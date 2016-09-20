@@ -1,0 +1,102 @@
+{
+  "maxCapacityInKb": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "capacity_max_kb"
+  },
+  "capacityInUseInKb": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "capacity_use_kb"
+  },
+  "failedCapacityInKb": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "capacity_failed_kb"
+  },
+  "spareCapacityInKb": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "capacity_spare_kb"
+  },
+  "unusedCapacityInKb": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "capacity_unused_kb"
+  },
+  "degradedFailedCapacityInKb": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "capacity_degraded_failed_kb"
+  },
+  "capacityAvailableForVolumeAllocationInKb": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "capacity_available_volume_allocation_kb"
+  },
+  "numOfMappedVolumes": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "mapped_volumes"
+  },
+  "bckRebuildReadBwc": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "read_bck_rebuild"
+  },
+  "bckRebuildWriteBwc": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "write_bck_rebuild"
+  },
+  "fwdRebuildReadBwc": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "read_fwd_rebuild"
+  },
+  "fwdRebuildWriteBwc": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "write_fwd_rebuild"
+  },
+  "totalReadBwc": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "read_total"
+  },
+  "totalWriteBwc": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "write_total"
+  },
+  "rebalanceReadBwc": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "read_rebalance"
+  },
+  "rebalanceWriteBwc": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "write_rebalance"
+  },
+  "userDataReadBwc": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "read_user_data"
+  },
+  "userDataWriteBwc": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "write_user_data"
+  },
+  "avgReadLatencyInMicrosec": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "read_latency_ms"
+  },
+  "avgWriteLatencyInMicrosec": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "write_latency_ms"
+  }
+}

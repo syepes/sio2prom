@@ -1,0 +1,40 @@
+[package]
+name = "sio2prom"
+version = "0.1.0"
+authors = ["Sebastian YEPES F <syepes@gmail.com>"]
+keywords = ["prometheus", "metrics", "scaleio"]
+license = "Apache-2.0"
+description = "ScaleIO Prometheus Exporter"
+homepage = "https://github.com/syepes/sio2prom"
+repository = "https://github.com/syepes/sio2prom.git"
+exclude = ["*"]
+include = ["README.md", "CHANGELOG.md", "src/**/*.rs", "benches/**/*.rs", "tests/**/*.rs", "cfg/*", "Cargo.toml", "rustfmt.toml", "clippy.toml"]
+readme = "README.md"
+publish = true
+
+[dependencies]
+time = "*"
+regex = "*"
+serde = "*"
+serde_json = "*"
+serde_macros = "*"
+lazy_static ="*"
+log = "*"
+log4rs = "*"
+hyper = "*"
+hyper_insecure_https_connector = "*"
+prometheus = "*"
+
+[replace]
+"aster:0.26.1" = { git = "https://github.com/jchlapinski/aster" }
+
+
+
+[profile.release]
+opt-level = 3
+debug = false
+rpath = false
+lto = true
+debug-assertions = false
+codegen-units = 1
+

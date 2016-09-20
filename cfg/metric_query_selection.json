@@ -1,0 +1,94 @@
+{
+  "selectedStatisticsList": [
+    {
+      "type" : "System",
+      "allIds" : "",
+      "properties": [
+        "maxCapacityInKb",
+        "capacityInUseInKb",
+        "degradedFailedCapacityInKb",
+        "failedCapacityInKb",
+        "capacityAvailableForVolumeAllocationInKb",
+        "totalReadBwc",
+        "totalWriteBwc",
+        "fwdRebuildReadBwc",
+        "fwdRebuildWriteBwc",
+        "bckRebuildReadBwc",
+        "bckRebuildWriteBwc",
+        "rebalanceReadBwc",
+        "rebalanceWriteBwc"
+      ]
+    },
+    {
+      "type" : "Sds",
+      "allIds" : "",
+      "properties": [
+        "totalReadBwc",
+        "totalWriteBwc"
+      ]
+    },
+    {
+      "type" : "Sdc",
+      "allIds" : "",
+      "properties": [
+        "numOfMappedVolumes",
+        "userDataReadBwc",
+        "userDataWriteBwc"
+      ]
+    },
+    {
+      "type" : "Volume",
+      "allIds" : "",
+      "properties": [
+        "userDataReadBwc",
+        "userDataWriteBwc"
+      ]
+    },
+    {
+      "type" : "StoragePool",
+      "allIds" : "",
+      "properties": [
+        "maxCapacityInKb",
+        "capacityInUseInKb",
+        "degradedFailedCapacityInKb",
+        "failedCapacityInKb",
+        "unusedCapacityInKb",
+        "spareCapacityInKb",
+        "capacityAvailableForVolumeAllocationInKb",
+        "totalReadBwc",
+        "totalWriteBwc",
+        "fwdRebuildReadBwc",
+        "fwdRebuildWriteBwc",
+        "bckRebuildReadBwc",
+        "bckRebuildWriteBwc",
+        "rebalanceReadBwc",
+        "rebalanceWriteBwc"
+      ]
+    },
+    {
+      "type" : "Device",
+      "allIds" : "",
+      "properties": [
+        "avgReadLatencyInMicrosec",
+        "avgWriteLatencyInMicrosec",
+        "totalReadBwc",
+        "totalWriteBwc"
+
+      ]
+    },
+    {
+      "type" : "ProtectionDomain",
+      "allIds" : "",
+      "properties": [
+        "totalReadBwc",
+        "totalWriteBwc",
+        "fwdRebuildReadBwc",
+        "fwdRebuildWriteBwc",
+        "bckRebuildReadBwc",
+        "bckRebuildWriteBwc",
+        "rebalanceReadBwc",
+        "rebalanceWriteBwc"
+      ]
+    }
+  ]
+}
