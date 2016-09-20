@@ -40,7 +40,6 @@ impl Metric {
 
 /// Query ScaleIO instances and find their relationships
 fn get_instances(sio: &Arc<Mutex<sio::client::Client>>) -> (BTreeMap<String, serde_json::Value>, HashMap<&'static str, HashMap<String, HashMap<String, Vec<String>>>>) {
-    // let instances = read_json("temp/data/Instances.json").unwrap();
     let instances = sio.lock().unwrap().instances();
 
     let mut relations: HashMap<&'static str, HashMap<String, HashMap<String, Vec<String>>>> = HashMap::new();
@@ -53,7 +52,8 @@ fn get_instances(sio: &Arc<Mutex<sio::client::Client>>) -> (BTreeMap<String, ser
             for items in value.as_array().unwrap().iter() {
                 let item_type = key.replace("List", "").to_string().replace('"', "").to_lowercase();
                 let item_id = items.as_object().unwrap().get("id").unwrap().to_string().replace('"', "");
-                // println!("type: {} / id: {}", item_type, item_id);
+                let item_name = items.as_object().unwrap().get("name").unwrap().to_string().replace('"', "");
+                trace!("Instance item type: {} / name: {} / id: {}", item_type, item_name, item_id);
 
                 for links in items.find("links")
                                   .and_then(|v| v.as_array())
@@ -84,6 +84,8 @@ fn get_instances(sio: &Arc<Mutex<sio::client::Client>>) -> (BTreeMap<String, ser
             }
         }
     }
+    trace!("Found Instances: {:?}", instances.keys().map(|i| i.replace("List", "")).collect::<Vec<_>>());
+    info!("Found Instance relationships Parent: {} / Child: {} relations", relations.get("parents").unwrap().len(), relations.get("childs").unwrap().len());
     (instances.clone(), relations)
 }
 
@@ -100,7 +102,6 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
         label.entry("clu_name").or_insert(clu_name.to_string());
         label.entry("clu_id").or_insert(clu_id.to_string());
 
-        // println!("label: {:?}", label);
         labels.entry("System").or_insert(HashMap::new()).entry("System".to_string()).or_insert(label);
     }
     // Devices
@@ -161,7 +162,6 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             label.entry("pdo_name").or_insert(parent_pdo.get("name").unwrap().to_string());
             label.entry("pdo_id").or_insert(parent_pdo.get("id").unwrap().to_string());
 
-            // println!("label: {:?}", label);
             labels.entry("device").or_insert(HashMap::new()).entry(dev_id).or_insert(label);
         }
     }
@@ -208,7 +208,6 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             label.entry("pdo_name").or_insert(parent_pdo.get("name").unwrap().to_string());
             label.entry("pdo_id").or_insert(parent_pdo.get("id").unwrap().to_string());
 
-            // println!("label: {:?}", label);
             labels.entry("volume").or_insert(HashMap::new()).entry(vol_id).or_insert(label);
         }
     }
@@ -238,7 +237,6 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             label.entry("pdo_name").or_insert(parent.get("name").unwrap().to_string());
             label.entry("pdo_id").or_insert(parent.get("id").unwrap().to_string());
 
-            // println!("label: {:?}", label);
             labels.entry("storagepool").or_insert(HashMap::new()).entry(sp_id).or_insert(label);
         }
     }
@@ -268,7 +266,6 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             label.entry("pdo_name").or_insert(parent.get("name").unwrap().to_string());
             label.entry("pdo_id").or_insert(parent.get("id").unwrap().to_string());
 
-            // println!("label: {:?}", label);
             labels.entry("sds").or_insert(HashMap::new()).entry(sds_id).or_insert(label);
         }
     }
@@ -284,7 +281,6 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             label.entry("sdc_name").or_insert(sdc_name);
             label.entry("sdc_id").or_insert(sdc_id.to_string());
 
-            // println!("label: {:?}", label);
             labels.entry("sdc").or_insert(HashMap::new()).entry(sdc_id).or_insert(label);
         }
     }
@@ -294,8 +290,7 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
 /// Build the final metric definition that should be used to create and update the metrics
 fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>>) -> Vec<Metric> {
     let mdef = read_json("cfg/metric_definition.json").unwrap_or_else(|| panic!("Failed to loading metric_definition"));
-
-    println!("metric_def.keys: {:?}", mdef.keys().collect::<Vec<_>>());
+    debug!("Loaded metric defenitions: {:?}", mdef.keys().collect::<Vec<_>>());
 
     let mut metric_list: Vec<Metric> = Vec::new();
 
@@ -310,7 +305,7 @@ fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap
 
         if instance_type == "System" {
             if metrics.is_object() {
-                let stype: &str = &instance_type.replace('"', ""); // Panic
+                let stype: &str = &instance_type.replace('"', "");
 
                 for (m, v) in metrics.as_object().unwrap().iter() {
                     if mdef.contains_key(m) {
@@ -343,7 +338,7 @@ fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap
                             metric_list.push(metric_bw);
                         }
                     } else {
-                        println!("Metric: {} ({}) not found in the Metric Definition", m, stype);
+                        error!("Metric: {} ({}) not found in the metric definition", m, stype);
                         continue;
                     }
                 }
@@ -384,7 +379,7 @@ fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap
                                 metric_list.push(metric);
                             }
                         } else {
-                            println!("Metric: {} ({}) not found in the Metric Definition", m, stype);
+                            error!("Metric: {} ({}) not found in the metric definition", m, stype);
                             continue;
                         }
                     }
@@ -414,7 +409,6 @@ fn bw_calc(occur: i32, secs: i32) -> f64 {
     }
 }
 
-/// TODO: Remove
 /// Read json file using `serde_json`
 fn read_json(file: &str) -> Option<BTreeMap<String, serde_json::Value>> {
     match File::open(file) {
@@ -430,20 +424,12 @@ fn read_json(file: &str) -> Option<BTreeMap<String, serde_json::Value>> {
 
 pub fn get_metrics(sio: &Arc<Mutex<sio::client::Client>>) -> Vec<Metric> {
     let (inst, rela) = get_instances(&sio);
-    // println!("intances.keys: {:?}", inst.keys().collect::<Vec<_>>());
-    // println!("Rela:{:?}", rela);
-    // println!("Rela.keys: {:?}", rela.keys().collect::<Vec<_>>());
 
     let labels = get_labels(&inst, &rela);
-    // println!("labels: {:?}", labels);
-    println!("labels.keys {:?}", labels.keys().collect::<Vec<_>>());
+    debug!("Loaded labels for instances: {:?}", labels.keys().collect::<Vec<_>>());
 
-    // let ststs = read_json("temp/data/querySelectedStatistics_Statistics.json").unwrap();
     let ststs = sio.lock().unwrap().stats();
-
-    // println!("ststs: {:?}", ststs);
-    println!("ststs.keys {:?}", ststs.keys().collect::<Vec<_>>());
-    // parse_stats(&ststs);
+    debug!("Loaded ststs for instances: {:?}", ststs.keys().collect::<Vec<_>>());
 
     convert_metrics(&ststs, &labels)
 }

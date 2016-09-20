@@ -3,10 +3,10 @@
 verbose = false                             # Use verbose output
 skip_children = false                       # Don't reformat out of line modules
 
-max_width = 180                             # (100) Maximum width of each line
-ideal_width = 100                           # (80) Ideal width of each line
+max_width = 195                             # (100) Maximum width of each line
+ideal_width = 120                           # (80) Ideal width of each line
 tab_spaces = 4                              # Number of spaces per tab
-fn_call_width = 140                         # (60) Maximum width of the args of a function call before falling back to vertical formatting
+fn_call_width = 150                         # (60) Maximum width of the args of a function call before falling back to vertical formatting
 struct_lit_width = 40                       # Maximum width in the body of a struct lit before falling back to vertical formatting
 newline_style = "Unix"                      # Unix or Windows line endings
 

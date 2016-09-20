@@ -1,0 +1,26 @@
+refresh_rate = 30
+
+[appenders.console]
+kind = "console"
+
+[appenders.console.encoder]
+pattern = "{d(%Y-%m-%d %H:%M:%S)} [{t}]:{T}:{L} {h({l})} {M}:{m}{n}"
+
+[[appenders.console.filters]]
+kind = "threshold"
+level = "debug"
+
+[appenders.file]
+kind = "file"
+path = "logs/sio2prom.log"
+
+[appenders.file.encoder]
+pattern = "{d} [{t}]:{T}:{L} {l} {M}:{m}{n}"
+
+[[appenders.console.filters]]
+kind = "threshold"
+level = "trace"
+
+[root]
+level = "trace"
+appenders = ["console", "file"]

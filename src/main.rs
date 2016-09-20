@@ -33,12 +33,10 @@ use prometheus::{Opts, Collector, Registry, Counter, CounterVec, Gauge, GaugeVec
 
 
 lazy_static! {
-    static ref REPO_METRICS_COUNTER: Mutex<HashMap<String, Arc<Mutex<CounterVec>>>> = {
-        println!("Init: LOAD_METRICS - COUNTER");
+    static ref METRIC_COUNTERS: Mutex<HashMap<String, Arc<Mutex<CounterVec>>>> = {
         Mutex::new(HashMap::new())
     };
-    static ref REPO_METRICS_GAUGE: Mutex<HashMap<String, Arc<Mutex<GaugeVec>>>> = {
-        println!("Init: LOAD_METRICS - GAUGE");
+    static ref METRIC_GAUGES: Mutex<HashMap<String, Arc<Mutex<GaugeVec>>>> = {
         Mutex::new(HashMap::new())
     };
 
@@ -74,33 +72,10 @@ fn read_json(file: &str) -> Option<BTreeMap<String, serde_json::Value>> {
 }
 
 
-
-
-
-
-fn parse_stats(stats: &BTreeMap<String, serde_json::Value>) {
-    println!("-- parse_stats --");
-
-    for (key, value) in stats.iter() {
-        if key != "Volume" && key != "System" && key != "ProtectionDomain" {
-            continue;
-        }
-        if value.is_object() {
-            println!("{}:", key);
-            for (k, v) in value.as_object().unwrap().iter() {
-                println!("\t{}: {}", k, v);
-            }
-        }
-    }
-}
-
-
-
-
 fn start_exporter(ip: &str, port: &str) {
     let encoder = TextEncoder::new();
     let addr: &str = &format!("{}:{}", ip, port);
-    println!("Starting Exporter @{:?}", addr);
+    info!("Starting exporter {:?}", addr);
 
     Server::http(addr)
         .unwrap()
@@ -120,12 +95,9 @@ fn start_exporter(ip: &str, port: &str) {
 }
 
 
-
-
-// -> Result<(), io::Error>
 fn load_prom(metrics: &Vec<sio::metrics::Metric>) {
-    let mut repo_counter = REPO_METRICS_COUNTER.lock().unwrap();
-    let mut repo_gauge = REPO_METRICS_GAUGE.lock().unwrap();
+    let mut counters = METRIC_COUNTERS.lock().unwrap();
+    let mut gauges = METRIC_GAUGES.lock().unwrap();
 
     for m in metrics {
         // Labels need to be sorted by value https://github.com/pingcap/rust-prometheus/blob/master/src/vec.rs#L78-L80
@@ -135,41 +107,43 @@ fn load_prom(metrics: &Vec<sio::metrics::Metric>) {
 
         let opts = Opts::new(m.name.clone(), m.help.clone());
 
-        // println!("Regestering metric: {:?} {:?} ({})", m.name,labels, m.mtype);
+        trace!("Registering metric: {} {:?} ({})", m.name, labels, m.mtype);
 
         if m.mtype.to_lowercase() == "counter" {
             match register_counter_vec!(opts, &labels) {
-                // Err(e) => {  println!("Register error: {}{:?} - {}", m.name.clone(), m.labels, e); },
-                Err(_) => {},
+                Err(e) => {
+                    trace!("Register error: {}{:?} - {}", m.name.clone(), m.labels, e);
+                },
                 Ok(o) => {
-                    repo_counter.insert(m.name.clone().to_string(), Arc::new(Mutex::new(o)));
+                    counters.insert(m.name.clone().to_string(), Arc::new(Mutex::new(o)));
                 },
             };
         } else if m.mtype.to_lowercase() == "gauge" {
             match register_gauge_vec!(opts, &labels) {
-                // Err(e) => {  println!("Register error: {}{:?} - {}", m.name.clone(), m.labels, e); },
-                Err(_) => {},
+                Err(e) => {
+                    trace!("Register error: {}{:?} - {}", m.name.clone(), m.labels, e);
+                },
                 Ok(o) => {
-                    repo_gauge.insert(m.name.clone().to_string(), Arc::new(Mutex::new(o)));
+                    gauges.insert(m.name.clone().to_string(), Arc::new(Mutex::new(o)));
                 },
             };
         } else {
-            println!("Unknown metric type: {:?} {:?} ({})", m.name, labels, m.mtype);
+            error!("Unknown metric type: {} {:?} ({})", m.name, labels, m.mtype);
         }
 
     }
-    println!("Loaded REPO_METRICS_COUNTER: {:?}", repo_counter.keys().collect::<Vec<_>>());
-    println!("Loaded REPO_METRICS_GAUGE: {:?}", repo_gauge.keys().collect::<Vec<_>>());
+    info!("Loaded metric Counters: {:?}", counters.keys().collect::<Vec<_>>());
+    info!("Loaded metric Gauges: {:?}", gauges.keys().collect::<Vec<_>>());
 }
 
 
 fn updata_metrics(metrics: &Vec<sio::metrics::Metric>) {
-    let repo_counter = REPO_METRICS_COUNTER.lock().unwrap();
-    let repo_gauge = REPO_METRICS_GAUGE.lock().unwrap();
+    let counters = METRIC_COUNTERS.lock().unwrap();
+    let gauges = METRIC_GAUGES.lock().unwrap();
 
     for m in metrics {
-        if !repo_counter.contains_key(&m.name) && !repo_gauge.contains_key(&m.name) {
-            println!("Metric {} not found in repo {}", m.name, m.mtype);
+        if !counters.contains_key(&m.name) && !gauges.contains_key(&m.name) {
+            error!("The metric {} ({}) was not found as registered", m.name, m.mtype);
             continue;
         }
 
@@ -179,25 +153,25 @@ fn updata_metrics(metrics: &Vec<sio::metrics::Metric>) {
         }
 
         if m.mtype.to_lowercase() == "counter" {
-            let c = repo_counter.get(&m.name).unwrap().lock().unwrap();
-
-            // println!("Updateing Metric: {:?}", c.collect());
+            let c = counters.get(&m.name).unwrap().lock().unwrap();
+            trace!("Updateing Metric: {:?}", c.collect());
 
             let metric = c.get_metric_with(&labels).unwrap();
             metric.inc_by(m.value as f64);
 
         } else if m.mtype.to_lowercase() == "gauge" {
-            let g = repo_gauge.get(&m.name).unwrap().lock().unwrap();
-
-            // println!("Updateing Metric: {:?}", g.collect());
+            let g = gauges.get(&m.name).unwrap().lock().unwrap();
+            trace!("Updateing Metric: {:?}", g.collect());
 
             let metric = g.get_metric_with(&labels).unwrap();
             metric.set(m.value as f64);
-        } else {
 
+        } else {
+            error!("Unknown metric type: {} {:?} ({})", m.name, labels, m.mtype);
         }
     }
 }
+
 
 fn scheduler(sio: &Arc<Mutex<sio::client::Client>>, interval: Duration) -> Option<thread::JoinHandle<()>> {
     if interval == Duration::from_secs(0) {
@@ -206,9 +180,9 @@ fn scheduler(sio: &Arc<Mutex<sio::client::Client>>, interval: Duration) -> Optio
     let sio_clone = sio.clone();
     Some(thread::spawn(move || {
         loop {
+            info!("Starting scheduled metric update");
             let timer = UPDATE_HISTOGRAM.start_timer();
 
-            println!("Start: Update Metrics");
             let metrics = sio::metrics::get_metrics(&sio_clone);
             updata_metrics(&metrics);
 
@@ -220,20 +194,13 @@ fn scheduler(sio: &Arc<Mutex<sio::client::Client>>, interval: Duration) -> Optio
 
 
 fn main() {
+    log4rs::init_file("cfg/log4rs.toml", Default::default()).expect("Failed to initialize logger");
+
     let sio: Arc<Mutex<sio::client::Client>> = sio::client::Client::new("localhost", "admin", "admin");
-    println!("connect: {:?}", sio.lock().unwrap().connect());
-    // println!("stats: {:?}", sio.stats());
-    // println!("instances: {:?}", sio.instances());
-
     let metrics = sio::metrics::get_metrics(&sio);
-    // println!("instances: {:?}", sio.instances());
-
-    // println!("metrics.size: {}", metrics.len());
-    // for m in metrics { println!("{:?}", m); }
 
     load_prom(&metrics);
 
-    // updata_metrics(&metrics);
     scheduler(&sio, Duration::from_millis(30000 as u64));
     start_exporter("0.0.0.0", "9898");
 }

@@ -20,7 +20,7 @@ serde_json = "*"
 serde_macros = "*"
 lazy_static ="*"
 log = "*"
-log4rs = "*"
+log4rs = { version = "*", optional = false, features = ["toml"] }
 hyper = "*"
 hyper_insecure_https_connector = "*"
 prometheus = "*"
