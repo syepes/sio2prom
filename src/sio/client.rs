@@ -20,16 +20,15 @@ use hyper::client;
 use hyper::header::{Authorization, Basic, Headers, ContentType, UserAgent};
 use hyper::status::StatusCode;
 
-
 pub struct Client {
-    gw: &'static str,
-    user: &'static str,
-    pass: &'static str,
+    gw: String,
+    user: String,
+    pass: String,
     token: RefCell<Option<String>>,
 }
 
 impl Client {
-    pub fn new(gw: &'static str, user: &'static str, pass: &'static str) -> Arc<Mutex<Client>> {
+    pub fn new(gw: String, user: String, pass: String) -> Arc<Mutex<Client>> {
         Arc::new(Mutex::new(Client { gw: gw,
                                      user: user,
                                      pass: pass,
@@ -62,6 +61,29 @@ impl Client {
         } else {
             *self.token.borrow_mut() = Some(buf.replace('"', ""));
             debug!("Token: {}", self.token.borrow().clone().unwrap());
+            Ok(())
+        }
+    }
+
+    fn connect_check(&self) -> Result<(), String> {
+        let url = format!("https://{}/api/Configuration", &self.gw);
+        let mut headers = Headers::new();
+        headers.set(Authorization(Basic { username: self.user.to_string(),
+                                          password: Some(self.token.borrow().clone().unwrap()), }));
+        headers.set(UserAgent("sio2prom".to_string()));
+        let client = client::Client::with_connector(hyper_insecure_https_connector::insecure_https_connector());
+
+        let response = match client.get(&url).headers(headers).send() {
+            Err(e) => return Err(e.to_string()),
+            Ok(r) => r,
+        };
+
+        if response.status != StatusCode::Ok {
+            error!("ScaleIO REST API {} Check: {}, requesting a new auth token", url, response.status);
+            *self.token.borrow_mut() = None;
+            Err(format!("ScaleIO REST API {} Check: {}, requesting a new auth token", url, response.status))
+        } else {
+            debug!("ScaleIO REST API Check: {}", response.status);
             Ok(())
         }
     }
@@ -110,6 +132,9 @@ impl Client {
 
     pub fn instances(&self) -> BTreeMap<String, serde_json::Value> {
         if self.token.borrow().is_none() {
+            self.connect();
+        }
+        if self.connect_check().is_err() {
             self.connect();
         }
 

@@ -71,10 +71,14 @@ fn read_json(file: &str) -> Option<BTreeMap<String, serde_json::Value>> {
     }
 }
 
+fn read_cfg() -> BTreeMap<String, serde_json::Value> {
+    let cfg = read_json("cfg/sio2prom.json").unwrap_or_else(|| panic!("Failed to loading config"));
+    cfg
+}
 
-fn start_exporter(ip: &str, port: &str) {
+fn start_exporter(ip: String, port: u64) {
     let encoder = TextEncoder::new();
-    let addr: &str = &format!("{}:{}", ip, port);
+    let addr: &str = &format!("{}:{}", ip, port).replace('"', "");
     info!("Starting exporter {:?}", addr);
 
     Server::http(addr)
@@ -178,29 +182,40 @@ fn scheduler(sio: &Arc<Mutex<sio::client::Client>>, interval: Duration) -> Optio
         return None;
     }
     let sio_clone = sio.clone();
-    Some(thread::spawn(move || {
-        loop {
-            info!("Starting scheduled metric update");
-            let timer = UPDATE_HISTOGRAM.start_timer();
+    Some(thread::Builder::new()
+        .name("scheduler".to_string())
+        .spawn(move || {
+            loop {
+                info!("Starting scheduled metric update");
+                let timer = UPDATE_HISTOGRAM.start_timer();
 
-            let metrics = sio::metrics::get_metrics(&sio_clone);
-            updata_metrics(&metrics);
+                let metrics = sio::metrics::get_metrics(&sio_clone);
+                updata_metrics(&metrics);
 
-            timer.observe_duration();
-            thread::sleep(interval);
-        }
-    }))
+                timer.observe_duration();
+                thread::sleep(interval);
+            }
+        })
+        .unwrap())
 }
 
 
 fn main() {
     log4rs::init_file("cfg/log4rs.toml", Default::default()).expect("Failed to initialize logger");
 
-    let sio: Arc<Mutex<sio::client::Client>> = sio::client::Client::new("localhost", "admin", "admin");
+    // TODO Clean this
+    let cfg = read_cfg();
+    let sio_host = cfg.get("sio").unwrap().as_object().unwrap().get("host").unwrap().to_string().replace('"', "");
+    let sio_user = cfg.get("sio").unwrap().as_object().unwrap().get("user").unwrap().to_string().replace('"', "");
+    let sio_pass = cfg.get("sio").unwrap().as_object().unwrap().get("pass").unwrap().to_string().replace('"', "");
+    let sio_update = cfg.get("sio").unwrap().as_object().unwrap().get("metric_update").unwrap().as_u64().expect("Bad update number");
+    let prom_listen_ip = cfg.get("prom").unwrap().as_object().unwrap().get("listen_ip").unwrap().to_string();
+    let prom_listen_port: u64 = cfg.get("prom").unwrap().as_object().unwrap().get("listen_port").unwrap().as_u64().expect("Bad port number");
+
+    let sio = sio::client::Client::new(sio_host, sio_user, sio_pass);
     let metrics = sio::metrics::get_metrics(&sio);
-
     load_prom(&metrics);
+    scheduler(&sio, Duration::from_secs(sio_update));
 
-    scheduler(&sio, Duration::from_millis(30000 as u64));
-    start_exporter("0.0.0.0", "9898");
+    start_exporter(prom_listen_ip, prom_listen_port);
 }

@@ -6,6 +6,7 @@
       "properties": [
         "maxCapacityInKb",
         "capacityInUseInKb",
+        "spareCapacityInKb",
         "degradedFailedCapacityInKb",
         "failedCapacityInKb",
         "capacityAvailableForVolumeAllocationInKb",

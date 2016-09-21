@@ -8,7 +8,7 @@ pattern = "{d(%Y-%m-%d %H:%M:%S)} [{t}]:{T}:{L} {h({l})} {M}:{m}{n}"
 
 [[appenders.console.filters]]
 kind = "threshold"
-level = "debug"
+level = "warn"
 
 [appenders.file]
 kind = "file"
@@ -17,9 +17,9 @@ path = "logs/sio2prom.log"
 [appenders.file.encoder]
 pattern = "{d} [{t}]:{T}:{L} {l} {M}:{m}{n}"
 
-[[appenders.console.filters]]
+[[appenders.file.filters]]
 kind = "threshold"
-level = "trace"
+level = "info"
 
 [root]
 level = "trace"

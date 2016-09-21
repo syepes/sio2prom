@@ -1,0 +1,12 @@
+{
+  "sio": {
+    "host" : "localhost",
+    "user": "admin",
+    "pass" : "admin",
+    "metric_update" : 30
+  },
+  "prom": {
+    "listen_ip" : "0.0.0.0",
+    "listen_port" : 9186
+  }
+}

@@ -13,8 +13,6 @@ readme = "README.md"
 publish = true
 
 [dependencies]
-time = "*"
-regex = "*"
 serde = "*"
 serde_json = "*"
 serde_macros = "*"
@@ -24,11 +22,6 @@ log4rs = { version = "*", optional = false, features = ["toml"] }
 hyper = "*"
 hyper_insecure_https_connector = "*"
 prometheus = "*"
-
-[replace]
-"aster:0.26.1" = { git = "https://github.com/jchlapinski/aster" }
-
-
 
 [profile.release]
 opt-level = 3
