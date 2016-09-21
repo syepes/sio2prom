@@ -4,11 +4,25 @@
       "type" : "System",
       "allIds" : "",
       "properties": [
+        "numOfProtectionDomains",
+        "numOfSdc",
+        "numOfSds",
+        "numOfVolumes",
+        "numOfDevices",
+        "numOfVtrees",
+        "numOfStoragePools",
+        "numOfUnmappedVolumes",
+        "numOfMappedToAllVolumes",
+        "numOfThickBaseVolumes",
+        "numOfThinBaseVolumes",
+        "numOfSnapshots",
+        "numOfVolumesInDeletion",
         "maxCapacityInKb",
         "capacityInUseInKb",
         "spareCapacityInKb",
         "degradedFailedCapacityInKb",
         "failedCapacityInKb",
+        "protectedCapacityInKb",
         "capacityAvailableForVolumeAllocationInKb",
         "totalReadBwc",
         "totalWriteBwc",
@@ -24,8 +38,12 @@
       "type" : "Sds",
       "allIds" : "",
       "properties": [
+        "numOfDevices",
+        "maxCapacityInKb",
+        "capacityInUseInKb",
         "totalReadBwc",
-        "totalWriteBwc"
+        "totalWriteBwc",
+        "fixedReadErrorCount"
       ]
     },
     {
@@ -41,6 +59,9 @@
       "type" : "Volume",
       "allIds" : "",
       "properties": [
+        "numOfMappedSdcs",
+        "numOfChildVolumes",
+        "numOfDescendantVolumes",
         "userDataReadBwc",
         "userDataWriteBwc"
       ]
@@ -49,12 +70,23 @@
       "type" : "StoragePool",
       "allIds" : "",
       "properties": [
+        "numOfDevices",
+        "numOfVtrees",
+        "numOfVolumes",
+        "numOfUnmappedVolumes",
+        "numOfMappedToAllVolumes",
+        "numOfThickBaseVolumes",
+        "numOfThinBaseVolumes",
+        "numOfSnapshots",
+        "numOfVolumesInDeletion",
         "maxCapacityInKb",
         "capacityInUseInKb",
         "degradedFailedCapacityInKb",
         "failedCapacityInKb",
         "unusedCapacityInKb",
         "spareCapacityInKb",
+        "protectedCapacityInKb",
+        "movingCapacityInKb",
         "capacityAvailableForVolumeAllocationInKb",
         "totalReadBwc",
         "totalWriteBwc",
@@ -63,7 +95,8 @@
         "bckRebuildReadBwc",
         "bckRebuildWriteBwc",
         "rebalanceReadBwc",
-        "rebalanceWriteBwc"
+        "rebalanceWriteBwc",
+        "fixedReadErrorCount"
       ]
     },
     {
@@ -72,15 +105,26 @@
       "properties": [
         "avgReadLatencyInMicrosec",
         "avgWriteLatencyInMicrosec",
+        "avgReadSizeInBytes",
+        "avgWriteSizeInBytes",
         "totalReadBwc",
-        "totalWriteBwc"
-
+        "totalWriteBwc",
+        "fixedReadErrorCount"
       ]
     },
     {
       "type" : "ProtectionDomain",
       "allIds" : "",
       "properties": [
+        "numOfSds",
+        "numOfStoragePools",
+        "numOfFaultSets",
+        "numOfUnmappedVolumes",
+        "numOfMappedToAllVolumes",
+        "numOfThickBaseVolumes",
+        "numOfThinBaseVolumes",
+        "numOfSnapshots",
+        "numOfVolumesInDeletion",
         "totalReadBwc",
         "totalWriteBwc",
         "fwdRebuildReadBwc",
@@ -88,7 +132,8 @@
         "bckRebuildReadBwc",
         "bckRebuildWriteBwc",
         "rebalanceReadBwc",
-        "rebalanceWriteBwc"
+        "rebalanceWriteBwc",
+        "fixedReadErrorCount"
       ]
     }
   ]

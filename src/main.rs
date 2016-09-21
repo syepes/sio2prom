@@ -42,7 +42,7 @@ lazy_static! {
 
     static ref UPDATE_HISTOGRAM: Histogram = register_histogram!(
         histogram_opts!("sio2prom_update_duration_seconds",
-                        "The HTTP request latencies in seconds."
+                        "The time in seconds it took to collect the ScaleIO stats"
         )
     ).unwrap();
 

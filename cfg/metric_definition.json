@@ -1,4 +1,94 @@
 {
+  "numOfProtectionDomains": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_protection_domains"
+  },
+  "numOfSdc": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_sdc"
+  },
+  "numOfSds": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_sds"
+  },
+  "numOfVolumes": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_volumes"
+  },
+  "numOfDevices": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_devices"
+  },
+  "numOfVtrees": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_vtrees"
+  },
+  "numOfStoragePools": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_storage_pools"
+  },
+  "numOfUnmappedVolumes": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_unmapped_volumes"
+  },
+  "numOfMappedToAllVolumes": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_mapped_to_all_volumes"
+  },
+  "numOfThickBaseVolumes": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_thick_base_volumes"
+  },
+  "numOfThinBaseVolumes": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_thin_base_volumes"
+  },
+  "numOfSnapshots": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_snapshots"
+  },
+  "numOfVolumesInDeletion": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_volumes_in_deletion"
+  },
+  "numOfRfcacheDevices": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_rfcache_devices"
+  },
+  "numOfFaultSets": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_fault_sets"
+  },
+  "numOfMappedSdcs": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_mapped_sdcs"
+  },
+  "numOfChildVolumes": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_child_volumes"
+  },
+  "numOfDescendantVolumes": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "num_descendant_volumes"
+  },
   "maxCapacityInKb": {
     "type" : "gauge",
     "help": "Help Text",
@@ -33,6 +123,16 @@
     "type" : "gauge",
     "help": "Help Text",
     "name" : "capacity_degraded_failed_kb"
+  },
+  "protectedCapacityInKb": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "capacity_protected_kb"
+  },
+  "movingCapacityInKb": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "capacity_moving_kb"
   },
   "capacityAvailableForVolumeAllocationInKb": {
     "type" : "gauge",
@@ -103,5 +203,20 @@
     "type" : "gauge",
     "help": "Help Text",
     "name" : "write_latency_ms"
+  },
+  "avgReadSizeInBytes": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "read_size_bytes"
+  },
+  "avgWriteSizeInBytes": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "write_size_bytes"
+  },
+  "fixedReadErrorCount": {
+    "type" : "gauge",
+    "help": "Help Text",
+    "name" : "fixed_read_error"
   }
 }

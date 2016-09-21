@@ -1,6 +1,6 @@
 //! SIO Metrics
 //!
-//! The ScaleIO `Client`
+//! The ScaleIO `Metrics conversion`
 //!
 
 use std;
@@ -105,7 +105,6 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
         labels.entry("System").or_insert(HashMap::new()).entry("System".to_string()).or_insert(label);
     }
     // Devices
-    // for dl in instances.get("deviceList").unwrap().as_array().unwrap().iter() {
     for dl in instances.get("deviceList").and_then(|v| v.as_array()).unwrap_or_else(|| panic!("Failed to get 'deviceList' from instances")).iter() {
         let mut parent_sds: HashMap<&'static str, String> = HashMap::new();
         let mut parent_sto: HashMap<&'static str, String> = HashMap::new();
@@ -295,10 +294,6 @@ fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap
     let mut metric_list: Vec<Metric> = Vec::new();
 
     for (instance_type, metrics) in stats.iter() {
-        // if instance_type != "Volume" && instance_type != "System" && instance_type != "ProtectionDomain"  && instance_type != "StoragePool" { continue; }
-        // if instance_type != "System" && instance_type != "Volume" && instance_type != "StoragePool" { continue; }
-        // if instance_type != "System" && instance_type != "Volume" { continue; }
-        // if instance_type != "Volume" { continue; }
         if instance_type == "ProtectionDomain" {
             continue;
         }
