@@ -104,110 +104,34 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
 
         labels.entry("System").or_insert(HashMap::new()).entry("System".to_string()).or_insert(label);
     }
-    // Devices
-    for dl in instances.get("deviceList").and_then(|v| v.as_array()).unwrap_or_else(|| panic!("Failed to get 'deviceList' from instances")).iter() {
-        let mut parent_sds: HashMap<&'static str, String> = HashMap::new();
-        let mut parent_sto: HashMap<&'static str, String> = HashMap::new();
-        let mut parent_pdo: HashMap<&'static str, String> = HashMap::new();
-
-        for dev in dl.as_object().iter() {
+    // Sdc
+    for sdc in instances.get("sdcList").and_then(|v| v.as_array()).unwrap_or_else(|| panic!("Failed to get 'sdcList' from instances")) {
+        for sdc in sdc.as_object().iter() {
             let mut label: HashMap<&'static str, String> = HashMap::new();
-            let dev_name = dev.get("name").unwrap().to_string().replace('"', "");
-            let dev_id = dev.get("id").unwrap().to_string().replace('"', "");
-            let dev_path = dev.get("deviceCurrentPathName").unwrap().to_string().replace("/dev/", "").replace('"', "");
-
-            for sdsl in instances.get("sdsList").unwrap().as_array().unwrap().iter() {
-                for sds in sdsl.as_object().iter() {
-                    if relations["parents"].get(&(dev_id)).unwrap().get("sds").unwrap().contains(&(sds.get("id").unwrap().to_string().replace('"', ""))) {
-                        parent_sds.entry("name").or_insert(sds.get("name").unwrap().to_string().replace('"', ""));
-                        parent_sds.entry("id").or_insert(sds.get("id").unwrap().to_string().replace('"', ""));
-                        break;
-                    }
-                }
-            }
-            for sp in instances.get("storagePoolList").unwrap().as_array().unwrap().iter() {
-                for sto in sp.as_object().iter() {
-                    if relations["parents"].get(&(dev_id)).unwrap().get("storagepool").unwrap().contains(&(sto.get("id").unwrap().to_string().replace('"', ""))) {
-                        parent_sto.entry("name").or_insert(sto.get("name").unwrap().to_string().replace('"', ""));
-                        parent_sto.entry("id").or_insert(sto.get("id").unwrap().to_string().replace('"', ""));
-                        break;
-                    }
-                }
-            }
-            for pd in instances.get("protectionDomainList").unwrap().as_array().unwrap().iter() {
-                for pdo in pd.as_object().iter() {
-                    if relations["parents"]
-                        .get(&(parent_sto.get("id").unwrap().to_string().replace('"', "")))
-                        .unwrap()
-                        .get("protectiondomain")
-                        .unwrap()
-                        .contains(&(pdo.get("id").unwrap().to_string().replace('"', ""))) {
-                        parent_pdo.entry("name").or_insert(pdo.get("name").unwrap().to_string().replace('"', ""));
-                        parent_pdo.entry("id").or_insert(pdo.get("id").unwrap().to_string().replace('"', ""));
-                        break;
-                    }
-                }
-            }
+            let sdc_name = sdc.get("name").unwrap().to_string().replace('"', "");
+            let sdc_id = sdc.get("id").unwrap().to_string().replace('"', "");
 
             label.entry("clu_name").or_insert(clu_name.to_string());
             label.entry("clu_id").or_insert(clu_id.to_string());
-            label.entry("dev_name").or_insert(dev_name);
-            label.entry("dev_id").or_insert(dev_id.to_string());
-            label.entry("dev_path").or_insert(dev_path);
-            label.entry("sds_name").or_insert(parent_sds.get("name").unwrap().to_string());
-            label.entry("sds_id").or_insert(parent_sds.get("id").unwrap().to_string());
-            label.entry("sto_name").or_insert(parent_sto.get("name").unwrap().to_string());
-            label.entry("sto_id").or_insert(parent_sto.get("id").unwrap().to_string());
-            label.entry("pdo_name").or_insert(parent_pdo.get("name").unwrap().to_string());
-            label.entry("pdo_id").or_insert(parent_pdo.get("id").unwrap().to_string());
+            label.entry("sdc_name").or_insert(sdc_name);
+            label.entry("sdc_id").or_insert(sdc_id.to_string());
 
-            labels.entry("device").or_insert(HashMap::new()).entry(dev_id).or_insert(label);
+            labels.entry("sdc").or_insert(HashMap::new()).entry(sdc_id).or_insert(label);
         }
     }
-    // Volumes
-    for vl in instances.get("volumeList").and_then(|v| v.as_array()).unwrap_or_else(|| panic!("Failed to get 'volumeList' from instances")) {
-        let mut parent_sto: HashMap<&'static str, String> = HashMap::new();
-        let mut parent_pdo: HashMap<&'static str, String> = HashMap::new();
-
-        for vol in vl.as_object().iter() {
+    // ProtectionDomain
+    for pd in instances.get("protectionDomainList").and_then(|v| v.as_array()).unwrap_or_else(|| panic!("Failed to get 'protectionDomainList' from instances")) {
+        for pdo in pd.as_object().iter() {
             let mut label: HashMap<&'static str, String> = HashMap::new();
-            let vol_name = vol.get("name").unwrap().to_string().replace('"', "");
-            let vol_id = vol.get("id").unwrap().to_string().replace('"', "");
-
-            for sp in instances.get("storagePoolList").unwrap().as_array().unwrap().iter() {
-                for sto in sp.as_object().iter() {
-                    if relations["parents"].get(&(vol_id)).unwrap().get("storagepool").unwrap().contains(&(sto.get("id").unwrap().to_string().replace('"', ""))) {
-                        parent_sto.entry("name").or_insert(sto.get("name").unwrap().to_string().replace('"', ""));
-                        parent_sto.entry("id").or_insert(sto.get("id").unwrap().to_string().replace('"', ""));
-                        break;
-                    }
-                }
-            }
-            for pd in instances.get("protectionDomainList").unwrap().as_array().unwrap().iter() {
-                for pdo in pd.as_object().iter() {
-                    if relations["parents"]
-                        .get(&(parent_sto.get("id").unwrap().to_string().replace('"', "")))
-                        .unwrap()
-                        .get("protectiondomain")
-                        .unwrap()
-                        .contains(&(pdo.get("id").unwrap().to_string().replace('"', ""))) {
-                        parent_pdo.entry("name").or_insert(pdo.get("name").unwrap().to_string().replace('"', ""));
-                        parent_pdo.entry("id").or_insert(pdo.get("id").unwrap().to_string().replace('"', ""));
-                        break;
-                    }
-                }
-            }
+            let pdo_name = pdo.get("name").unwrap().to_string().replace('"', "");
+            let pdo_id = pdo.get("id").unwrap().to_string().replace('"', "");
 
             label.entry("clu_name").or_insert(clu_name.to_string());
             label.entry("clu_id").or_insert(clu_id.to_string());
-            label.entry("vol_name").or_insert(vol_name);
-            label.entry("vol_id").or_insert(vol_id.to_string());
-            label.entry("sto_name").or_insert(parent_sto.get("name").unwrap().to_string());
-            label.entry("sto_id").or_insert(parent_sto.get("id").unwrap().to_string());
-            label.entry("pdo_name").or_insert(parent_pdo.get("name").unwrap().to_string());
-            label.entry("pdo_id").or_insert(parent_pdo.get("id").unwrap().to_string());
+            label.entry("pdo_name").or_insert(pdo_name.to_string());
+            label.entry("pdo_id").or_insert(pdo_id.to_string());
 
-            labels.entry("volume").or_insert(HashMap::new()).entry(vol_id).or_insert(label);
+            labels.entry("protectiondomain").or_insert(HashMap::new()).entry(pdo_id).or_insert(label);
         }
     }
     // StoragePool
@@ -268,19 +192,110 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             labels.entry("sds").or_insert(HashMap::new()).entry(sds_id).or_insert(label);
         }
     }
-    // Sdc
-    for sdc in instances.get("sdcList").and_then(|v| v.as_array()).unwrap_or_else(|| panic!("Failed to get 'sdcList' from instances")) {
-        for sdc in sdc.as_object().iter() {
+    // Volumes
+    for vl in instances.get("volumeList").and_then(|v| v.as_array()).unwrap_or_else(|| panic!("Failed to get 'volumeList' from instances")) {
+        let mut parent_sto: HashMap<&'static str, String> = HashMap::new();
+        let mut parent_pdo: HashMap<&'static str, String> = HashMap::new();
+
+        for vol in vl.as_object().iter() {
             let mut label: HashMap<&'static str, String> = HashMap::new();
-            let sdc_name = sdc.get("name").unwrap().to_string().replace('"', "");
-            let sdc_id = sdc.get("id").unwrap().to_string().replace('"', "");
+            let vol_name = vol.get("name").unwrap().to_string().replace('"', "");
+            let vol_id = vol.get("id").unwrap().to_string().replace('"', "");
+
+            for sp in instances.get("storagePoolList").unwrap().as_array().unwrap().iter() {
+                for sto in sp.as_object().iter() {
+                    if relations["parents"].get(&(vol_id)).unwrap().get("storagepool").unwrap().contains(&(sto.get("id").unwrap().to_string().replace('"', ""))) {
+                        parent_sto.entry("name").or_insert(sto.get("name").unwrap().to_string().replace('"', ""));
+                        parent_sto.entry("id").or_insert(sto.get("id").unwrap().to_string().replace('"', ""));
+                        break;
+                    }
+                }
+            }
+            for pd in instances.get("protectionDomainList").unwrap().as_array().unwrap().iter() {
+                for pdo in pd.as_object().iter() {
+                    if relations["parents"]
+                        .get(&(parent_sto.get("id").unwrap().to_string().replace('"', "")))
+                        .unwrap()
+                        .get("protectiondomain")
+                        .unwrap()
+                        .contains(&(pdo.get("id").unwrap().to_string().replace('"', ""))) {
+                        parent_pdo.entry("name").or_insert(pdo.get("name").unwrap().to_string().replace('"', ""));
+                        parent_pdo.entry("id").or_insert(pdo.get("id").unwrap().to_string().replace('"', ""));
+                        break;
+                    }
+                }
+            }
 
             label.entry("clu_name").or_insert(clu_name.to_string());
             label.entry("clu_id").or_insert(clu_id.to_string());
-            label.entry("sdc_name").or_insert(sdc_name);
-            label.entry("sdc_id").or_insert(sdc_id.to_string());
+            label.entry("vol_name").or_insert(vol_name);
+            label.entry("vol_id").or_insert(vol_id.to_string());
+            label.entry("sto_name").or_insert(parent_sto.get("name").unwrap().to_string());
+            label.entry("sto_id").or_insert(parent_sto.get("id").unwrap().to_string());
+            label.entry("pdo_name").or_insert(parent_pdo.get("name").unwrap().to_string());
+            label.entry("pdo_id").or_insert(parent_pdo.get("id").unwrap().to_string());
 
-            labels.entry("sdc").or_insert(HashMap::new()).entry(sdc_id).or_insert(label);
+            labels.entry("volume").or_insert(HashMap::new()).entry(vol_id).or_insert(label);
+        }
+    }
+    // Devices
+    for dl in instances.get("deviceList").and_then(|v| v.as_array()).unwrap_or_else(|| panic!("Failed to get 'deviceList' from instances")).iter() {
+        let mut parent_sds: HashMap<&'static str, String> = HashMap::new();
+        let mut parent_sto: HashMap<&'static str, String> = HashMap::new();
+        let mut parent_pdo: HashMap<&'static str, String> = HashMap::new();
+
+        for dev in dl.as_object().iter() {
+            let mut label: HashMap<&'static str, String> = HashMap::new();
+            let dev_name = dev.get("name").unwrap().to_string().replace('"', "");
+            let dev_id = dev.get("id").unwrap().to_string().replace('"', "");
+            let dev_path = dev.get("deviceCurrentPathName").unwrap().to_string().replace("/dev/", "").replace('"', "");
+
+            for sdsl in instances.get("sdsList").unwrap().as_array().unwrap().iter() {
+                for sds in sdsl.as_object().iter() {
+                    if relations["parents"].get(&(dev_id)).unwrap().get("sds").unwrap().contains(&(sds.get("id").unwrap().to_string().replace('"', ""))) {
+                        parent_sds.entry("name").or_insert(sds.get("name").unwrap().to_string().replace('"', ""));
+                        parent_sds.entry("id").or_insert(sds.get("id").unwrap().to_string().replace('"', ""));
+                        break;
+                    }
+                }
+            }
+            for sp in instances.get("storagePoolList").unwrap().as_array().unwrap().iter() {
+                for sto in sp.as_object().iter() {
+                    if relations["parents"].get(&(dev_id)).unwrap().get("storagepool").unwrap().contains(&(sto.get("id").unwrap().to_string().replace('"', ""))) {
+                        parent_sto.entry("name").or_insert(sto.get("name").unwrap().to_string().replace('"', ""));
+                        parent_sto.entry("id").or_insert(sto.get("id").unwrap().to_string().replace('"', ""));
+                        break;
+                    }
+                }
+            }
+            for pd in instances.get("protectionDomainList").unwrap().as_array().unwrap().iter() {
+                for pdo in pd.as_object().iter() {
+                    if relations["parents"]
+                        .get(&(parent_sto.get("id").unwrap().to_string().replace('"', "")))
+                        .unwrap()
+                        .get("protectiondomain")
+                        .unwrap()
+                        .contains(&(pdo.get("id").unwrap().to_string().replace('"', ""))) {
+                        parent_pdo.entry("name").or_insert(pdo.get("name").unwrap().to_string().replace('"', ""));
+                        parent_pdo.entry("id").or_insert(pdo.get("id").unwrap().to_string().replace('"', ""));
+                        break;
+                    }
+                }
+            }
+
+            label.entry("clu_name").or_insert(clu_name.to_string());
+            label.entry("clu_id").or_insert(clu_id.to_string());
+            label.entry("dev_name").or_insert(dev_name);
+            label.entry("dev_id").or_insert(dev_id.to_string());
+            label.entry("dev_path").or_insert(dev_path);
+            label.entry("sds_name").or_insert(parent_sds.get("name").unwrap().to_string());
+            label.entry("sds_id").or_insert(parent_sds.get("id").unwrap().to_string());
+            label.entry("sto_name").or_insert(parent_sto.get("name").unwrap().to_string());
+            label.entry("sto_id").or_insert(parent_sto.get("id").unwrap().to_string());
+            label.entry("pdo_name").or_insert(parent_pdo.get("name").unwrap().to_string());
+            label.entry("pdo_id").or_insert(parent_pdo.get("id").unwrap().to_string());
+
+            labels.entry("device").or_insert(HashMap::new()).entry(dev_id).or_insert(label);
         }
     }
     labels
@@ -294,10 +309,6 @@ fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap
     let mut metric_list: Vec<Metric> = Vec::new();
 
     for (instance_type, metrics) in stats.iter() {
-        if instance_type == "ProtectionDomain" {
-            continue;
-        }
-
         if instance_type == "System" {
             if metrics.is_object() {
                 let stype: &str = &instance_type.replace('"', "");
