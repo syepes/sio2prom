@@ -4,7 +4,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## 0.1.1 - 2016-09-25
 ### Added
+- First pass on handling errors correctly
 - `metric_query_selection.json` More metrics
 - `metrics.rs` Added ProtectionDomain metrics
 

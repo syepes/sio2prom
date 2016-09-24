@@ -3,9 +3,8 @@
 //! The ScaleIO `Client`
 //!
 
-use std;
 use std::cell::RefCell;
-use std::collections::{HashMap, BTreeMap};
+use std::collections::BTreeMap;
 use std::fs::File;
 use std::io::Read;
 use std::sync::{Arc, Mutex};
@@ -44,23 +43,28 @@ impl Client {
         headers.set(UserAgent("sio2prom".to_string()));
         let client = client::Client::with_connector(hyper_insecure_https_connector::insecure_https_connector());
 
-        let mut response = client.get(&url).headers(headers).send().unwrap_or_else(|e| {
-            panic!("Failed to contact the ScaleIO REST API {} - {}", url, e);
-        });
+        let mut response = match client.get(&url).headers(headers).send() {
+            Ok(r) => r,
+            Err(e) => return Err(format!("Failed to contact the ScaleIO REST API {} - {}", url, e)),
+        };
 
         if response.status != StatusCode::Ok {
-            panic!("Invalid ScaleIO REST API {} Response StatusCode: {}", url, response.status);
+            error!("Invalid ScaleIO REST API {} Response StatusCode: {}", url, response.status);
         }
 
-        response.read_to_string(&mut buf).unwrap_or_else(|e| {
-            panic!("Failed to read ScaleIO REST API response: {}", e);
-        });
+        match response.read_to_string(&mut buf) {
+            Ok(_) => {},
+            Err(e) => {
+                error!("Failed to read ScaleIO REST API response: {}", e);
+                return Err(e.to_string());
+            },
+        }
 
         if buf.replace('"', "").to_string().is_empty() {
             Err(format!("Could not get auth token from the ScaleIO REST API {}", url))
         } else {
             *self.token.borrow_mut() = Some(buf.replace('"', ""));
-            debug!("Token: {}", self.token.borrow().clone().unwrap());
+            debug!("Token: {}", self.token.borrow().as_ref().unwrap());
             Ok(())
         }
     }
@@ -69,7 +73,7 @@ impl Client {
         let url = format!("https://{}/api/Configuration", &self.gw);
         let mut headers = Headers::new();
         headers.set(Authorization(Basic { username: self.user.to_string(),
-                                          password: Some(self.token.borrow().clone().unwrap()), }));
+                                          password: self.token.borrow().clone(), }));
         headers.set(UserAgent("sio2prom".to_string()));
         let client = client::Client::with_connector(hyper_insecure_https_connector::insecure_https_connector());
 
@@ -88,7 +92,7 @@ impl Client {
         }
     }
 
-    pub fn stats(&self) -> BTreeMap<String, serde_json::Value> {
+    pub fn stats(&self) -> Result<BTreeMap<String, serde_json::Value>, String> {
         if self.token.borrow().is_none() {
             self.connect();
         }
@@ -98,39 +102,49 @@ impl Client {
         let mut headers = Headers::new();
         headers.set(ContentType::json());
         headers.set(Authorization(Basic { username: self.user.to_string(),
-                                          password: Some(self.token.borrow().clone().unwrap()), }));
+                                          password: self.token.borrow().clone(), }));
         headers.set(UserAgent("sio2prom".to_string()));
 
         let client = client::Client::with_connector(hyper_insecure_https_connector::insecure_https_connector());
         let query: String = Client::read_json("cfg/metric_query_selection.json").map(|q| serde_json::to_string(&q)).expect("Could not load the query (querySelectedStatistics)").unwrap();
 
-        let mut response = client.post(&url).headers(headers).body(&query).send().unwrap_or_else(|e| {
-            panic!("Failed to retrieve stats from the ScaleIO REST API {} - {}", url, e);
-        });
+        let mut response = match client.post(&url).headers(headers).body(&query).send() {
+            Ok(r) => r,
+            Err(e) => {
+                error!("Failed to retrieve stats from the ScaleIO REST API {} - {}", url, e);
+                return Err(e.to_string());
+            },
+        };
 
         if response.status == StatusCode::Unauthorized {
             warn!("Requesting a new auth token");
             self.connect();
         } else if response.status != StatusCode::Ok {
-            panic!("Invalid ScaleIO REST API {} Response StatusCode: {}", url, response.status);
+            error!("Invalid ScaleIO REST API {} Response StatusCode: {}", url, response.status);
         }
 
-        response.read_to_string(&mut buf).unwrap_or_else(|e| {
-            panic!("Failed to read ScaleIO REST API response: {}", e);
-        });
+        match response.read_to_string(&mut buf) {
+            Ok(_) => {},
+            Err(e) => {
+                error!("Failed to read ScaleIO REST API response: {}", e);
+                return Err(e.to_string());
+            },
+        }
 
-        let json: serde_json::Value = serde_json::from_str(&buf).unwrap_or_else(|e| {
-            panic!("Failed to parse json: {}", e);
-        });
+        let json: serde_json::Value = match serde_json::from_str(&buf) {
+            Ok(j) => j,
+            Err(e) => {
+                error!("Failed to parse json: {}", e);
+                return Err(e.to_string());
+            },
+        };
 
-        let data: &BTreeMap<String, serde_json::Value> = json.as_object().unwrap_or_else(|| {
-            panic!("Failed deserialize json");
-        });
+        let data: &BTreeMap<String, serde_json::Value> = try!(json.as_object().ok_or("Failed deserialize json"));
 
-        data.clone()
+        Ok(data.clone())
     }
 
-    pub fn instances(&self) -> BTreeMap<String, serde_json::Value> {
+    pub fn instances(&self) -> Result<BTreeMap<String, serde_json::Value>, String> {
         if self.token.borrow().is_none() {
             self.connect();
         }
@@ -143,35 +157,45 @@ impl Client {
         let mut headers = Headers::new();
         headers.set(ContentType::json());
         headers.set(Authorization(Basic { username: self.user.to_string(),
-                                          password: Some(self.token.borrow().clone().unwrap()), }));
+                                          password: self.token.borrow().clone(), }));
         headers.set(UserAgent("sio2prom".to_string()));
 
         let client = client::Client::with_connector(hyper_insecure_https_connector::insecure_https_connector());
 
-        let mut response = client.get(&url).headers(headers).send().unwrap_or_else(|e| {
-            panic!("Failed to retrieve instances from the ScaleIO REST API {} - {}", url, e);
-        });
+        let mut response = match client.get(&url).headers(headers).send() {
+            Ok(r) => r,
+            Err(e) => {
+                error!("Failed to retrieve instances from the ScaleIO REST API {} - {}", url, e);
+                return Err(e.to_string());
+            },
+        };
 
         if response.status == StatusCode::Unauthorized {
             warn!("Requesting a new auth token");
             self.connect();
         } else if response.status != StatusCode::Ok {
-            panic!("Invalid ScaleIO REST API {} Response StatusCode: {}", url, response.status);
+            error!("Invalid ScaleIO REST API {} Response StatusCode: {}", url, response.status);
         }
 
-        response.read_to_string(&mut buf).unwrap_or_else(|e| {
-            panic!("Failed to read ScaleIO REST API response: {}", e);
-        });
+        match response.read_to_string(&mut buf) {
+            Ok(_) => {},
+            Err(e) => {
+                error!("Failed to read ScaleIO REST API response: {}", e);
+                return Err(e.to_string());
+            },
+        }
 
-        let json: serde_json::Value = serde_json::from_str(&buf).unwrap_or_else(|e| {
-            panic!("Failed to parse json: {}", e);
-        });
+        let json: serde_json::Value = match serde_json::from_str(&buf) {
+            Ok(j) => j,
+            Err(e) => {
+                error!("Failed to parse json: {}", e);
+                return Err(e.to_string());
+            },
+        };
 
-        let data: &BTreeMap<String, serde_json::Value> = json.as_object().unwrap_or_else(|| {
-            panic!("Failed deserialize json");
-        });
+        let data: &BTreeMap<String, serde_json::Value> = try!(json.as_object().ok_or("Failed deserialize json"));
 
-        data.clone()
+        Ok(data.clone())
     }
 
     /// Read json file using `serde_json`

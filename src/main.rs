@@ -1,14 +1,14 @@
-#![allow(unused_imports,dead_code,unused_variables,unused_must_use,unused_features)]
-#![feature(custom_derive, plugin, question_mark,question_mark_carrier)]
+#![allow(unused_must_use)]
+#![feature(plugin)]
 #![plugin(serde_macros)]
 
 mod sio;
 
+use std::{process, thread};
 use std::collections::{HashMap, BTreeMap};
 use std::fs::File;
 use std::io::Read;
 use std::sync::{Arc, Mutex};
-use std::thread;
 use std::time::Duration;
 
 #[macro_use]
@@ -22,13 +22,13 @@ extern crate serde;
 extern crate serde_json;
 
 extern crate hyper;
-use hyper::header::{Authorization, Basic, Headers, ContentType};
+use hyper::header::ContentType;
 use hyper::mime::Mime;
 use hyper::server::{Server, Request, Response};
 
 #[macro_use]
 extern crate prometheus;
-use prometheus::{Opts, Collector, Registry, Counter, CounterVec, Gauge, GaugeVec, Histogram, TextEncoder, Encoder};
+use prometheus::{Opts, Collector, CounterVec, Gauge, GaugeVec, Histogram, TextEncoder, Encoder};
 
 
 
@@ -84,16 +84,21 @@ fn start_exporter(ip: String, port: u64) {
     Server::http(addr)
         .unwrap()
         .handle(move |_: Request, mut res: Response| {
-            let timer = HTTP_REQ_HISTOGRAM.start_timer();
-
             let metric_familys = prometheus::gather();
             let mut buffer = vec![];
-            encoder.encode(&metric_familys, &mut buffer).expect("Encoder problem");
-            res.headers_mut().set(ContentType(encoder.format_type().parse::<Mime>().unwrap()));
-            res.send(&buffer).unwrap();
 
-            timer.observe_duration();
-            HTTP_BODY_GAUGE.set(buffer.len() as f64);
+            match encoder.encode(&metric_familys, &mut buffer) {
+                Ok(_) => {
+                    let timer = HTTP_REQ_HISTOGRAM.start_timer();
+
+                    res.headers_mut().set(ContentType(encoder.format_type().parse::<Mime>().unwrap()));
+                    res.send(&buffer).unwrap();
+
+                    timer.observe_duration();
+                    HTTP_BODY_GAUGE.set(buffer.len() as f64);
+                },
+                Err(e) => error!("Encoder problem: {}", e),
+            };
         })
         .unwrap();
 }
@@ -187,12 +192,16 @@ fn scheduler(sio: &Arc<Mutex<sio::client::Client>>, interval: Duration) -> Optio
         .spawn(move || {
             loop {
                 info!("Starting scheduled metric update");
-                let timer = UPDATE_HISTOGRAM.start_timer();
 
-                let metrics = sio::metrics::get_metrics(&sio_clone);
-                updata_metrics(&metrics);
+                match sio::metrics::get_metrics(&sio_clone) {
+                    Some(m) => {
+                        let timer = UPDATE_HISTOGRAM.start_timer();
+                        updata_metrics(&m);
+                        timer.observe_duration();
+                    },
+                    None => error!("Skipping scheduled metric update"),
+                }
 
-                timer.observe_duration();
                 thread::sleep(interval);
             }
         })
@@ -213,8 +222,13 @@ fn main() {
     let prom_listen_port: u64 = cfg.get("prom").unwrap().as_object().unwrap().get("listen_port").unwrap().as_u64().expect("Bad port number");
 
     let sio = sio::client::Client::new(sio_host, sio_user, sio_pass);
-    let metrics = sio::metrics::get_metrics(&sio);
-    load_prom(&metrics);
+
+    match sio::metrics::get_metrics(&sio) {
+        Some(m) => load_prom(&m),
+        None => {
+            process::exit(1);
+        },
+    }
     scheduler(&sio, Duration::from_secs(sio_update));
 
     start_exporter(prom_listen_ip, prom_listen_port);

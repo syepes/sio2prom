@@ -19,5 +19,14 @@
     vi cfg/sio2prom.json (ScaleIO settings)
     ./sio2prom
 
+## Exposed labels
+    System:           {clu_id="", clu_name=""}
+    Sdc:              {clu_id="", clu_name="", sdc_id="", sdc_name=""}
+    ProtectionDomain: {clu_id="", clu_name="", pdo_id="", pdo_name=""}
+    Sds:              {clu_id="", clu_name="", pdo_id="", pdo_name="", sds_id="", sds_name=""}
+    StoragePool:      {clu_id="", clu_name="", pdo_id="", pdo_name="", sto_id="", sto_name=""}
+    Volume:           {clu_id="", clu_name="", pdo_id="", pdo_name="", sto_id="", sto_name="", vol_id="", vol_name=""}
+    Device:           {clu_id="", clu_name="", pdo_id="", pdo_name="", sto_id="", sto_name="", sds_id="", sds_name="", dev_id="", dev_name="", dev_path=""}
+
 ## Notes
 Beta version still needs some work on error handling
