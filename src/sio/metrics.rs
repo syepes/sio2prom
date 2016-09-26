@@ -37,7 +37,7 @@ impl Metric {
 
 /// Query ScaleIO instances and find their relationships
 fn get_instances(sio: &Arc<Mutex<sio::client::Client>>) -> Result<BTreeMap<String, serde_json::Value>, String> {
-    let instances = sio.lock().unwrap().instances();
+    let instances = sio.lock().expect("Failed to obtain sio lock for instances").instances();
     if instances.is_err() {
         return Err("Some error".to_string());
     }
@@ -61,11 +61,11 @@ fn get_relations(instances: &BTreeMap<String, serde_json::Value>) -> Result<Hash
                 trace!("Instance item type: {} / name: {} / id: {}", item_type, item_name, item_id);
 
                 let items_links = match items.find("links").and_then(|v| v.as_array()) {
-                    Some(l) => l,
                     None => {
                         error!("Cound not find links for instance item type: {} / name: {} / id: {}", item_type, item_name, item_id);
                         continue;
                     },
+                    Some(l) => l,
                 };
 
                 for links in items_links.iter() {
@@ -92,8 +92,14 @@ fn get_relations(instances: &BTreeMap<String, serde_json::Value>) -> Result<Hash
             }
         }
     }
-    info!("Found Instance relationships Parent: {} / Child: {} relations", relations.get("parents").unwrap().len(), relations.get("childs").unwrap().len());
-    Ok(relations)
+
+    if relations.get("parents").unwrap().len() == 0 || relations.get("childs").unwrap().len() == 0 {
+        error!("Found Instance relationships Parent: {} / Child: {} relations", relations.get("parents").unwrap().len(), relations.get("childs").unwrap().len());
+        Err("Instance relationships not found".to_string())
+    } else {
+        info!("Found Instance relationships Parent: {} / Child: {} relations", relations.get("parents").unwrap().len(), relations.get("childs").unwrap().len());
+        Ok(relations)
+    }
 }
 
 /// Generate Prometheus.io labels from ScaleIO instances and relations
@@ -323,11 +329,11 @@ fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap
                 for (m, v) in metrics.as_object().unwrap().iter() {
                     if mdef.contains_key(m) {
                         let m_labels = match labels.get(stype).and_then(|l| l.get(stype)) {
-                            Some(l) => l,
                             None => {
                                 error!("Failed to get 'labels' from {}", stype);
                                 continue;
                             },
+                            Some(l) => l,
                         };
 
                         if m.ends_with("Bwc") && v.is_object() {
@@ -339,7 +345,7 @@ fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap
                             let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
                             metric_list.push(metric_io);
 
-                            let m_bw_name = format!("{}_{}_mbs", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
+                            let m_bw_name = format!("{}_{}_kb", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
                             let m_bw_type = mdef.get(m).unwrap().as_object().unwrap().get("type").unwrap().to_string().replace('"', "").to_lowercase();
                             let m_bw_help = mdef.get(m).unwrap().as_object().unwrap().get("help").unwrap().to_string().replace('"', "");
                             let m_bw_value: f64 = bw_calc(v.as_object().unwrap().get("totalWeightInKb").unwrap().to_string().parse::<i32>().unwrap(),
@@ -370,11 +376,11 @@ fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap
                     for (m, v) in v.as_object().unwrap().iter() {
                         if mdef.contains_key(m) {
                             let m_labels = match labels.get(stype).and_then(|l| l.get(id)) {
-                                Some(l) => l,
                                 None => {
                                     error!("Failed to get 'labels' from {} -> {}", stype, id);
                                     continue;
                                 },
+                                Some(l) => l,
                             };
 
                             if m.ends_with("Bwc") && v.is_object() {
@@ -386,7 +392,7 @@ fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap
                                 let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
                                 metric_list.push(metric_io);
 
-                                let m_bw_name = format!("{}_{}_mbs", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
+                                let m_bw_name = format!("{}_{}_kb", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
                                 let m_bw_type = mdef.get(m).unwrap().as_object().unwrap().get("type").unwrap().to_string().replace('"', "").to_lowercase();
                                 let m_bw_help = mdef.get(m).unwrap().as_object().unwrap().get("help").unwrap().to_string().replace('"', "");
                                 let m_bw_value: f64 = bw_calc(v.as_object().unwrap().get("totalWeightInKb").unwrap().to_string().parse::<i32>().unwrap(),
@@ -425,12 +431,12 @@ fn iops_calc(occur: i32, secs: i32) -> f64 {
     }
 }
 
-/// Calculate Bandwidth MB/s from the *Bwc metrics
+/// Calculate Bandwidth Kb/s from the *Bwc metrics
 fn bw_calc(occur: i32, secs: i32) -> f64 {
     if occur == 0 {
         0.0 as f64
     } else {
-        ((occur / secs) / 1024) as f64
+        (occur / secs) as f64
     }
 }
 
@@ -454,11 +460,14 @@ pub fn get_metrics(sio: &Arc<Mutex<sio::client::Client>>) -> Option<Vec<Metric>>
     }
 
     let rela = get_relations(&inst.as_ref().unwrap());
+    if rela.is_err() {
+        return None;
+    }
 
     let labels = get_labels(&inst.unwrap(), &rela.unwrap());
     debug!("Loaded labels for instances: {:?}", &labels.as_ref().unwrap().keys().collect::<Vec<_>>());
 
-    let ststs = sio.lock().unwrap().stats();
+    let ststs = sio.lock().expect("Failed to obtain sio lock for stats").stats();
     if ststs.is_err() {
         return None;
     }

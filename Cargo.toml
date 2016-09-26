@@ -1,6 +1,6 @@
 [package]
 name = "sio2prom"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Sebastian YEPES F <syepes@gmail.com>"]
 keywords = ["prometheus", "metrics", "scaleio"]
 license = "Apache-2.0"
@@ -22,6 +22,7 @@ log4rs = { version = "*", optional = false, features = ["toml"] }
 hyper = "*"
 hyper_insecure_https_connector = "*"
 prometheus = "*"
+
 
 [profile.release]
 opt-level = 3
