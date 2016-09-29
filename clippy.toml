@@ -1,0 +1,2 @@
+cyclomatic-complexity-threshold = 40
+type-complexity-threshold = 400

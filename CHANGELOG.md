@@ -4,6 +4,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+### Added
+- Clippy compliant
+
 ### Changed
 - Second pass on handling errors correctly
 - Remove unnecessary Arc/Mutex on metrics as they are already thread-safe

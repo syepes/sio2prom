@@ -1,11 +1,10 @@
 //! SIO Client
 //!
-//! The ScaleIO `Client`
+//! The `ScaleIO Client`
 //!
 
 use std::cell::RefCell;
 use std::collections::BTreeMap;
-use std::fs::File;
 use std::io::Read;
 use std::sync::{Arc, Mutex};
 
@@ -18,6 +17,8 @@ extern crate hyper;
 use hyper::client;
 use hyper::header::{Authorization, Basic, Headers, ContentType, UserAgent};
 use hyper::status::StatusCode;
+
+use sio;
 
 pub struct Client {
     gw: String,
@@ -106,7 +107,7 @@ impl Client {
         headers.set(UserAgent("sio2prom".to_string()));
 
         let client = client::Client::with_connector(hyper_insecure_https_connector::insecure_https_connector());
-        let query: String = Client::read_json("cfg/metric_query_selection.json").map(|q| serde_json::to_string(&q)).expect("Could not load the query (querySelectedStatistics)").unwrap();
+        let query: String = sio::utils::read_json("cfg/metric_query_selection.json").map(|q| serde_json::to_string(&q)).expect("Could not load the query (querySelectedStatistics)").unwrap();
 
         let mut response = match client.post(&url).headers(headers).body(&query).send() {
             Ok(r) => r,
@@ -196,18 +197,5 @@ impl Client {
         let data: &BTreeMap<String, serde_json::Value> = try!(json.as_object().ok_or("Failed deserialize json"));
 
         Ok(data.clone())
-    }
-
-    /// Read json file using `serde_json`
-    fn read_json(file: &str) -> Option<BTreeMap<String, serde_json::Value>> {
-        match File::open(file) {
-            Err(e) => panic!("Failed to open file: {}, {:?}", file, e.kind()),
-            Ok(mut f) => {
-                let mut content: String = String::new();
-                f.read_to_string(&mut content).ok().expect("Error reading file");
-                let j: serde_json::Value = serde_json::from_str::<serde_json::Value>(&mut content).expect(&format!("Can't deserialize json file {}", file));
-                Some(j.as_object().unwrap().clone())
-            },
-        }
     }
 }

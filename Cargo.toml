@@ -13,9 +13,10 @@ readme = "README.md"
 publish = true
 
 [dependencies]
+clippy = "*"
 serde = "*"
 serde_json = "*"
-serde_macros = "*"
+serde_derive = "*"
 lazy_static ="*"
 log = "*"
 log4rs = { version = "*", optional = false, features = ["toml"] }

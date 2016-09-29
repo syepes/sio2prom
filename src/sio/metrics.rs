@@ -1,12 +1,10 @@
 //! SIO Metrics
 //!
-//! The ScaleIO `Metrics conversion`
+//! The `ScaleIO` Metrics conversion
 //!
 
 use std::collections::{HashMap, BTreeMap};
 use std::fmt;
-use std::fs::File;
-use std::io::Read;
 use std::sync::{Arc, Mutex};
 
 extern crate core;
@@ -35,7 +33,7 @@ impl Metric {
     }
 }
 
-/// Query ScaleIO instances and find their relationships
+/// Query `ScaleIO` instances and find their relationships
 fn get_instances(sio: &Arc<Mutex<sio::client::Client>>) -> Result<BTreeMap<String, serde_json::Value>, String> {
     let instances = sio.lock().expect("Failed to obtain sio lock for instances").instances();
     if instances.is_err() {
@@ -45,11 +43,11 @@ fn get_instances(sio: &Arc<Mutex<sio::client::Client>>) -> Result<BTreeMap<Strin
     instances
 }
 
-/// Query ScaleIO instances and find their relationships
+/// Query `ScaleIO` instances and find their relationships
 fn get_relations(instances: &BTreeMap<String, serde_json::Value>) -> Result<HashMap<&'static str, HashMap<String, HashMap<String, Vec<String>>>>, String> {
     let mut relations: HashMap<&'static str, HashMap<String, HashMap<String, Vec<String>>>> = HashMap::new();
-    relations.entry("childs").or_insert(HashMap::new());
-    relations.entry("parents").or_insert(HashMap::new());
+    relations.entry("childs").or_insert_with(HashMap::new);
+    relations.entry("parents").or_insert_with(HashMap::new);
 
     // Get relations of all the elements
     for (key, value) in instances.iter() {
@@ -74,18 +72,15 @@ fn get_relations(instances: &BTreeMap<String, serde_json::Value>) -> Result<Hash
                         continue;
                     }
 
-                    let parent_type_tmp: String = link.get("href").unwrap().to_string();
-                    let parent_type: String = parent_type_tmp.split(':').nth(0).unwrap().split('/').last().unwrap().to_string().replace('"', "").to_lowercase();
-
-                    let parent_id_tmp: String = link.get("href").unwrap().to_string().replace('"', "");
-                    let parent_id: String = parent_id_tmp.split(':').last().unwrap().to_string().replace('"', "");
+                    let parent_type: String = link.get("href").unwrap().to_string().split(':').nth(0).unwrap().split('/').last().unwrap().to_string().replace('"', "").to_lowercase();
+                    let parent_id: String = link.get("href").unwrap().to_string().split(':').last().unwrap().to_string().replace('"', "");
 
                     {
-                        let mut a = relations.get_mut("childs").unwrap().entry(parent_id.clone()).or_insert(HashMap::new()).entry(item_type.clone()).or_insert(Vec::new());
+                        let mut a = relations.get_mut("childs").unwrap().entry(parent_id.clone()).or_insert_with(HashMap::new).entry(item_type.clone()).or_insert_with(Vec::new);
                         a.push(item_id.clone());
                     }
                     {
-                        let mut a = relations.get_mut("parents").unwrap().entry(item_id.clone()).or_insert(HashMap::new()).entry(parent_type.clone()).or_insert(Vec::new());
+                        let mut a = relations.get_mut("parents").unwrap().entry(item_id.clone()).or_insert_with(HashMap::new).entry(parent_type.clone()).or_insert_with(Vec::new);
                         a.push(parent_id.clone());
                     }
                 }
@@ -93,7 +88,7 @@ fn get_relations(instances: &BTreeMap<String, serde_json::Value>) -> Result<Hash
         }
     }
 
-    if relations.get("parents").unwrap().len() == 0 || relations.get("childs").unwrap().len() == 0 {
+    if relations.get("parents").unwrap().is_empty() || relations.get("childs").unwrap().is_empty() {
         error!("Found Instance relationships Parent: {} / Child: {} relations", relations.get("parents").unwrap().len(), relations.get("childs").unwrap().len());
         Err("Instance relationships not found".to_string())
     } else {
@@ -102,9 +97,10 @@ fn get_relations(instances: &BTreeMap<String, serde_json::Value>) -> Result<Hash
     }
 }
 
-/// Generate Prometheus.io labels from ScaleIO instances and relations
+/// Generate Prometheus.io labels from `ScaleIO` instances and relations
 fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashMap<&'static str, HashMap<String, HashMap<String, Vec<String>>>>)
               -> Result<HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>>, String> {
+    let default_val = vec![serde_json::Value::Null];
     let mut labels: HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>> = HashMap::new();
     let clu_name = instances.get("System").unwrap().as_object().unwrap().get("name").unwrap().to_string().replace('"', "");
     let clu_id = instances.get("System").unwrap().as_object().unwrap().get("id").unwrap().to_string().replace('"', "");
@@ -115,10 +111,13 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
         label.entry("clu_name").or_insert(clu_name.to_string());
         label.entry("clu_id").or_insert(clu_id.to_string());
 
-        labels.entry("System").or_insert(HashMap::new()).entry("System".to_string()).or_insert(label);
+        labels.entry("System").or_insert_with(HashMap::new).entry("System".to_string()).or_insert(label);
     }
     // Sdc
-    for sdc in instances.get("sdcList").and_then(|v| v.as_array()).unwrap_or_else(|| panic!("Failed to get 'sdcList' from instances")) {
+    for sdc in instances.get("sdcList").and_then(|v| v.as_array()).unwrap_or_else(|| {
+        error!("Failed to get 'sdcList' from instances");
+        &default_val
+    }) {
         for sdc in sdc.as_object().iter() {
             let mut label: HashMap<&'static str, String> = HashMap::new();
             let sdc_name = sdc.get("name").unwrap().to_string().replace('"', "");
@@ -129,11 +128,14 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             label.entry("sdc_name").or_insert(sdc_name);
             label.entry("sdc_id").or_insert(sdc_id.to_string());
 
-            labels.entry("sdc").or_insert(HashMap::new()).entry(sdc_id).or_insert(label);
+            labels.entry("sdc").or_insert_with(HashMap::new).entry(sdc_id).or_insert(label);
         }
     }
     // ProtectionDomain
-    for pd in instances.get("protectionDomainList").and_then(|v| v.as_array()).unwrap_or_else(|| panic!("Failed to get 'protectionDomainList' from instances")) {
+    for pd in instances.get("protectionDomainList").and_then(|v| v.as_array()).unwrap_or_else(|| {
+        error!("Failed to get 'protectionDomainList' from instances");
+        &default_val
+    }) {
         for pdo in pd.as_object().iter() {
             let mut label: HashMap<&'static str, String> = HashMap::new();
             let pdo_name = pdo.get("name").unwrap().to_string().replace('"', "");
@@ -144,11 +146,14 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             label.entry("pdo_name").or_insert(pdo_name.to_string());
             label.entry("pdo_id").or_insert(pdo_id.to_string());
 
-            labels.entry("protectiondomain").or_insert(HashMap::new()).entry(pdo_id).or_insert(label);
+            labels.entry("protectiondomain").or_insert_with(HashMap::new).entry(pdo_id).or_insert(label);
         }
     }
     // StoragePool
-    for spl in instances.get("storagePoolList").and_then(|v| v.as_array()).unwrap_or_else(|| panic!("Failed to get 'storagePoolList' from instances")) {
+    for spl in instances.get("storagePoolList").and_then(|v| v.as_array()).unwrap_or_else(|| {
+        error!("Failed to get 'storagePoolList' from instances");
+        &default_val
+    }) {
         let mut parent: HashMap<&'static str, String> = HashMap::new();
 
         for sp in spl.as_object().iter() {
@@ -173,11 +178,14 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             label.entry("pdo_name").or_insert(parent.get("name").unwrap().to_string());
             label.entry("pdo_id").or_insert(parent.get("id").unwrap().to_string());
 
-            labels.entry("storagepool").or_insert(HashMap::new()).entry(sp_id).or_insert(label);
+            labels.entry("storagepool").or_insert_with(HashMap::new).entry(sp_id).or_insert(label);
         }
     }
     // Sds
-    for sdsl in instances.get("sdsList").and_then(|v| v.as_array()).unwrap_or_else(|| panic!("Failed to get 'sdsList' from instances")) {
+    for sdsl in instances.get("sdsList").and_then(|v| v.as_array()).unwrap_or_else(|| {
+        error!("Failed to get 'sdsList' from instances");
+        &default_val
+    }) {
         let mut parent: HashMap<&'static str, String> = HashMap::new();
 
         for sds in sdsl.as_object().iter() {
@@ -202,11 +210,14 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             label.entry("pdo_name").or_insert(parent.get("name").unwrap().to_string());
             label.entry("pdo_id").or_insert(parent.get("id").unwrap().to_string());
 
-            labels.entry("sds").or_insert(HashMap::new()).entry(sds_id).or_insert(label);
+            labels.entry("sds").or_insert_with(HashMap::new).entry(sds_id).or_insert(label);
         }
     }
     // Volumes
-    for vl in instances.get("volumeList").and_then(|v| v.as_array()).unwrap_or_else(|| panic!("Failed to get 'volumeList' from instances")) {
+    for vl in instances.get("volumeList").and_then(|v| v.as_array()).unwrap_or_else(|| {
+        error!("Failed to get 'volumeList' from instances");
+        &default_val
+    }) {
         let mut parent_sto: HashMap<&'static str, String> = HashMap::new();
         let mut parent_pdo: HashMap<&'static str, String> = HashMap::new();
 
@@ -248,11 +259,17 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             label.entry("pdo_name").or_insert(parent_pdo.get("name").unwrap().to_string());
             label.entry("pdo_id").or_insert(parent_pdo.get("id").unwrap().to_string());
 
-            labels.entry("volume").or_insert(HashMap::new()).entry(vol_id).or_insert(label);
+            labels.entry("volume").or_insert_with(HashMap::new).entry(vol_id).or_insert(label);
         }
     }
     // Devices
-    for dl in instances.get("deviceList").and_then(|v| v.as_array()).unwrap_or_else(|| panic!("Failed to get 'deviceList' from instances")).iter() {
+    for dl in instances.get("deviceList")
+                       .and_then(|v| v.as_array())
+                       .unwrap_or_else(|| {
+                           error!("Failed to get 'deviceList' from instances");
+                           &default_val
+                       })
+                       .iter() {
         let mut parent_sds: HashMap<&'static str, String> = HashMap::new();
         let mut parent_sto: HashMap<&'static str, String> = HashMap::new();
         let mut parent_pdo: HashMap<&'static str, String> = HashMap::new();
@@ -308,15 +325,21 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             label.entry("pdo_name").or_insert(parent_pdo.get("name").unwrap().to_string());
             label.entry("pdo_id").or_insert(parent_pdo.get("id").unwrap().to_string());
 
-            labels.entry("device").or_insert(HashMap::new()).entry(dev_id).or_insert(label);
+            labels.entry("device").or_insert_with(HashMap::new).entry(dev_id).or_insert(label);
         }
     }
-    Ok(labels)
+
+    if labels.is_empty() {
+        error!("Could not generate labels");
+        Err("Could not generate labels".to_string())
+    } else {
+        Ok(labels)
+    }
 }
 
 /// Build the final metric definition that should be used to create and update the metrics
 fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>>) -> Option<Vec<Metric>> {
-    let mdef = read_json("cfg/metric_definition.json").unwrap_or_else(|| panic!("Failed to loading metric definition"));
+    let mdef = sio::utils::read_json("cfg/metric_definition.json").unwrap_or_else(|| panic!("Failed to loading metric definition"));
     debug!("Loaded metric defenitions: {:?}", mdef.keys().collect::<Vec<_>>());
 
     let mut metric_list: Vec<Metric> = Vec::new();
@@ -368,61 +391,64 @@ fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap
                     }
                 }
             }
-        } else {
-            if metrics.is_object() {
-                for (id, v) in metrics.as_object().unwrap().iter() {
-                    let stype: &str = &instance_type.replace('"', "").to_lowercase();
+        } else if metrics.is_object() {
+            for (id, v) in metrics.as_object().unwrap().iter() {
+                let stype: &str = &instance_type.replace('"', "").to_lowercase();
 
-                    for (m, v) in v.as_object().unwrap().iter() {
-                        if mdef.contains_key(m) {
-                            let m_labels = match labels.get(stype).and_then(|l| l.get(id)) {
-                                None => {
-                                    error!("Failed to get 'labels' from {} -> {}", stype, id);
-                                    continue;
-                                },
-                                Some(l) => l,
-                            };
+                for (m, v) in v.as_object().unwrap().iter() {
+                    if mdef.contains_key(m) {
+                        let m_labels = match labels.get(stype).and_then(|l| l.get(id)) {
+                            None => {
+                                error!("Failed to get 'labels' from {} -> {}", stype, id);
+                                continue;
+                            },
+                            Some(l) => l,
+                        };
 
-                            if m.ends_with("Bwc") && v.is_object() {
-                                let m_io_name = format!("{}_{}_iops", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
-                                let m_io_type = mdef.get(m).unwrap().as_object().unwrap().get("type").unwrap().to_string().replace('"', "").to_lowercase();
-                                let m_io_help = mdef.get(m).unwrap().as_object().unwrap().get("help").unwrap().to_string().replace('"', "");
-                                let m_io_value: f64 = iops_calc(v.as_object().unwrap().get("numOccured").unwrap().to_string().parse::<i32>().unwrap(),
-                                                                v.as_object().unwrap().get("numSeconds").unwrap().to_string().parse::<i32>().unwrap());
-                                let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
-                                metric_list.push(metric_io);
+                        if m.ends_with("Bwc") && v.is_object() {
+                            let m_io_name = format!("{}_{}_iops", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
+                            let m_io_type = mdef.get(m).unwrap().as_object().unwrap().get("type").unwrap().to_string().replace('"', "").to_lowercase();
+                            let m_io_help = mdef.get(m).unwrap().as_object().unwrap().get("help").unwrap().to_string().replace('"', "");
+                            let m_io_value: f64 = iops_calc(v.as_object().unwrap().get("numOccured").unwrap().to_string().parse::<i32>().unwrap(),
+                                                            v.as_object().unwrap().get("numSeconds").unwrap().to_string().parse::<i32>().unwrap());
+                            let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
+                            metric_list.push(metric_io);
 
-                                let m_bw_name = format!("{}_{}_kb", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
-                                let m_bw_type = mdef.get(m).unwrap().as_object().unwrap().get("type").unwrap().to_string().replace('"', "").to_lowercase();
-                                let m_bw_help = mdef.get(m).unwrap().as_object().unwrap().get("help").unwrap().to_string().replace('"', "");
-                                let m_bw_value: f64 = bw_calc(v.as_object().unwrap().get("totalWeightInKb").unwrap().to_string().parse::<i32>().unwrap(),
-                                                              v.as_object().unwrap().get("numSeconds").unwrap().to_string().parse::<i32>().unwrap());
-                                let metric_bw: Metric = Metric::new(m_bw_name, m_bw_type, m_bw_help, m_labels.clone(), m_bw_value);
-                                metric_list.push(metric_bw);
+                            let m_bw_name = format!("{}_{}_kb", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
+                            let m_bw_type = mdef.get(m).unwrap().as_object().unwrap().get("type").unwrap().to_string().replace('"', "").to_lowercase();
+                            let m_bw_help = mdef.get(m).unwrap().as_object().unwrap().get("help").unwrap().to_string().replace('"', "");
+                            let m_bw_value: f64 = bw_calc(v.as_object().unwrap().get("totalWeightInKb").unwrap().to_string().parse::<i32>().unwrap(),
+                                                          v.as_object().unwrap().get("numSeconds").unwrap().to_string().parse::<i32>().unwrap());
+                            let metric_bw: Metric = Metric::new(m_bw_name, m_bw_type, m_bw_help, m_labels.clone(), m_bw_value);
+                            metric_list.push(metric_bw);
 
-                            } else {
-                                let m_name = format!("{}_{}", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
-                                let m_type = mdef.get(m).unwrap().as_object().unwrap().get("type").unwrap().to_string().replace('"', "").to_lowercase();
-                                let m_help = mdef.get(m).unwrap().as_object().unwrap().get("help").unwrap().to_string().replace('"', "");
-                                let m_value: f64 = v.as_f64().expect("Invalid metric value");
-
-                                let metric: Metric = Metric::new(m_name, m_type, m_help, m_labels.clone(), m_value);
-                                metric_list.push(metric);
-                            }
                         } else {
-                            error!("Metric: {} ({}) not found in the metric definition", m, stype);
-                            continue;
+                            let m_name = format!("{}_{}", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
+                            let m_type = mdef.get(m).unwrap().as_object().unwrap().get("type").unwrap().to_string().replace('"', "").to_lowercase();
+                            let m_help = mdef.get(m).unwrap().as_object().unwrap().get("help").unwrap().to_string().replace('"', "");
+                            let m_value: f64 = v.as_f64().expect("Invalid metric value");
+
+                            let metric: Metric = Metric::new(m_name, m_type, m_help, m_labels.clone(), m_value);
+                            metric_list.push(metric);
                         }
+                    } else {
+                        error!("Metric: {} ({}) not found in the metric definition", m, stype);
+                        continue;
                     }
                 }
             }
         }
     }
-    Some(metric_list)
+
+    if metric_list.is_empty() {
+        None
+    } else {
+        Some(metric_list)
+    }
 }
 
 /// Calculate IOPS from the *Bwc metrics
-/// https://github.com/andrewjwhite/ScaleIO_RestAPI_Python_Examples/blob/master/ScaleIO_cluster_stats_example.py#L92-L108
+/// `https://github.com/andrewjwhite/ScaleIO_RestAPI_Python_Examples/blob/master/ScaleIO_cluster_stats_example.py#L92-L108`
 fn iops_calc(occur: i32, secs: i32) -> f64 {
     if occur == 0 {
         0.0 as f64
@@ -440,31 +466,22 @@ fn bw_calc(occur: i32, secs: i32) -> f64 {
     }
 }
 
-/// Read json file using `serde_json`
-fn read_json(file: &str) -> Option<BTreeMap<String, serde_json::Value>> {
-    match File::open(file) {
-        Err(e) => panic!("Failed to open file: {}, {:?}", file, e.kind()),
-        Ok(mut f) => {
-            let mut content: String = String::new();
-            f.read_to_string(&mut content).ok().expect("Error reading file");
-            let j: serde_json::Value = serde_json::from_str::<serde_json::Value>(&mut content).expect(&format!("Can't deserialize json file {}", file));
-            Some(j.as_object().unwrap().clone())
-        },
-    }
-}
-
-pub fn get_metrics(sio: &Arc<Mutex<sio::client::Client>>) -> Option<Vec<Metric>> {
-    let inst = get_instances(&sio);
+pub fn metrics(sio: &Arc<Mutex<sio::client::Client>>) -> Option<Vec<Metric>> {
+    let inst = get_instances(sio);
     if inst.is_err() {
         return None;
     }
 
-    let rela = get_relations(&inst.as_ref().unwrap());
+    let rela = get_relations(inst.as_ref().unwrap());
     if rela.is_err() {
         return None;
     }
 
     let labels = get_labels(&inst.unwrap(), &rela.unwrap());
+    if labels.is_err() {
+        return None;
+    }
+
     debug!("Loaded labels for instances: {:?}", &labels.as_ref().unwrap().keys().collect::<Vec<_>>());
 
     let ststs = sio.lock().expect("Failed to obtain sio lock for stats").stats();

@@ -1,13 +1,11 @@
 #![allow(unused_must_use)]
-#![feature(plugin)]
-#![plugin(serde_macros)]
+#![feature(plugin,rustc_macro)]
+#![plugin(clippy)]
 
 mod sio;
 
 use std::{process, thread};
 use std::collections::{HashMap, BTreeMap};
-use std::fs::File;
-use std::io::Read;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
@@ -20,6 +18,8 @@ extern crate lazy_static;
 
 extern crate serde;
 extern crate serde_json;
+#[macro_use]
+extern crate serde_derive;
 
 extern crate hyper;
 use hyper::header::ContentType;
@@ -57,24 +57,7 @@ lazy_static! {
     ).unwrap();
 }
 
-
-/// Read json file using `serde_json`
-fn read_json(file: &str) -> Option<BTreeMap<String, serde_json::Value>> {
-    match File::open(file) {
-        Err(e) => panic!("Failed to open file: {}, {:?}", file, e.kind()),
-        Ok(mut f) => {
-            let mut content: String = String::new();
-            f.read_to_string(&mut content).ok().expect("Error reading file");
-            let j: serde_json::Value = serde_json::from_str::<serde_json::Value>(&mut content).expect(&format!("Can't deserialize json file {}", file));
-            Some(j.as_object().unwrap().clone())
-        },
-    }
-}
-
-fn read_cfg() -> BTreeMap<String, serde_json::Value> {
-    let cfg = read_json("cfg/sio2prom.json").unwrap_or_else(|| panic!("Failed to loading config"));
-    cfg
-}
+fn read_cfg() -> BTreeMap<String, serde_json::Value> { sio::utils::read_json("cfg/sio2prom.json").unwrap_or_else(|| panic!("Failed to loading config")) }
 
 fn start_exporter(ip: String, port: u64) {
     let encoder = TextEncoder::new();
@@ -92,11 +75,8 @@ fn start_exporter(ip: String, port: u64) {
                     let timer = HTTP_REQ_HISTOGRAM.start_timer();
 
                     res.headers_mut().set(ContentType(encoder.format_type().parse::<Mime>().unwrap()));
-                    match res.send(&buffer) {
-                        Err(e) => {
-                            error!("Sending responce: {}", e);
-                        },
-                        _ => (),
+                    if let Err(e) = res.send(&buffer) {
+                        error!("Sending responce: {}", e);
                     }
 
                     timer.observe_duration();
@@ -109,7 +89,7 @@ fn start_exporter(ip: String, port: u64) {
 }
 
 
-fn load_prom(metrics: &Vec<sio::metrics::Metric>) {
+fn load_prom(metrics: &[sio::metrics::Metric]) {
     let mut counters = METRIC_COUNTERS.lock().expect("Failed to obtain metric counter lock");
     let mut gauges = METRIC_GAUGES.lock().expect("Failed to obtain metric gauge lock");
 
@@ -117,7 +97,7 @@ fn load_prom(metrics: &Vec<sio::metrics::Metric>) {
         // Labels need to be sorted by value https://github.com/pingcap/rust-prometheus/blob/master/src/vec.rs#L78-L80
         let mut labels_sort = m.labels.iter().collect::<Vec<_>>();
         labels_sort.sort_by(|v1, v2| v1.1.cmp(v2.1));
-        let labels: Vec<&str> = labels_sort.iter().map(|v| v.0.clone()).collect::<Vec<_>>();
+        let labels: Vec<&str> = labels_sort.iter().map(|v| *v.0).collect::<Vec<_>>();
 
         let opts = Opts::new(m.name.clone(), m.help.clone());
 
@@ -151,14 +131,14 @@ fn load_prom(metrics: &Vec<sio::metrics::Metric>) {
 }
 
 
-fn updata_metrics(metrics: &Vec<sio::metrics::Metric>) {
+fn updata_metrics(metrics: &[sio::metrics::Metric]) {
     let counters = METRIC_COUNTERS.lock().expect("Failed to obtain metric counter lock");
     let gauges = METRIC_GAUGES.lock().expect("Failed to obtain metric gauge lock");
 
     for m in metrics {
         let mut labels: HashMap<&str, &str> = HashMap::new();
-        for (k, v) in m.labels.iter() {
-            labels.insert(k, &v);
+        for (k, v) in &m.labels {
+            labels.insert(k, v);
         }
 
         if m.mtype.to_lowercase() == "counter" {
@@ -221,7 +201,7 @@ fn scheduler(sio: &Arc<Mutex<sio::client::Client>>, interval: Duration) -> Optio
             loop {
                 info!("Starting scheduled metric update");
 
-                match sio::metrics::get_metrics(&sio_clone) {
+                match sio::metrics::metrics(&sio_clone) {
                     None => error!("Skipping scheduled metric update"),
                     Some(m) => {
                         let timer = UPDATE_HISTOGRAM.start_timer();
@@ -251,7 +231,7 @@ fn main() {
 
     let sio = sio::client::Client::new(sio_host, sio_user, sio_pass);
 
-    match sio::metrics::get_metrics(&sio) {
+    match sio::metrics::metrics(&sio) {
         None => {
             process::exit(1);
         },
