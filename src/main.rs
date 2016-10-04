@@ -61,7 +61,7 @@ fn read_cfg() -> BTreeMap<String, serde_json::Value> { sio::utils::read_json("cf
 
 fn start_exporter(ip: String, port: u64) {
     let encoder = TextEncoder::new();
-    let addr: &str = &format!("{}:{}", ip, port).replace('"', "");
+    let addr: &str = &format!("{}:{}", ip, port);
     info!("Starting exporter {:?}", addr);
 
     Server::http(addr)
@@ -220,14 +220,13 @@ fn scheduler(sio: &Arc<Mutex<sio::client::Client>>, interval: Duration) -> Optio
 fn main() {
     log4rs::init_file("cfg/log4rs.toml", Default::default()).expect("Failed to initialize logger");
 
-    // TODO Clean this
     let cfg = read_cfg();
-    let sio_host = cfg.get("sio").unwrap().as_object().unwrap().get("host").unwrap().to_string().replace('"', "");
-    let sio_user = cfg.get("sio").unwrap().as_object().unwrap().get("user").unwrap().to_string().replace('"', "");
-    let sio_pass = cfg.get("sio").unwrap().as_object().unwrap().get("pass").unwrap().to_string().replace('"', "");
-    let sio_update = cfg.get("sio").unwrap().as_object().unwrap().get("metric_update").unwrap().as_u64().expect("Bad update number");
-    let prom_listen_ip = cfg.get("prom").unwrap().as_object().unwrap().get("listen_ip").unwrap().to_string();
-    let prom_listen_port: u64 = cfg.get("prom").unwrap().as_object().unwrap().get("listen_port").unwrap().as_u64().expect("Bad port number");
+    let sio_host = cfg.get("sio").and_then(|o| o.as_object().and_then(|j| j.get("host")).map(|s| s.to_string().replace('"', ""))).expect("Missing sio_host");
+    let sio_user = cfg.get("sio").and_then(|o| o.as_object().and_then(|j| j.get("user")).map(|s| s.to_string().replace('"', ""))).expect("Missing sio_user");
+    let sio_pass = cfg.get("sio").and_then(|o| o.as_object().and_then(|j| j.get("pass")).map(|s| s.to_string().replace('"', ""))).expect("Missing sio_pass");
+    let sio_update = cfg.get("sio").and_then(|o| o.as_object().and_then(|j| j.get("metric_update")).and_then(|s| s.as_u64())).expect("Missing metric_update");
+    let prom_listen_ip = cfg.get("prom").and_then(|o| o.as_object().and_then(|j| j.get("listen_ip")).map(|s| s.to_string().replace('"', ""))).expect("Missing listen_ip");
+    let prom_listen_port = cfg.get("prom").and_then(|o| o.as_object().and_then(|j| j.get("listen_port")).and_then(|s| s.as_u64())).expect("Missing listen_port");
 
     let sio = sio::client::Client::new(sio_host, sio_user, sio_pass);
 

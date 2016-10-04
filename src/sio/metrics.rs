@@ -54,8 +54,8 @@ fn get_relations(instances: &BTreeMap<String, serde_json::Value>) -> Result<Hash
         if value.is_array() {
             for items in value.as_array().unwrap().iter() {
                 let item_type = key.replace("List", "").to_string().replace('"', "").to_lowercase();
-                let item_id = items.as_object().unwrap().get("id").unwrap().to_string().replace('"', "");
-                let item_name = items.as_object().unwrap().get("name").unwrap().to_string().replace('"', "");
+                let item_id = items.as_object().and_then(|o| o.get("id").map(|s| s.to_string().replace('"', ""))).expect("item_id Not found");
+                let item_name = items.as_object().and_then(|o| o.get("name").map(|s| s.to_string().replace('"', ""))).expect("item_name Not found");
                 trace!("Instance item type: {} / name: {} / id: {}", item_type, item_name, item_id);
 
                 let items_links = match items.find("links").and_then(|v| v.as_array()) {
@@ -120,8 +120,8 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
     }) {
         for sdc in sdc.as_object().iter() {
             let mut label: HashMap<&'static str, String> = HashMap::new();
-            let sdc_name = sdc.get("name").unwrap().to_string().replace('"', "");
-            let sdc_id = sdc.get("id").unwrap().to_string().replace('"', "");
+            let sdc_name = sdc.get("name").map(|s| s.to_string().replace('"', "")).expect("sdc_name Not found");
+            let sdc_id = sdc.get("id").map(|s| s.to_string().replace('"', "")).expect("sdc_id Not found");
 
             label.entry("clu_name").or_insert(clu_name.to_string());
             label.entry("clu_id").or_insert(clu_id.to_string());
@@ -138,8 +138,8 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
     }) {
         for pdo in pd.as_object().iter() {
             let mut label: HashMap<&'static str, String> = HashMap::new();
-            let pdo_name = pdo.get("name").unwrap().to_string().replace('"', "");
-            let pdo_id = pdo.get("id").unwrap().to_string().replace('"', "");
+            let pdo_name = pdo.get("name").map(|s| s.to_string().replace('"', "")).expect("pdo_name Not found");
+            let pdo_id = pdo.get("id").map(|s| s.to_string().replace('"', "")).expect("pdo_id Not found");
 
             label.entry("clu_name").or_insert(clu_name.to_string());
             label.entry("clu_id").or_insert(clu_id.to_string());
@@ -158,8 +158,8 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
 
         for sp in spl.as_object().iter() {
             let mut label: HashMap<&'static str, String> = HashMap::new();
-            let sp_name = sp.get("name").unwrap().to_string().replace('"', "");
-            let sp_id = sp.get("id").unwrap().to_string().replace('"', "");
+            let sp_name = sp.get("name").map(|s| s.to_string().replace('"', "")).expect("sp_name Not found");
+            let sp_id = sp.get("id").map(|s| s.to_string().replace('"', "")).expect("sp_id Not found");
 
             for pd in instances.get("protectionDomainList").unwrap().as_array().unwrap().iter() {
                 for pdo in pd.as_object().iter() {
@@ -190,8 +190,8 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
 
         for sds in sdsl.as_object().iter() {
             let mut label: HashMap<&'static str, String> = HashMap::new();
-            let sds_name = sds.get("name").unwrap().to_string().replace('"', "");
-            let sds_id = sds.get("id").unwrap().to_string().replace('"', "");
+            let sds_name = sds.get("name").map(|s| s.to_string().replace('"', "")).expect("sds_name Not found");
+            let sds_id = sds.get("id").map(|s| s.to_string().replace('"', "")).expect("sds_id Not found");
 
             for pd in instances.get("protectionDomainList").unwrap().as_array().unwrap().iter() {
                 for pdo in pd.as_object().iter() {
@@ -223,8 +223,8 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
 
         for vol in vl.as_object().iter() {
             let mut label: HashMap<&'static str, String> = HashMap::new();
-            let vol_name = vol.get("name").unwrap().to_string().replace('"', "");
-            let vol_id = vol.get("id").unwrap().to_string().replace('"', "");
+            let vol_name = vol.get("name").map(|s| s.to_string().replace('"', "")).expect("vol_name Not found");
+            let vol_id = vol.get("id").map(|s| s.to_string().replace('"', "")).expect("vol_id Not found");
 
             for sp in instances.get("storagePoolList").unwrap().as_array().unwrap().iter() {
                 for sto in sp.as_object().iter() {
@@ -276,9 +276,9 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
 
         for dev in dl.as_object().iter() {
             let mut label: HashMap<&'static str, String> = HashMap::new();
-            let dev_name = dev.get("name").unwrap().to_string().replace('"', "");
-            let dev_id = dev.get("id").unwrap().to_string().replace('"', "");
-            let dev_path = dev.get("deviceCurrentPathName").unwrap().to_string().replace("/dev/", "").replace('"', "");
+            let dev_name = dev.get("name").map(|s| s.to_string().replace('"', "")).expect("dev_name Not found");
+            let dev_id = dev.get("id").map(|s| s.to_string().replace('"', "")).expect("dev_id Not found");
+            let dev_path = dev.get("deviceCurrentPathName").map(|s| s.to_string().replace("/dev/", "").replace('"', "")).expect("dev_path Not found");
 
             for sdsl in instances.get("sdsList").unwrap().as_array().unwrap().iter() {
                 for sds in sdsl.as_object().iter() {
@@ -318,12 +318,52 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             label.entry("dev_name").or_insert(dev_name);
             label.entry("dev_id").or_insert(dev_id.to_string());
             label.entry("dev_path").or_insert(dev_path);
-            label.entry("sds_name").or_insert(parent_sds.get("name").unwrap().to_string());
-            label.entry("sds_id").or_insert(parent_sds.get("id").unwrap().to_string());
-            label.entry("sto_name").or_insert(parent_sto.get("name").unwrap().to_string());
-            label.entry("sto_id").or_insert(parent_sto.get("id").unwrap().to_string());
-            label.entry("pdo_name").or_insert(parent_pdo.get("name").unwrap().to_string());
-            label.entry("pdo_id").or_insert(parent_pdo.get("id").unwrap().to_string());
+
+            match parent_sds.get("name") {
+                None => {
+                    error!("Failed to get 'name' from parent_sds");
+                    continue;
+                },
+                Some(o) => label.entry("sds_name").or_insert(o.to_string()),
+            };
+            match parent_sds.get("id") {
+                None => {
+                    error!("Failed to get 'id' from parent_sds");
+                    continue;
+                },
+                Some(o) => label.entry("sds_id").or_insert(o.to_string()),
+            };
+
+            match parent_sto.get("name") {
+                None => {
+                    error!("Failed to get 'name' from parent_sto");
+                    continue;
+                },
+                Some(o) => label.entry("sto_name").or_insert(o.to_string()),
+            };
+            match parent_sto.get("id") {
+                None => {
+                    error!("Failed to get 'id' from parent_sto");
+                    continue;
+                },
+                Some(o) => label.entry("sto_id").or_insert(o.to_string()),
+            };
+
+            match parent_pdo.get("name") {
+                None => {
+                    error!("Failed to get 'name' from parent_pdo");
+                    continue;
+                },
+                Some(o) => label.entry("pdo_name").or_insert(o.to_string()),
+            };
+            match parent_pdo.get("id") {
+                None => {
+                    error!("Failed to get 'id' from parent_pdo");
+                    continue;
+                },
+                Some(o) => label.entry("pdo_id").or_insert(o.to_string()),
+            };
+
 
             labels.entry("device").or_insert_with(HashMap::new).entry(dev_id).or_insert(label);
         }

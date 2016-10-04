@@ -6,6 +6,7 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 ## [Unreleased]
 ### Added
 - Clippy compliant
+- Third pass on handling errors correctly
 
 ### Changed
 - Second pass on handling errors correctly
