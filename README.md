@@ -10,12 +10,12 @@
  - Runtime logging configuration `log4rs.toml`
 
 ### Examples
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_global.jpg" width="300">
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_pool.jpg" width="300">
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_cluster.jpg" width="300">
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sds.jpg" width="300">
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sdc.jpg" width="300">
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_volume.jpg" width="300">
+<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_global.jpg" target="_blank" width="300">
+<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_pool.jpg" target="_blank" width="300">
+<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_cluster.jpg" target="_blank" width="300">
+<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sds.jpg" target="_blank" width="300">
+<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sdc.jpg" target="_blank" width="300">
+<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_volume.jpg" target="_blank" width="300">
 
 ## Usage
     git clone https://github.com/syepes/sio2prom.git && cd sio2prom
