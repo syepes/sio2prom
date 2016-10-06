@@ -19,10 +19,10 @@ serde_json = "*"
 serde_derive = "*"
 lazy_static ="*"
 log = "*"
-log4rs = { version = "*", optional = false, features = ["toml"] }
+log4rs = { version = "*", optional = false,  features = ["toml_format", "threshold_filter"] }
 hyper = "*"
 hyper_insecure_https_connector = "*"
-prometheus = "*"
+prometheus = { git = "https://github.com/pingcap/rust-prometheus.git", features = ["nightly"] }
 
 
 [profile.release]

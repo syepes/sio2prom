@@ -37,7 +37,7 @@ impl Metric {
 fn get_instances(sio: &Arc<Mutex<sio::client::Client>>) -> Result<BTreeMap<String, serde_json::Value>, String> {
     let instances = sio.lock().expect("Failed to obtain sio lock for instances").instances();
     if instances.is_err() {
-        return Err("Some error".to_string());
+        return Err("Instances not found".to_string());
     }
     trace!("Found Instances: {:?}", instances.as_ref().unwrap().keys().map(|i| i.replace("List", "")).collect::<Vec<_>>());
     instances
@@ -102,8 +102,8 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
               -> Result<HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>>, String> {
     let default_val = vec![serde_json::Value::Null];
     let mut labels: HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>> = HashMap::new();
-    let clu_name = instances.get("System").unwrap().as_object().unwrap().get("name").unwrap().to_string().replace('"', "");
-    let clu_id = instances.get("System").unwrap().as_object().unwrap().get("id").unwrap().to_string().replace('"', "");
+    let clu_name = instances.get("System").and_then(|o| o.as_object().and_then(|j| j.get("name")).map(|s| s.to_string().replace('"', ""))).expect("clu_name Not found");
+    let clu_id = instances.get("System").and_then(|o| o.as_object().and_then(|j| j.get("id")).map(|s| s.to_string().replace('"', ""))).expect("clu_id Not found");
 
     // System
     {

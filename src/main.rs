@@ -94,19 +94,15 @@ fn load_prom(metrics: &[sio::metrics::Metric]) {
     let mut gauges = METRIC_GAUGES.lock().expect("Failed to obtain metric gauge lock");
 
     for m in metrics {
-        // Labels need to be sorted by value https://github.com/pingcap/rust-prometheus/blob/master/src/vec.rs#L78-L80
-        let mut labels_sort = m.labels.iter().collect::<Vec<_>>();
-        labels_sort.sort_by(|v1, v2| v1.1.cmp(v2.1));
-        let labels: Vec<&str> = labels_sort.iter().map(|v| *v.0).collect::<Vec<_>>();
-
-        let opts = Opts::new(m.name.clone(), m.help.clone());
+        let labels: Vec<&str> = m.labels.iter().map(|v| *v.0).collect::<Vec<_>>();
+        let opts = Opts::new(m.name.as_ref(), m.help.as_ref());
 
         trace!("Registering metric: {} {:?} ({})", m.name, labels, m.mtype);
 
         if m.mtype.to_lowercase() == "counter" {
             match register_counter_vec!(opts, &labels) {
                 Err(e) => {
-                    trace!("Register error: {} {:?} - {}", m.name.clone(), m.labels, e);
+                    trace!("Register error: {} {:?} - {}", m.name, m.labels, e);
                 },
                 Ok(o) => {
                     counters.insert(m.name.clone().to_string(), o);
@@ -115,7 +111,7 @@ fn load_prom(metrics: &[sio::metrics::Metric]) {
         } else if m.mtype.to_lowercase() == "gauge" {
             match register_gauge_vec!(opts, &labels) {
                 Err(e) => {
-                    trace!("Register error: {} {:?} - {}", m.name.clone(), m.labels, e);
+                    trace!("Register error: {} {:?} - {}", m.name, m.labels, e);
                 },
                 Ok(o) => {
                     gauges.insert(m.name.clone().to_string(), o);

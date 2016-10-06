@@ -4,14 +4,18 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachangelog.com/)
 
 ## [Unreleased]
+
+## 0.1.2 - 2016-10-06
 ### Added
 - Clippy compliant
-- Third pass on handling errors correctly
+- Grafana templates
 
 ### Changed
-- Second pass on handling errors correctly
+- Second+Third pass on handling errors correctly
 - Remove unnecessary Arc/Mutex on metrics as they are already thread-safe
 - Change Bandwidth metrics from Mb to Kb
+- Label sorting is no longer needed: https://github.com/pingcap/rust-prometheus/pull/73
+- Update log4rs settings
 
 ## 0.1.1 - 2016-09-25
 ### Changed

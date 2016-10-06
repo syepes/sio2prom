@@ -9,6 +9,14 @@
  - [Prometheus](https://prometheus.io/) customizable metric naming `metric_definition.json`
  - Runtime logging configuration `log4rs.toml`
 
+### Examples
+<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_global.jpg" width="250">
+<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_cluster.jpg" width="250">
+<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sdc.jpg" width="250">
+<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_pool.jpg" width="250">
+<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_volume.jpg" width="250">
+<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sds.jpg" width="250">
+
 ## Usage
     git clone https://github.com/syepes/sio2prom.git && cd sio2prom
     cargo build --release (nightly)
