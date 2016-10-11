@@ -1,5 +1,5 @@
 #![allow(unused_must_use)]
-#![feature(plugin,rustc_macro)]
+#![feature(plugin,proc_macro)]
 #![plugin(clippy)]
 
 mod sio;
