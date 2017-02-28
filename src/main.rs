@@ -1,11 +1,12 @@
-#![allow(unused_must_use)]
+#![allow(unused_must_use,zero_ptr)]
 #![feature(plugin,proc_macro)]
 #![plugin(clippy)]
 
 mod sio;
 
 use std::{process, thread};
-use std::collections::{HashMap, BTreeMap};
+use std::collections::HashMap;
+use serde_json::value::Map;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
@@ -18,7 +19,6 @@ extern crate lazy_static;
 
 extern crate serde;
 extern crate serde_json;
-#[macro_use]
 extern crate serde_derive;
 
 extern crate hyper;
@@ -57,9 +57,9 @@ lazy_static! {
     ).unwrap();
 }
 
-fn read_cfg() -> BTreeMap<String, serde_json::Value> { sio::utils::read_json("cfg/sio2prom.json").unwrap_or_else(|| panic!("Failed to loading config")) }
+fn read_cfg() -> Map<String, serde_json::Value> { sio::utils::read_json("cfg/sio2prom.json").unwrap_or_else(|| panic!("Failed to loading config")) }
 
-fn start_exporter(ip: String, port: u64) {
+fn start_exporter(ip: &str, port: u64) {
     let encoder = TextEncoder::new();
     let addr: &str = &format!("{}:{}", ip, port);
     info!("Starting exporter {:?}", addr);
@@ -234,5 +234,5 @@ fn main() {
     }
     scheduler(&sio, Duration::from_secs(sio_update));
 
-    start_exporter(prom_listen_ip, prom_listen_port);
+    start_exporter(prom_listen_ip.as_str(), prom_listen_port);
 }

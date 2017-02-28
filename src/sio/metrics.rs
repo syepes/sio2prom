@@ -3,7 +3,8 @@
 //! The `ScaleIO` Metrics conversion
 //!
 
-use std::collections::{HashMap, BTreeMap};
+use std::collections::HashMap;
+use serde_json::value::Map;
 use std::fmt;
 use std::sync::{Arc, Mutex};
 
@@ -34,7 +35,7 @@ impl Metric {
 }
 
 /// Query `ScaleIO` instances and find their relationships
-fn get_instances(sio: &Arc<Mutex<sio::client::Client>>) -> Result<BTreeMap<String, serde_json::Value>, String> {
+fn get_instances(sio: &Arc<Mutex<sio::client::Client>>) -> Result<Map<String, serde_json::Value>, String> {
     let instances = sio.lock().expect("Failed to obtain sio lock for instances").instances();
     if instances.is_err() {
         return Err("Instances not found".to_string());
@@ -44,7 +45,7 @@ fn get_instances(sio: &Arc<Mutex<sio::client::Client>>) -> Result<BTreeMap<Strin
 }
 
 /// Query `ScaleIO` instances and find their relationships
-fn get_relations(instances: &BTreeMap<String, serde_json::Value>) -> Result<HashMap<&'static str, HashMap<String, HashMap<String, Vec<String>>>>, String> {
+fn get_relations(instances: &Map<String, serde_json::Value>) -> Result<HashMap<&'static str, HashMap<String, HashMap<String, Vec<String>>>>, String> {
     let mut relations: HashMap<&'static str, HashMap<String, HashMap<String, Vec<String>>>> = HashMap::new();
     relations.entry("childs").or_insert_with(HashMap::new);
     relations.entry("parents").or_insert_with(HashMap::new);
@@ -58,7 +59,7 @@ fn get_relations(instances: &BTreeMap<String, serde_json::Value>) -> Result<Hash
                 let item_name = items.as_object().and_then(|o| o.get("name").map(|s| s.to_string().replace('"', ""))).expect("item_name Not found");
                 trace!("Instance item type: {} / name: {} / id: {}", item_type, item_name, item_id);
 
-                let items_links = match items.find("links").and_then(|v| v.as_array()) {
+                let items_links = match items.get("links").and_then(|v| v.as_array()) {
                     None => {
                         error!("Cound not find links for instance item type: {} / name: {} / id: {}", item_type, item_name, item_id);
                         continue;
@@ -68,12 +69,12 @@ fn get_relations(instances: &BTreeMap<String, serde_json::Value>) -> Result<Hash
 
                 for links in items_links.iter() {
                     let link = links.as_object().unwrap();
-                    if !link.get("rel").unwrap().to_string().replace('"', "").starts_with("/api/parent") {
+                    if !link["rel"].to_string().replace('"', "").starts_with("/api/parent") {
                         continue;
                     }
 
-                    let parent_type: String = link.get("href").unwrap().to_string().split(':').nth(0).unwrap().split('/').last().unwrap().to_string().replace('"', "").to_lowercase();
-                    let parent_id: String = link.get("href").unwrap().to_string().split(':').last().unwrap().to_string().replace('"', "");
+                    let parent_type: String = link["href"].to_string().split(':').nth(0).unwrap().split('/').last().unwrap().to_string().replace('"', "").to_lowercase();
+                    let parent_id: String = link["href"].to_string().split(':').last().unwrap().to_string().replace('"', "");
 
                     {
                         let mut a = relations.get_mut("childs").unwrap().entry(parent_id.clone()).or_insert_with(HashMap::new).entry(item_type.clone()).or_insert_with(Vec::new);
@@ -88,17 +89,17 @@ fn get_relations(instances: &BTreeMap<String, serde_json::Value>) -> Result<Hash
         }
     }
 
-    if relations.get("parents").unwrap().is_empty() || relations.get("childs").unwrap().is_empty() {
-        error!("Found Instance relationships Parent: {} / Child: {} relations", relations.get("parents").unwrap().len(), relations.get("childs").unwrap().len());
+    if relations["parents"].is_empty() || relations["childs"].is_empty() {
+        error!("Found Instance relationships Parent: {} / Child: {} relations", relations["parents"].len(), relations["childs"].len());
         Err("Instance relationships not found".to_string())
     } else {
-        info!("Found Instance relationships Parent: {} / Child: {} relations", relations.get("parents").unwrap().len(), relations.get("childs").unwrap().len());
+        info!("Found Instance relationships Parent: {} / Child: {} relations", relations["parents"].len(), relations["childs"].len());
         Ok(relations)
     }
 }
 
 /// Generate Prometheus.io labels from `ScaleIO` instances and relations
-fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashMap<&'static str, HashMap<String, HashMap<String, Vec<String>>>>)
+fn get_labels(instances: &Map<String, serde_json::Value>, relations: &HashMap<&'static str, HashMap<String, HashMap<String, Vec<String>>>>)
               -> Result<HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>>, String> {
     let default_val = vec![serde_json::Value::Null];
     let mut labels: HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>> = HashMap::new();
@@ -108,10 +109,10 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
     // System
     {
         let mut label: HashMap<&'static str, String> = HashMap::new();
-        label.entry("clu_name").or_insert(clu_name.to_string());
-        label.entry("clu_id").or_insert(clu_id.to_string());
+        label.entry("clu_name").or_insert_with(|| clu_name.to_string());
+        label.entry("clu_id").or_insert_with(|| clu_id.to_string());
 
-        labels.entry("System").or_insert_with(HashMap::new).entry("System".to_string()).or_insert(label);
+        labels.entry("System").or_insert_with(HashMap::new).entry("System".to_string()).or_insert_with(|| label);
     }
     // Sdc
     for sdc in instances.get("sdcList").and_then(|v| v.as_array()).unwrap_or_else(|| {
@@ -123,12 +124,12 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             let sdc_name = sdc.get("name").map(|s| s.to_string().replace('"', "")).expect("sdc_name Not found");
             let sdc_id = sdc.get("id").map(|s| s.to_string().replace('"', "")).expect("sdc_id Not found");
 
-            label.entry("clu_name").or_insert(clu_name.to_string());
-            label.entry("clu_id").or_insert(clu_id.to_string());
-            label.entry("sdc_name").or_insert(sdc_name);
-            label.entry("sdc_id").or_insert(sdc_id.to_string());
+            label.entry("clu_name").or_insert_with(|| clu_name.to_string());
+            label.entry("clu_id").or_insert_with(|| clu_id.to_string());
+            label.entry("sdc_name").or_insert_with(|| sdc_name);
+            label.entry("sdc_id").or_insert_with(|| sdc_id.to_string());
 
-            labels.entry("sdc").or_insert_with(HashMap::new).entry(sdc_id).or_insert(label);
+            labels.entry("sdc").or_insert_with(HashMap::new).entry(sdc_id).or_insert_with(|| label);
         }
     }
     // ProtectionDomain
@@ -141,12 +142,12 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             let pdo_name = pdo.get("name").map(|s| s.to_string().replace('"', "")).expect("pdo_name Not found");
             let pdo_id = pdo.get("id").map(|s| s.to_string().replace('"', "")).expect("pdo_id Not found");
 
-            label.entry("clu_name").or_insert(clu_name.to_string());
-            label.entry("clu_id").or_insert(clu_id.to_string());
-            label.entry("pdo_name").or_insert(pdo_name.to_string());
-            label.entry("pdo_id").or_insert(pdo_id.to_string());
+            label.entry("clu_name").or_insert_with(|| clu_name.to_string());
+            label.entry("clu_id").or_insert_with(|| clu_id.to_string());
+            label.entry("pdo_name").or_insert_with(|| pdo_name.to_string());
+            label.entry("pdo_id").or_insert_with(|| pdo_id.to_string());
 
-            labels.entry("protectiondomain").or_insert_with(HashMap::new).entry(pdo_id).or_insert(label);
+            labels.entry("protectiondomain").or_insert_with(HashMap::new).entry(pdo_id).or_insert_with(|| label);
         }
     }
     // StoragePool
@@ -161,24 +162,24 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             let sp_name = sp.get("name").map(|s| s.to_string().replace('"', "")).expect("sp_name Not found");
             let sp_id = sp.get("id").map(|s| s.to_string().replace('"', "")).expect("sp_id Not found");
 
-            for pd in instances.get("protectionDomainList").unwrap().as_array().unwrap().iter() {
+            for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
                 for pdo in pd.as_object().iter() {
-                    if relations["parents"].get(&(sp_id)).unwrap().get("protectiondomain").unwrap().contains(&(pdo.get("id").unwrap().to_string().replace('"', ""))) {
-                        parent.entry("name").or_insert(pdo.get("name").unwrap().to_string().replace('"', ""));
-                        parent.entry("id").or_insert(pdo.get("id").unwrap().to_string().replace('"', ""));
+                    if relations["parents"][&(sp_id)]["protectiondomain"].contains(&(pdo["id"].to_string().replace('"', ""))) {
+                        parent.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
+                        parent.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
                         break;
                     }
                 }
             }
 
-            label.entry("clu_name").or_insert(clu_name.to_string());
-            label.entry("clu_id").or_insert(clu_id.to_string());
-            label.entry("sto_name").or_insert(sp_name);
-            label.entry("sto_id").or_insert(sp_id.to_string());
-            label.entry("pdo_name").or_insert(parent.get("name").unwrap().to_string());
-            label.entry("pdo_id").or_insert(parent.get("id").unwrap().to_string());
+            label.entry("clu_name").or_insert_with(|| clu_name.to_string());
+            label.entry("clu_id").or_insert_with(|| clu_id.to_string());
+            label.entry("sto_name").or_insert_with(|| sp_name);
+            label.entry("sto_id").or_insert_with(|| sp_id.to_string());
+            label.entry("pdo_name").or_insert_with(|| parent["name"].to_string());
+            label.entry("pdo_id").or_insert_with(|| parent["id"].to_string());
 
-            labels.entry("storagepool").or_insert_with(HashMap::new).entry(sp_id).or_insert(label);
+            labels.entry("storagepool").or_insert_with(HashMap::new).entry(sp_id).or_insert_with(|| label);
         }
     }
     // Sds
@@ -193,24 +194,24 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             let sds_name = sds.get("name").map(|s| s.to_string().replace('"', "")).expect("sds_name Not found");
             let sds_id = sds.get("id").map(|s| s.to_string().replace('"', "")).expect("sds_id Not found");
 
-            for pd in instances.get("protectionDomainList").unwrap().as_array().unwrap().iter() {
+            for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
                 for pdo in pd.as_object().iter() {
-                    if relations["parents"].get(&(sds_id)).unwrap().get("protectiondomain").unwrap().contains(&(pdo.get("id").unwrap().to_string().replace('"', ""))) {
-                        parent.entry("name").or_insert(pdo.get("name").unwrap().to_string().replace('"', ""));
-                        parent.entry("id").or_insert(pdo.get("id").unwrap().to_string().replace('"', ""));
+                    if relations["parents"][&(sds_id)]["protectiondomain"].contains(&(pdo["id"].to_string().replace('"', ""))) {
+                        parent.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
+                        parent.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
                         break;
                     }
                 }
             }
 
-            label.entry("clu_name").or_insert(clu_name.to_string());
-            label.entry("clu_id").or_insert(clu_id.to_string());
-            label.entry("sds_name").or_insert(sds_name);
-            label.entry("sds_id").or_insert(sds_id.to_string());
-            label.entry("pdo_name").or_insert(parent.get("name").unwrap().to_string());
-            label.entry("pdo_id").or_insert(parent.get("id").unwrap().to_string());
+            label.entry("clu_name").or_insert_with(|| clu_name.to_string());
+            label.entry("clu_id").or_insert_with(|| clu_id.to_string());
+            label.entry("sds_name").or_insert_with(|| sds_name);
+            label.entry("sds_id").or_insert_with(|| sds_id.to_string());
+            label.entry("pdo_name").or_insert_with(|| parent["name"].to_string());
+            label.entry("pdo_id").or_insert_with(|| parent["id"].to_string());
 
-            labels.entry("sds").or_insert_with(HashMap::new).entry(sds_id).or_insert(label);
+            labels.entry("sds").or_insert_with(HashMap::new).entry(sds_id).or_insert_with(|| label);
         }
     }
     // Volumes
@@ -226,40 +227,36 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             let vol_name = vol.get("name").map(|s| s.to_string().replace('"', "")).expect("vol_name Not found");
             let vol_id = vol.get("id").map(|s| s.to_string().replace('"', "")).expect("vol_id Not found");
 
-            for sp in instances.get("storagePoolList").unwrap().as_array().unwrap().iter() {
+            for sp in instances["storagePoolList"].as_array().unwrap().iter() {
                 for sto in sp.as_object().iter() {
-                    if relations["parents"].get(&(vol_id)).unwrap().get("storagepool").unwrap().contains(&(sto.get("id").unwrap().to_string().replace('"', ""))) {
-                        parent_sto.entry("name").or_insert(sto.get("name").unwrap().to_string().replace('"', ""));
-                        parent_sto.entry("id").or_insert(sto.get("id").unwrap().to_string().replace('"', ""));
+                    if relations["parents"][&(vol_id)]["storagepool"].contains(&(sto["id"].to_string().replace('"', ""))) {
+                        parent_sto.entry("name").or_insert_with(|| sto["name"].to_string().replace('"', ""));
+                        parent_sto.entry("id").or_insert_with(|| sto["id"].to_string().replace('"', ""));
                         break;
                     }
                 }
             }
-            for pd in instances.get("protectionDomainList").unwrap().as_array().unwrap().iter() {
+            for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
                 for pdo in pd.as_object().iter() {
-                    if relations["parents"]
-                        .get(&(parent_sto.get("id").unwrap().to_string().replace('"', "")))
-                        .unwrap()
-                        .get("protectiondomain")
-                        .unwrap()
-                        .contains(&(pdo.get("id").unwrap().to_string().replace('"', ""))) {
-                        parent_pdo.entry("name").or_insert(pdo.get("name").unwrap().to_string().replace('"', ""));
-                        parent_pdo.entry("id").or_insert(pdo.get("id").unwrap().to_string().replace('"', ""));
+                    if relations["parents"][&(parent_sto["id"].to_string().replace('"', ""))]["protectiondomain"]
+                        .contains(&(pdo["id"].to_string().replace('"', ""))) {
+                        parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
+                        parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
                         break;
                     }
                 }
             }
 
-            label.entry("clu_name").or_insert(clu_name.to_string());
-            label.entry("clu_id").or_insert(clu_id.to_string());
-            label.entry("vol_name").or_insert(vol_name);
-            label.entry("vol_id").or_insert(vol_id.to_string());
-            label.entry("sto_name").or_insert(parent_sto.get("name").unwrap().to_string());
-            label.entry("sto_id").or_insert(parent_sto.get("id").unwrap().to_string());
-            label.entry("pdo_name").or_insert(parent_pdo.get("name").unwrap().to_string());
-            label.entry("pdo_id").or_insert(parent_pdo.get("id").unwrap().to_string());
+            label.entry("clu_name").or_insert_with(|| clu_name.to_string());
+            label.entry("clu_id").or_insert_with(|| clu_id.to_string());
+            label.entry("vol_name").or_insert_with(|| vol_name);
+            label.entry("vol_id").or_insert_with(|| vol_id.to_string());
+            label.entry("sto_name").or_insert_with(|| parent_sto["name"].to_string());
+            label.entry("sto_id").or_insert_with(|| parent_sto["id"].to_string());
+            label.entry("pdo_name").or_insert_with(|| parent_pdo["name"].to_string());
+            label.entry("pdo_id").or_insert_with(|| parent_pdo["id"].to_string());
 
-            labels.entry("volume").or_insert_with(HashMap::new).entry(vol_id).or_insert(label);
+            labels.entry("volume").or_insert_with(HashMap::new).entry(vol_id).or_insert_with(|| label);
         }
     }
     // Devices
@@ -280,58 +277,54 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
             let dev_id = dev.get("id").map(|s| s.to_string().replace('"', "")).expect("dev_id Not found");
             let dev_path = dev.get("deviceCurrentPathName").map(|s| s.to_string().replace("/dev/", "").replace('"', "")).expect("dev_path Not found");
 
-            for sdsl in instances.get("sdsList").unwrap().as_array().unwrap().iter() {
+            for sdsl in instances["sdsList"].as_array().unwrap().iter() {
                 for sds in sdsl.as_object().iter() {
-                    if relations["parents"].get(&(dev_id)).unwrap().get("sds").unwrap().contains(&(sds.get("id").unwrap().to_string().replace('"', ""))) {
-                        parent_sds.entry("name").or_insert(sds.get("name").unwrap().to_string().replace('"', ""));
-                        parent_sds.entry("id").or_insert(sds.get("id").unwrap().to_string().replace('"', ""));
+                    if relations["parents"][&(dev_id)]["sds"].contains(&(sds["id"].to_string().replace('"', ""))) {
+                        parent_sds.entry("name").or_insert_with(|| sds["name"].to_string().replace('"', ""));
+                        parent_sds.entry("id").or_insert_with(|| sds["id"].to_string().replace('"', ""));
                         break;
                     }
                 }
             }
-            for sp in instances.get("storagePoolList").unwrap().as_array().unwrap().iter() {
+            for sp in instances["storagePoolList"].as_array().unwrap().iter() {
                 for sto in sp.as_object().iter() {
-                    if relations["parents"].get(&(dev_id)).unwrap().get("storagepool").unwrap().contains(&(sto.get("id").unwrap().to_string().replace('"', ""))) {
-                        parent_sto.entry("name").or_insert(sto.get("name").unwrap().to_string().replace('"', ""));
-                        parent_sto.entry("id").or_insert(sto.get("id").unwrap().to_string().replace('"', ""));
+                    if relations["parents"][&(dev_id)]["storagepool"].contains(&(sto["id"].to_string().replace('"', ""))) {
+                        parent_sto.entry("name").or_insert_with(|| sto["name"].to_string().replace('"', ""));
+                        parent_sto.entry("id").or_insert_with(|| sto["id"].to_string().replace('"', ""));
                         break;
                     }
                 }
             }
-            for pd in instances.get("protectionDomainList").unwrap().as_array().unwrap().iter() {
+            for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
                 for pdo in pd.as_object().iter() {
-                    if relations["parents"]
-                        .get(&(parent_sto.get("id").unwrap().to_string().replace('"', "")))
-                        .unwrap()
-                        .get("protectiondomain")
-                        .unwrap()
-                        .contains(&(pdo.get("id").unwrap().to_string().replace('"', ""))) {
-                        parent_pdo.entry("name").or_insert(pdo.get("name").unwrap().to_string().replace('"', ""));
-                        parent_pdo.entry("id").or_insert(pdo.get("id").unwrap().to_string().replace('"', ""));
+                    if relations["parents"][&(parent_sto["id"].to_string().replace('"', ""))]["protectiondomain"]
+                        .contains(&(pdo["id"].to_string().replace('"', ""))) {
+                        parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
+                        parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
                         break;
                     }
                 }
             }
 
-            label.entry("clu_name").or_insert(clu_name.to_string());
-            label.entry("clu_id").or_insert(clu_id.to_string());
-            label.entry("dev_name").or_insert(dev_name);
-            label.entry("dev_id").or_insert(dev_id.to_string());
-            label.entry("dev_path").or_insert(dev_path);
+            label.entry("clu_name").or_insert_with(|| clu_name.to_string());
+            label.entry("clu_id").or_insert_with(|| clu_id.to_string());
+            label.entry("dev_name").or_insert_with(|| dev_name);
+            label.entry("dev_id").or_insert_with(|| dev_id.to_string());
+            label.entry("dev_path").or_insert_with(|| dev_path);
 
             match parent_sds.get("name") {
                 None => {
                     error!("Failed to get 'name' from parent_sds");
                     continue;
                 },
-                Some(o) => label.entry("sds_name").or_insert(o.to_string()),
+                Some(o) => label.entry("sds_name").or_insert_with(|| o.to_string()),
             };
             match parent_sds.get("id") {
                 None => {
                     error!("Failed to get 'id' from parent_sds");
                     continue;
                 },
-                Some(o) => label.entry("sds_id").or_insert(o.to_string()),
+                Some(o) => label.entry("sds_id").or_insert_with(|| o.to_string()),
             };
 
             match parent_sto.get("name") {
@@ -339,14 +332,14 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
                     error!("Failed to get 'name' from parent_sto");
                     continue;
                 },
-                Some(o) => label.entry("sto_name").or_insert(o.to_string()),
+                Some(o) => label.entry("sto_name").or_insert_with(|| o.to_string()),
             };
             match parent_sto.get("id") {
                 None => {
                     error!("Failed to get 'id' from parent_sto");
                     continue;
                 },
-                Some(o) => label.entry("sto_id").or_insert(o.to_string()),
+                Some(o) => label.entry("sto_id").or_insert_with(|| o.to_string()),
             };
 
             match parent_pdo.get("name") {
@@ -354,18 +347,18 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
                     error!("Failed to get 'name' from parent_pdo");
                     continue;
                 },
-                Some(o) => label.entry("pdo_name").or_insert(o.to_string()),
+                Some(o) => label.entry("pdo_name").or_insert_with(|| o.to_string()),
             };
             match parent_pdo.get("id") {
                 None => {
                     error!("Failed to get 'id' from parent_pdo");
                     continue;
                 },
-                Some(o) => label.entry("pdo_id").or_insert(o.to_string()),
+                Some(o) => label.entry("pdo_id").or_insert_with(|| o.to_string()),
             };
 
 
-            labels.entry("device").or_insert_with(HashMap::new).entry(dev_id).or_insert(label);
+            labels.entry("device").or_insert_with(HashMap::new).entry(dev_id).or_insert_with(|| label);
         }
     }
 
@@ -378,7 +371,7 @@ fn get_labels(instances: &BTreeMap<String, serde_json::Value>, relations: &HashM
 }
 
 /// Build the final metric definition that should be used to create and update the metrics
-fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>>) -> Option<Vec<Metric>> {
+fn convert_metrics(stats: &Map<String, serde_json::Value>, labels: &HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>>) -> Option<Vec<Metric>> {
     let mdef = sio::utils::read_json("cfg/metric_definition.json").unwrap_or_else(|| panic!("Failed to loading metric definition"));
     debug!("Loaded metric defenitions: {:?}", mdef.keys().collect::<Vec<_>>());
 
@@ -400,26 +393,26 @@ fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap
                         };
 
                         if m.ends_with("Bwc") && v.is_object() {
-                            let m_io_name = format!("{}_{}_iops", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
-                            let m_io_type = mdef.get(m).unwrap().as_object().unwrap().get("type").unwrap().to_string().replace('"', "").to_lowercase();
-                            let m_io_help = mdef.get(m).unwrap().as_object().unwrap().get("help").unwrap().to_string().replace('"', "");
-                            let m_io_value: f64 = iops_calc(v.as_object().unwrap().get("numOccured").unwrap().to_string().parse::<i32>().unwrap(),
-                                                            v.as_object().unwrap().get("numSeconds").unwrap().to_string().parse::<i32>().unwrap());
+                            let m_io_name = format!("{}_{}_iops", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+                            let m_io_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
+                            let m_io_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
+                            let m_io_value: f64 = iops_calc(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(),
+                                                            v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
                             let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
                             metric_list.push(metric_io);
 
-                            let m_bw_name = format!("{}_{}_kb", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
-                            let m_bw_type = mdef.get(m).unwrap().as_object().unwrap().get("type").unwrap().to_string().replace('"', "").to_lowercase();
-                            let m_bw_help = mdef.get(m).unwrap().as_object().unwrap().get("help").unwrap().to_string().replace('"', "");
-                            let m_bw_value: f64 = bw_calc(v.as_object().unwrap().get("totalWeightInKb").unwrap().to_string().parse::<i32>().unwrap(),
-                                                          v.as_object().unwrap().get("numSeconds").unwrap().to_string().parse::<i32>().unwrap());
+                            let m_bw_name = format!("{}_{}_kb", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+                            let m_bw_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
+                            let m_bw_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
+                            let m_bw_value: f64 = bw_calc(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(),
+                                                          v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
                             let metric_bw: Metric = Metric::new(m_bw_name, m_bw_type, m_bw_help, m_labels.clone(), m_bw_value);
                             metric_list.push(metric_bw);
 
                         } else {
-                            let m_name = format!("{}_{}", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
-                            let m_type = mdef.get(m).unwrap().as_object().unwrap().get("type").unwrap().to_string().replace('"', "").to_lowercase();
-                            let m_help = mdef.get(m).unwrap().as_object().unwrap().get("help").unwrap().to_string().replace('"', "");
+                            let m_name = format!("{}_{}", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+                            let m_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
+                            let m_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
                             let m_value: f64 = v.as_f64().expect("Invalid metric value");
 
                             let metric_bw: Metric = Metric::new(m_name, m_type, m_help, m_labels.clone(), m_value);
@@ -446,26 +439,26 @@ fn convert_metrics(stats: &BTreeMap<String, serde_json::Value>, labels: &HashMap
                         };
 
                         if m.ends_with("Bwc") && v.is_object() {
-                            let m_io_name = format!("{}_{}_iops", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
-                            let m_io_type = mdef.get(m).unwrap().as_object().unwrap().get("type").unwrap().to_string().replace('"', "").to_lowercase();
-                            let m_io_help = mdef.get(m).unwrap().as_object().unwrap().get("help").unwrap().to_string().replace('"', "");
-                            let m_io_value: f64 = iops_calc(v.as_object().unwrap().get("numOccured").unwrap().to_string().parse::<i32>().unwrap(),
-                                                            v.as_object().unwrap().get("numSeconds").unwrap().to_string().parse::<i32>().unwrap());
+                            let m_io_name = format!("{}_{}_iops", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+                            let m_io_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
+                            let m_io_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
+                            let m_io_value: f64 = iops_calc(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(),
+                                                            v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
                             let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
                             metric_list.push(metric_io);
 
-                            let m_bw_name = format!("{}_{}_kb", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
-                            let m_bw_type = mdef.get(m).unwrap().as_object().unwrap().get("type").unwrap().to_string().replace('"', "").to_lowercase();
-                            let m_bw_help = mdef.get(m).unwrap().as_object().unwrap().get("help").unwrap().to_string().replace('"', "");
-                            let m_bw_value: f64 = bw_calc(v.as_object().unwrap().get("totalWeightInKb").unwrap().to_string().parse::<i32>().unwrap(),
-                                                          v.as_object().unwrap().get("numSeconds").unwrap().to_string().parse::<i32>().unwrap());
+                            let m_bw_name = format!("{}_{}_kb", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+                            let m_bw_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
+                            let m_bw_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
+                            let m_bw_value: f64 = bw_calc(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(),
+                                                          v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
                             let metric_bw: Metric = Metric::new(m_bw_name, m_bw_type, m_bw_help, m_labels.clone(), m_bw_value);
                             metric_list.push(metric_bw);
 
                         } else {
-                            let m_name = format!("{}_{}", stype, mdef.get(m).unwrap().as_object().unwrap().get("name").unwrap()).replace('"', "").to_lowercase();
-                            let m_type = mdef.get(m).unwrap().as_object().unwrap().get("type").unwrap().to_string().replace('"', "").to_lowercase();
-                            let m_help = mdef.get(m).unwrap().as_object().unwrap().get("help").unwrap().to_string().replace('"', "");
+                            let m_name = format!("{}_{}", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+                            let m_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
+                            let m_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
                             let m_value: f64 = v.as_f64().expect("Invalid metric value");
 
                             let metric: Metric = Metric::new(m_name, m_type, m_help, m_labels.clone(), m_value);

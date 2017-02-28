@@ -1,7 +1,7 @@
 //! SIO Utils
 //!
 
-use std::collections::BTreeMap;
+use serde_json::value::Map;
 use std::fs::File;
 use std::io::Read;
 
@@ -10,7 +10,7 @@ extern crate serde_json;
 
 
 /// Read json file using `serde_json`
-pub fn read_json(file: &str) -> Option<BTreeMap<String, serde_json::Value>> {
+pub fn read_json(file: &str) -> Option<Map<String, serde_json::Value>> {
     match File::open(file) {
         Err(e) => panic!("Failed to open file: {}, {:?}", file, e.kind()),
         Ok(mut f) => {

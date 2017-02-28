@@ -20,7 +20,7 @@ serde_derive = "*"
 lazy_static ="*"
 log = "*"
 log4rs = { version = "*", optional = false,  features = ["toml_format", "threshold_filter"] }
-hyper = "*"
+hyper = "0.9.*"
 hyper_insecure_https_connector = "*"
 prometheus = { git = "https://github.com/pingcap/rust-prometheus.git", features = ["nightly"] }
 

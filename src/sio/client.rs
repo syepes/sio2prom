@@ -4,7 +4,8 @@
 //!
 
 use std::cell::RefCell;
-use std::collections::BTreeMap;
+use serde_json::value::Map;
+
 use std::io::Read;
 use std::sync::{Arc, Mutex};
 
@@ -93,7 +94,7 @@ impl Client {
         }
     }
 
-    pub fn stats(&self) -> Result<BTreeMap<String, serde_json::Value>, String> {
+    pub fn stats(&self) -> Result<Map<String, serde_json::Value>, String> {
         if self.token.borrow().is_none() {
             self.connect();
         }
@@ -140,12 +141,12 @@ impl Client {
             },
         };
 
-        let data: &BTreeMap<String, serde_json::Value> = try!(json.as_object().ok_or("Failed deserialize json"));
+        let data: &Map<String, serde_json::Value> = try!(json.as_object().ok_or("Failed deserialize json"));
 
         Ok(data.clone())
     }
 
-    pub fn instances(&self) -> Result<BTreeMap<String, serde_json::Value>, String> {
+    pub fn instances(&self) -> Result<Map<String, serde_json::Value>, String> {
         if self.token.borrow().is_none() {
             self.connect();
         }
@@ -194,7 +195,7 @@ impl Client {
             },
         };
 
-        let data: &BTreeMap<String, serde_json::Value> = try!(json.as_object().ok_or("Failed deserialize json"));
+        let data: &Map<String, serde_json::Value> = try!(json.as_object().ok_or("Failed deserialize json"));
 
         Ok(data.clone())
     }
