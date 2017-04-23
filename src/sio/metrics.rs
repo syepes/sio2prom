@@ -3,8 +3,8 @@
 //! The `ScaleIO` Metrics conversion
 //!
 
-use std::collections::HashMap;
 use serde_json::value::Map;
+use std::collections::HashMap;
 use std::fmt;
 use std::sync::{Arc, Mutex};
 
@@ -103,8 +103,15 @@ fn get_labels(instances: &Map<String, serde_json::Value>, relations: &HashMap<&'
               -> Result<HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>>, String> {
     let default_val = vec![serde_json::Value::Null];
     let mut labels: HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>> = HashMap::new();
-    let clu_name = instances.get("System").and_then(|o| o.as_object().and_then(|j| j.get("name")).map(|s| s.to_string().replace('"', ""))).expect("clu_name Not found");
     let clu_id = instances.get("System").and_then(|o| o.as_object().and_then(|j| j.get("id")).map(|s| s.to_string().replace('"', ""))).expect("clu_id Not found");
+    let clu_name = match instances.get("System").and_then(|o| o.as_object().and_then(|j| j.get("name")).map(|s| s.to_string().replace('"', ""))) {
+        None => {
+            warn!("clu_name Not found using clu_id as name");
+            clu_id.to_string()
+        },
+        Some(s) => s,
+    };
+
 
     // System
     {
@@ -238,8 +245,7 @@ fn get_labels(instances: &Map<String, serde_json::Value>, relations: &HashMap<&'
             }
             for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
                 for pdo in pd.as_object().iter() {
-                    if relations["parents"][&(parent_sto["id"].to_string().replace('"', ""))]["protectiondomain"]
-                        .contains(&(pdo["id"].to_string().replace('"', ""))) {
+                    if relations["parents"][&(parent_sto["id"].to_string().replace('"', ""))]["protectiondomain"].contains(&(pdo["id"].to_string().replace('"', ""))) {
                         parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
                         parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
                         break;
@@ -297,8 +303,7 @@ fn get_labels(instances: &Map<String, serde_json::Value>, relations: &HashMap<&'
             }
             for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
                 for pdo in pd.as_object().iter() {
-                    if relations["parents"][&(parent_sto["id"].to_string().replace('"', ""))]["protectiondomain"]
-                        .contains(&(pdo["id"].to_string().replace('"', ""))) {
+                    if relations["parents"][&(parent_sto["id"].to_string().replace('"', ""))]["protectiondomain"].contains(&(pdo["id"].to_string().replace('"', ""))) {
                         parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
                         parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
                         break;
@@ -396,8 +401,7 @@ fn convert_metrics(stats: &Map<String, serde_json::Value>, labels: &HashMap<&'st
                             let m_io_name = format!("{}_{}_iops", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
                             let m_io_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
                             let m_io_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-                            let m_io_value: f64 = iops_calc(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(),
-                                                            v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
+                            let m_io_value: f64 = iops_calc(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
                             let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
                             metric_list.push(metric_io);
 
@@ -442,8 +446,7 @@ fn convert_metrics(stats: &Map<String, serde_json::Value>, labels: &HashMap<&'st
                             let m_io_name = format!("{}_{}_iops", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
                             let m_io_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
                             let m_io_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-                            let m_io_value: f64 = iops_calc(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(),
-                                                            v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
+                            let m_io_value: f64 = iops_calc(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
                             let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
                             metric_list.push(metric_io);
 

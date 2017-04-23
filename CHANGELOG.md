@@ -5,6 +5,9 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 0.1.3 - 2017-04-23
+- If cluster name (clu_name) has not been configured use the id (clu_id) as cluster name.
+
 ## 0.1.2 - 2016-10-06
 ### Added
 - Clippy compliant

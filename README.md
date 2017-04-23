@@ -17,7 +17,12 @@
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sdc.jpg" target="_blank" width="300">
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_volume.jpg" target="_blank" width="300">
 
-## Usage
+
+## Usage (Docker)
+    # Locally copy the configuration files and set them up
+    docker run -d --name sio2prom -h sio2prom -v cfg:/sio2prom/cfg syepes/sio2prom-docker
+
+## Usage (Built from src)
     git clone https://github.com/syepes/sio2prom.git && cd sio2prom
     cargo build --release (nightly)
     mkdir -p /opt/sio2prom/

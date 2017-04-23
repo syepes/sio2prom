@@ -3,8 +3,8 @@
 //! The `ScaleIO Client`
 //!
 
-use std::cell::RefCell;
 use serde_json::value::Map;
+use std::cell::RefCell;
 
 use std::io::Read;
 use std::sync::{Arc, Mutex};

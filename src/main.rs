@@ -4,9 +4,9 @@
 
 mod sio;
 
+use serde_json::value::Map;
 use std::{process, thread};
 use std::collections::HashMap;
-use serde_json::value::Map;
 use std::sync::{Arc, Mutex};
 use std::time::Duration;
 
