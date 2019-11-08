@@ -13,17 +13,18 @@ readme = "README.md"
 publish = true
 
 [dependencies]
-clippy = "*"
 serde = "*"
 serde_json = "*"
 serde_derive = "*"
 lazy_static ="*"
 log = "*"
 log4rs = { version = "*", optional = false,  features = ["toml_format", "threshold_filter"] }
-hyper = "0.9.*"
+hyper = { version = "0.9", default-features = false }
 hyper_insecure_https_connector = "*"
-prometheus = { git = "https://github.com/pingcap/rust-prometheus.git", features = ["nightly"] }
+prometheus = { version = "*", features = ["nightly"] }
 
+[dev-dependencies]
+clippy = { version = "*" }
 
 [profile.release]
 opt-level = 3
@@ -32,4 +33,3 @@ rpath = false
 lto = true
 debug-assertions = false
 codegen-units = 1
-

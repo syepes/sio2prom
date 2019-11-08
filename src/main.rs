@@ -1,6 +1,7 @@
-#![allow(unused_must_use,zero_ptr)]
+#![allow(unused_must_use)]
 #![feature(plugin,proc_macro)]
-#![plugin(clippy)]
+#![cfg_attr(test, feature(plugin))]
+#![cfg_attr(test, plugin(clippy))]
 
 mod sio;
 
