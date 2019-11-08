@@ -19,8 +19,8 @@ serde_derive = "*"
 lazy_static ="*"
 log = "*"
 log4rs = { version = "*", optional = false,  features = ["toml_format", "threshold_filter"] }
-hyper = { version = "0.9", default-features = false }
-hyper_insecure_https_connector = "*"
+hyper = { version = "*", default-features = false }
+#hyper_insecure_https_connector = "*"
 prometheus = { version = "*", features = ["nightly"] }
 
 [dev-dependencies]
