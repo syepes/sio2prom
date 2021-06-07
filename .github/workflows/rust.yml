@@ -29,8 +29,8 @@ jobs:
         toolchain: [nightly]
         triple:
           - {os: "ubuntu-latest", target: "x86_64-unknown-linux-gnu", cross: false}
-          - {os: "ubuntu-latest", target: "armv7-unknown-linux-gnueabihf", cross: true}
-          - {os: "ubuntu-latest", target: "aarch64-unknown-linux-gnu", cross: true}
+          # - {os: "ubuntu-latest", target: "armv7-unknown-linux-gnueabihf", cross: true}
+          # - {os: "ubuntu-latest", target: "aarch64-unknown-linux-gnu", cross: true}
 
     steps:
       - name: Checkout
@@ -67,4 +67,4 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: -- -D warnings -A clippy::or-fun-call -A clippy::expect-fun-call -A clippy::clone_double_ref -A clippy::wildcard-in-or-patterns
+          args: -- -A clippy::or-fun-call -A clippy::expect-fun-call -A clippy::clone_double_ref -A clippy::wildcard-in-or-patterns

@@ -1,5 +1,8 @@
 ## ScaleIO / VxFlex / PowerFlex Prometheus Exporter
 
+[![rust](https://github.com/syepes/sio2prom/actions/workflows/rust.yml/badge.svg)](https://github.com/syepes/sio2prom/actions/workflows/rust.yml)
+[![release](https://github.com/syepes/sio2prom/actions/workflows/release.yml/badge.svg)](https://github.com/syepes/sio2prom/actions/workflows/release.yml)
+
 ## Functionality
 
  Exposes all the selected [ScaleIO / VxFlex / PowerFlex](https://en.wikipedia.org/wiki/Dell_EMC_ScaleIO) statistics to a [Prometheus](https://prometheus.io/) endpoint
