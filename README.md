@@ -20,14 +20,20 @@
 
 ## Usage (Docker)
 
-    # Locally copy the configuration files and set them up
-    docker run -d --name sio2prom -h sio2prom -e IP=1.1.1.1 -e AUTH_USR=mon -p AUTH_PWD=mon syepes/sio2prom
+    # Default settings
+    docker run -d --name sio2prom -h sio2prom -e IP=1.1.1.1 -e AUTH_USR=mon -p AUTH_PWD=mon -p 8080:8080 syepes/sio2prom
+
+    # Custom / local configuration files: $PWD/cfgmetric_definition.json  $PWD/cfg/metric_query_selection.json
+    docker run -d --name sio2prom -h sio2prom -e IP=1.1.1.1 -e AUTH_USR=mon -p AUTH_PWD=mon -v $PWD/cfg:/app/cfg/ -p 8080:8080 syepes/sio2prom
+
+    # Metrics
+    curl -v -i https://localhost:8080/metrics
 
 ## Usage (Built from src)
 
     git clone https://github.com/syepes/sio2prom.git && cd sio2prom
     cargo build --release (nightly)
-    target/release/sio2prom --help
+    target/*/release/sio2prom --help
 
 ## Exposed labels
 
