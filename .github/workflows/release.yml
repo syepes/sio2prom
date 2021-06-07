@@ -18,7 +18,7 @@ jobs:
         uses: crazy-max/ghaction-docker-meta@v1.12.0
         id: docker_meta
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/hubitat_exporter
+          images: ${{ secrets.DOCKERHUB_USERNAME }}/sio2prom
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1.0.1
