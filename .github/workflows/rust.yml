@@ -3,12 +3,14 @@ name: rust
 on:
   pull_request:
     branches:
+      - master
       - main
     paths-ignore:
       - "**.md"
       - "docs/**"
   push:
     branches:
+      - master
       - main
     paths-ignore:
       - "**.md"
@@ -65,4 +67,4 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: -- -D warnings -A clippy::or-fun-call -A clippy::single-match -A clippy::expect-fun-call -A clippy::clone_double_ref -A clippy::wildcard-in-or-patterns
+          args: -- -D warnings -A clippy::or-fun-call -A clippy::expect-fun-call -A clippy::clone_double_ref -A clippy::wildcard-in-or-patterns

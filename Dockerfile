@@ -25,6 +25,7 @@ WORKDIR /app
 ENV RUST_BACKTRACE=full
 COPY --from=builder /app/target/release/sio2prom sio2prom
 COPY ./cfg cfg
+RUN apt-get update && apt-get install -y --no-install-recommends ca-certificates && update-ca-certificates
 
 EXPOSE 8080
 ENTRYPOINT ["/app/sio2prom"]
