@@ -1,13 +1,14 @@
-## ScaleIO Prometheus Exporter
+## ScaleIO / VxFlex / PowerFlex Prometheus Exporter
 
 ## Functionality
- Exposes all the selected [ScaleIO](https://store.emc.com/ScaleIO/) statistics to a [Prometheus](https://prometheus.io/) endpoint
+
+ Exposes all the selected [ScaleIO / VxFlex / PowerFlex](https://en.wikipedia.org/wiki/Dell_EMC_ScaleIO) statistics to a [Prometheus](https://prometheus.io/) endpoint
 
 ## Features
- - 100% [Rust](http://rust-lang.org/)
- - User selectable [ScaleIO](https://store.emc.com/ScaleIO/) statistics `metric_query_selection.json`
- - [Prometheus](https://prometheus.io/) customizable metric naming `metric_definition.json`
- - Runtime logging configuration `log4rs.toml`
+
+- 100% [Rust](http://rust-lang.org/)
+- User definable statistics via `metric_query_selection.json` see [REST API Reference Guide](https://docs.delltechnologies.com/bundle/PF_REST_API_RG)
+- [Prometheus](https://prometheus.io/) customizable metric naming via `metric_definition.json`
 
 ### Examples
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_global.jpg" target="_blank" width="300">
@@ -17,29 +18,24 @@
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sdc.jpg" target="_blank" width="300">
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_volume.jpg" target="_blank" width="300">
 
-
 ## Usage (Docker)
+
     # Locally copy the configuration files and set them up
-    docker run -d --name sio2prom -h sio2prom -v cfg:/sio2prom/cfg syepes/sio2prom-docker
+    docker run -d --name sio2prom -h sio2prom -e IP=1.1.1.1 -e AUTH_USR=mon -p AUTH_PWD=mon syepes/sio2prom
 
 ## Usage (Built from src)
+
     git clone https://github.com/syepes/sio2prom.git && cd sio2prom
     cargo build --release (nightly)
-    mkdir -p /opt/sio2prom/
-    cp target/release/sio2prom /opt/sio2prom/
-    cp -r cfg /opt/sio2prom/
-    cd /opt/sio2prom/
-    vi cfg/sio2prom.json (ScaleIO settings)
-    ./sio2prom
+    target/release/sio2prom --help
 
 ## Exposed labels
+
     System:           {clu_id="", clu_name=""}
+    Sdr:              {clu_id="", clu_name="", sdr_id="", sdr_name=""}
     Sdc:              {clu_id="", clu_name="", sdc_id="", sdc_name=""}
     ProtectionDomain: {clu_id="", clu_name="", pdo_id="", pdo_name=""}
     Sds:              {clu_id="", clu_name="", pdo_id="", pdo_name="", sds_id="", sds_name=""}
     StoragePool:      {clu_id="", clu_name="", pdo_id="", pdo_name="", sto_id="", sto_name=""}
     Volume:           {clu_id="", clu_name="", pdo_id="", pdo_name="", sto_id="", sto_name="", vol_id="", vol_name=""}
     Device:           {clu_id="", clu_name="", pdo_id="", pdo_name="", sto_id="", sto_name="", sds_id="", sds_name="", dev_id="", dev_name="", dev_path=""}
-
-## Notes
-Beta version still needs some work on error handling

@@ -1,8 +1,8 @@
 {
   "selectedStatisticsList": [
     {
-      "type" : "System",
-      "allIds" : "",
+      "type": "System",
+      "allIds": "",
       "properties": [
         "numOfProtectionDomains",
         "numOfSdc",
@@ -35,20 +35,29 @@
       ]
     },
     {
-      "type" : "Sds",
-      "allIds" : "",
+      "type": "Sdr",
+      "allIds": "",
+      "properties": [
+        "numActiveSessions",
+        "numRecoverySessions",
+        "journalerReadBwc",
+        "journalerWriteBwc"
+      ]
+    },
+    {
+      "type": "Sds",
+      "allIds": "",
       "properties": [
         "numOfDevices",
         "maxCapacityInKb",
         "capacityInUseInKb",
         "totalReadBwc",
-        "totalWriteBwc",
-        "fixedReadErrorCount"
+        "totalWriteBwc"
       ]
     },
     {
-      "type" : "Sdc",
-      "allIds" : "",
+      "type": "Sdc",
+      "allIds": "",
       "properties": [
         "numOfMappedVolumes",
         "userDataReadBwc",
@@ -56,8 +65,8 @@
       ]
     },
     {
-      "type" : "Volume",
-      "allIds" : "",
+      "type": "Volume",
+      "allIds": "",
       "properties": [
         "numOfMappedSdcs",
         "numOfChildVolumes",
@@ -67,8 +76,8 @@
       ]
     },
     {
-      "type" : "StoragePool",
-      "allIds" : "",
+      "type": "StoragePool",
+      "allIds": "",
       "properties": [
         "numOfDevices",
         "numOfVtrees",
@@ -95,26 +104,24 @@
         "bckRebuildReadBwc",
         "bckRebuildWriteBwc",
         "rebalanceReadBwc",
-        "rebalanceWriteBwc",
-        "fixedReadErrorCount"
+        "rebalanceWriteBwc"
       ]
     },
     {
-      "type" : "Device",
-      "allIds" : "",
+      "type": "Device",
+      "allIds": "",
       "properties": [
         "avgReadLatencyInMicrosec",
         "avgWriteLatencyInMicrosec",
         "avgReadSizeInBytes",
         "avgWriteSizeInBytes",
         "totalReadBwc",
-        "totalWriteBwc",
-        "fixedReadErrorCount"
+        "totalWriteBwc"
       ]
     },
     {
-      "type" : "ProtectionDomain",
-      "allIds" : "",
+      "type": "ProtectionDomain",
+      "allIds": "",
       "properties": [
         "numOfSds",
         "numOfStoragePools",
@@ -132,8 +139,7 @@
         "bckRebuildReadBwc",
         "bckRebuildWriteBwc",
         "rebalanceReadBwc",
-        "rebalanceWriteBwc",
-        "fixedReadErrorCount"
+        "rebalanceWriteBwc"
       ]
     }
   ]

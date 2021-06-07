@@ -1,239 +1,205 @@
-#![allow(unused_must_use)]
-#![feature(plugin,proc_macro)]
-#![cfg_attr(test, feature(plugin))]
-#![cfg_attr(test, plugin(clippy))]
-
 mod sio;
 
-use serde_json::value::Map;
-use std::{process, thread};
-use std::collections::HashMap;
-use std::sync::{Arc, Mutex};
-use std::time::Duration;
+use std::{collections::HashMap, io::Write, result::Result, sync::Mutex, time::Duration};
 
 #[macro_use]
 extern crate log;
-extern crate log4rs;
+extern crate env_logger;
+
+extern crate clap_v3;
+use clap_v3::{App, Arg, ArgMatches};
 
 #[macro_use]
 extern crate lazy_static;
 
-extern crate serde;
-extern crate serde_json;
-extern crate serde_derive;
-
-extern crate hyper;
-use hyper::header::ContentType;
-use hyper::mime::Mime;
-use hyper::server::{Server, Request, Response};
-
 #[macro_use]
 extern crate prometheus;
-use prometheus::{Opts, Collector, CounterVec, Gauge, GaugeVec, Histogram, TextEncoder, Encoder};
+use prometheus::{GaugeVec, Histogram, HistogramOpts, IntCounterVec, IntGauge, Opts, Registry};
 
-
+use warp::{Filter, Rejection, Reply};
 
 lazy_static! {
-    static ref METRIC_COUNTERS: Mutex<HashMap<String, CounterVec>> = {
-        Mutex::new(HashMap::new())
-    };
-    static ref METRIC_GAUGES: Mutex<HashMap<String, GaugeVec>> = {
-        Mutex::new(HashMap::new())
-    };
-
-    static ref UPDATE_HISTOGRAM: Histogram = register_histogram!(
-        histogram_opts!("sio2prom_update_duration_seconds",
-                        "The time in seconds it took to collect the ScaleIO stats"
-        )
-    ).unwrap();
-
-    static ref HTTP_BODY_GAUGE: Gauge = register_gauge!("sio2prom_http_response_size_bytes",
-                                                        "The HTTP response sizes in bytes."
-    ).unwrap();
-
-    static ref HTTP_REQ_HISTOGRAM: Histogram = register_histogram!(
-        histogram_opts!("sio2prom_http_request_duration_seconds",
-                        "The HTTP request latencies in seconds."
-        )
-    ).unwrap();
+  static ref REGISTRY: Registry = Registry::new();
+  static ref HTTP_BODY_GAUGE: IntGauge = IntGauge::new("sio2prom_http_response_size_bytes", "The HTTP response sizes in bytes").expect("metric can be created");
+  static ref HTTP_REQ_HISTOGRAM: Histogram = Histogram::with_opts(HistogramOpts::new("sio2prom_http_request_duration_seconds", "The HTTP request latencies in seconds")).expect("metric can be created");
+  static ref UPDATE_HISTOGRAM: Histogram = Histogram::with_opts(HistogramOpts::new("sio2prom_update_duration_seconds", "The time in seconds it took to collect the stats")).expect("metric can be created");
+  static ref METRIC_COUNTERS: Mutex<HashMap<String, IntCounterVec>> = Mutex::new(HashMap::new());
+  static ref METRIC_GAUGES: Mutex<HashMap<String, GaugeVec>> = Mutex::new(HashMap::new());
 }
 
-fn read_cfg() -> Map<String, serde_json::Value> { sio::utils::read_json("cfg/sio2prom.json").unwrap_or_else(|| panic!("Failed to loading config")) }
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+  let app = App::new("").version(env!("CARGO_PKG_VERSION")).author(env!("CARGO_PKG_AUTHORS")).about(env!("CARGO_PKG_DESCRIPTION")).arg(Arg::with_name("interval").short('i').long("interval").env("INTERVAL").required(false).default_value("60").help("Refresh interval in seconds")).arg(Arg::with_name("ip").short('h').long("ip").env("IP").required(true)).arg(Arg::with_name("auth_usr").short('u').long("auth_usr").env("AUTH_USR").required(true)).arg(Arg::with_name("auth_pwd").short('p').long("auth_pwd").env("AUTH_PWD").requires("auth_usr").required(true)).arg(Arg::with_name("v").short('v').multiple(true).takes_value(false).required(false).help("Log verbosity (-v, -vv, -vvv...)")).get_matches();
 
-fn start_exporter(ip: &str, port: u64) {
-    let encoder = TextEncoder::new();
-    let addr: &str = &format!("{}:{}", ip, port);
-    info!("Starting exporter {:?}", addr);
+  match app.occurrences_of("v") {
+    0 => std::env::set_var("RUST_LOG", "error"),
+    1 => std::env::set_var("RUST_LOG", "warn"),
+    2 => std::env::set_var("RUST_LOG", "info"),
+    3 => std::env::set_var("RUST_LOG", "debug"),
+    4 | _ => std::env::set_var("RUST_LOG", "trace"),
+  }
 
-    Server::http(addr)
-        .expect("Could not start web server")
-        .handle(move |_: Request, mut res: Response| {
-            let metric_familys = prometheus::gather();
-            let mut buffer = vec![];
+  env_logger::Builder::from_default_env().format(|buf, record| writeln!(buf, "{} {} {}:{} [{}] - {}", chrono::Local::now().format("%Y-%m-%dT%H:%M:%S"), record.module_path().unwrap_or("unknown"), record.file().unwrap_or("unknown"), record.line().unwrap_or(0), record.level(), record.args())).init();
 
-            match encoder.encode(&metric_familys, &mut buffer) {
-                Ok(_) => {
-                    let timer = HTTP_REQ_HISTOGRAM.start_timer();
+  register_metrics();
+  let data_handle = tokio::task::spawn(data_collector(app));
+  let metrics_route = warp::path!("metrics").and_then(metrics_handler);
+  let warp_handle = warp::serve(metrics_route).run(([0, 0, 0, 0], 8080));
 
-                    res.headers_mut().set(ContentType(encoder.format_type().parse::<Mime>().unwrap()));
-                    if let Err(e) = res.send(&buffer) {
-                        error!("Sending responce: {}", e);
-                    }
-
-                    timer.observe_duration();
-                    HTTP_BODY_GAUGE.set(buffer.len() as f64);
-                },
-                Err(e) => error!("Encoder problem: {}", e),
-            };
-        })
-        .expect("Could not spawn web server");
+  info!("Started on port http://127.0.0.1:8080/metrics");
+  let _ = tokio::join!(data_handle, warp_handle);
+  Ok(())
 }
 
+fn register_metrics() {
+  REGISTRY.register(Box::new(HTTP_BODY_GAUGE.clone())).expect("collector can be registered");
+  REGISTRY.register(Box::new(HTTP_REQ_HISTOGRAM.clone())).expect("collector can be registered");
+  REGISTRY.register(Box::new(UPDATE_HISTOGRAM.clone())).expect("collector can be registered");
+}
 
-fn load_prom(metrics: &[sio::metrics::Metric]) {
-    let mut counters = METRIC_COUNTERS.lock().expect("Failed to obtain metric counter lock");
-    let mut gauges = METRIC_GAUGES.lock().expect("Failed to obtain metric gauge lock");
+async fn data_collector(app: ArgMatches) {
+  let interval = app.value_of("interval").unwrap().parse::<u64>().unwrap_or(60);
+  let mut collect_interval = tokio::time::interval(Duration::from_secs(interval));
 
-    for m in metrics {
-        let labels: Vec<&str> = m.labels.iter().map(|v| *v.0).collect::<Vec<_>>();
-        let opts = Opts::new(m.name.as_ref(), m.help.as_ref());
+  let mut sio = sio::client::ClientInfo::new(app.value_of("ip"), app.value_of("auth_usr"), app.value_of("auth_pwd"));
+  sio.auth().await;
 
-        trace!("Registering metric: {} {:?} ({})", m.name, labels, m.mtype);
-
-        if m.mtype.to_lowercase() == "counter" {
-            match register_counter_vec!(opts, &labels) {
-                Err(e) => {
-                    trace!("Register error: {} {:?} - {}", m.name, m.labels, e);
-                },
-                Ok(o) => {
-                    counters.insert(m.name.clone().to_string(), o);
-                },
-            };
-        } else if m.mtype.to_lowercase() == "gauge" {
-            match register_gauge_vec!(opts, &labels) {
-                Err(e) => {
-                    trace!("Register error: {} {:?} - {}", m.name, m.labels, e);
-                },
-                Ok(o) => {
-                    gauges.insert(m.name.clone().to_string(), o);
-                },
-            };
-        } else {
-            error!("Unknown metric type: {} {:?} ({})", m.name, labels, m.mtype);
-        }
-
+  loop {
+    let metrics = sio.metrics().await;
+    if let Some(m) = metrics {
+      let timer = UPDATE_HISTOGRAM.start_timer();
+      load_metrics(&m);
+      update_metrics(&m);
+      timer.observe_duration();
     }
-    info!("Loaded metric Counters: {:?}", counters.keys().collect::<Vec<_>>());
-    info!("Loaded metric Gauges: {:?}", gauges.keys().collect::<Vec<_>>());
+
+    collect_interval.tick().await;
+  }
 }
 
+async fn metrics_handler() -> Result<impl Reply, Rejection> {
+  let timer = HTTP_REQ_HISTOGRAM.start_timer();
+  use prometheus::Encoder;
+  let encoder = prometheus::TextEncoder::new();
 
-fn updata_metrics(metrics: &[sio::metrics::Metric]) {
-    let counters = METRIC_COUNTERS.lock().expect("Failed to obtain metric counter lock");
-    let gauges = METRIC_GAUGES.lock().expect("Failed to obtain metric gauge lock");
+  let mut buffer = Vec::new();
+  if let Err(e) = encoder.encode(&REGISTRY.gather(), &mut buffer) {
+    eprintln!("could not encode metrics: {}", e);
+  };
+  let mut res = match String::from_utf8(buffer.clone()) {
+    Ok(v) => v,
+    Err(e) => {
+      eprintln!("metrics could not be from_utf8'd: {}", e);
+      String::default()
+    },
+  };
+  buffer.clear();
 
-    for m in metrics {
-        let mut labels: HashMap<&str, &str> = HashMap::new();
-        for (k, v) in &m.labels {
-            labels.insert(k, v);
-        }
+  let mut buffer = Vec::new();
+  if let Err(e) = encoder.encode(&prometheus::gather(), &mut buffer) {
+    eprintln!("could not encode prometheus metrics: {}", e);
+  };
+  let res_custom = match String::from_utf8(buffer.clone()) {
+    Ok(v) => v,
+    Err(e) => {
+      eprintln!("prometheus metrics could not be from_utf8'd: {}", e);
+      String::default()
+    },
+  };
+  buffer.clear();
 
-        if m.mtype.to_lowercase() == "counter" {
-            let c = match counters.get(&m.name) {
-                None => {
-                    error!("The metric {} ({}) was not found as registered", m.name, m.mtype);
-                    continue;
-                },
-                Some(c) => c,
-            };
-
-            trace!("Updateing Metric: {:?}", c.collect());
-
-            let metric = match c.get_metric_with(&labels) {
-                Err(e) => {
-                    error!("The metric {} {:?} ({}) was not found in MetricFamily - {}", m.name, labels, m.mtype, e);
-                    continue;
-                },
-                Ok(m) => m,
-            };
-
-            metric.inc_by(m.value as f64);
-
-        } else if m.mtype.to_lowercase() == "gauge" {
-            let g = match gauges.get(&m.name) {
-                None => {
-                    error!("The metric {} ({}) was not found as registered", m.name, m.mtype);
-                    continue;
-                },
-                Some(g) => g,
-            };
-
-            trace!("Updateing Metric: {:?}", g.collect());
-
-            let metric = match g.get_metric_with(&labels) {
-                Err(e) => {
-                    error!("The metric {} {:?} ({}) was not found in MetricFamily - {}", m.name, labels, m.mtype, e);
-                    continue;
-                },
-                Ok(m) => m,
-            };
-
-            metric.set(m.value as f64);
-
-        } else {
-            error!("Unknown metric type: {} {:?} ({})", m.name, labels, m.mtype);
-        }
-    }
+  res.push_str(&res_custom);
+  timer.observe_duration();
+  HTTP_BODY_GAUGE.set(res.len() as i64);
+  Ok(res)
 }
 
+fn load_metrics(metrics: &[sio::metrics::Metric]) {
+  let mut counters = METRIC_COUNTERS.lock().expect("Failed to obtain metric counter lock");
+  let mut gauges = METRIC_GAUGES.lock().expect("Failed to obtain metric gauge lock");
 
-fn scheduler(sio: &Arc<Mutex<sio::client::Client>>, interval: Duration) -> Option<thread::JoinHandle<()>> {
-    if interval == Duration::from_secs(0) {
-        return None;
-    }
-    let sio_clone = sio.clone();
-    Some(thread::Builder::new()
-        .name("scheduler".to_string())
-        .spawn(move || {
-            loop {
-                info!("Starting scheduled metric update");
+  for m in metrics {
+    let labels: Vec<&str> = m.labels.iter().map(|v| *v.0).collect::<Vec<_>>();
+    let opts = Opts::new(m.name.to_string(), m.help.to_string());
 
-                match sio::metrics::metrics(&sio_clone) {
-                    None => error!("Skipping scheduled metric update"),
-                    Some(m) => {
-                        let timer = UPDATE_HISTOGRAM.start_timer();
-                        updata_metrics(&m);
-                        timer.observe_duration();
-                    },
-                }
+    trace!("Registering metric: {} {:?} ({})", m.name, labels, m.mtype);
 
-                thread::sleep(interval);
-            }
-        })
-        .expect("Could not spawn scheduler"))
-}
-
-
-fn main() {
-    log4rs::init_file("cfg/log4rs.toml", Default::default()).expect("Failed to initialize logger");
-
-    let cfg = read_cfg();
-    let sio_host = cfg.get("sio").and_then(|o| o.as_object().and_then(|j| j.get("host")).map(|s| s.to_string().replace('"', ""))).expect("Missing sio_host");
-    let sio_user = cfg.get("sio").and_then(|o| o.as_object().and_then(|j| j.get("user")).map(|s| s.to_string().replace('"', ""))).expect("Missing sio_user");
-    let sio_pass = cfg.get("sio").and_then(|o| o.as_object().and_then(|j| j.get("pass")).map(|s| s.to_string().replace('"', ""))).expect("Missing sio_pass");
-    let sio_update = cfg.get("sio").and_then(|o| o.as_object().and_then(|j| j.get("metric_update")).and_then(|s| s.as_u64())).expect("Missing metric_update");
-    let prom_listen_ip = cfg.get("prom").and_then(|o| o.as_object().and_then(|j| j.get("listen_ip")).map(|s| s.to_string().replace('"', ""))).expect("Missing listen_ip");
-    let prom_listen_port = cfg.get("prom").and_then(|o| o.as_object().and_then(|j| j.get("listen_port")).and_then(|s| s.as_u64())).expect("Missing listen_port");
-
-    let sio = sio::client::Client::new(sio_host, sio_user, sio_pass);
-
-    match sio::metrics::metrics(&sio) {
-        None => {
-            process::exit(1);
+    if m.mtype.to_lowercase() == "counter" {
+      match register_int_counter_vec!(opts, &labels) {
+        Err(e) => {
+          trace!("Register error: {} {:?} - {}", m.name, m.labels, e);
         },
-        Some(m) => load_prom(&m),
+        Ok(o) => {
+          counters.insert(m.name.clone().to_string(), o);
+        },
+      };
+    } else if m.mtype.to_lowercase() == "gauge" {
+      match register_gauge_vec!(opts, &labels) {
+        Err(e) => {
+          trace!("Register error: {} {:?} - {}", m.name, m.labels, e);
+        },
+        Ok(o) => {
+          gauges.insert(m.name.clone().to_string(), o);
+        },
+      };
+    } else {
+      error!("Unknown metric type: {} {:?} ({})", m.name, labels, m.mtype);
     }
-    scheduler(&sio, Duration::from_secs(sio_update));
+  }
+  info!("Loaded Counters: {:?}", counters.keys().collect::<Vec<_>>());
+  info!("Loaded Gauges: {:?}", gauges.keys().collect::<Vec<_>>());
+}
 
-    start_exporter(prom_listen_ip.as_str(), prom_listen_port);
+fn update_metrics(metrics: &[sio::metrics::Metric]) {
+  info!("Update metrics");
+
+  let counters = METRIC_COUNTERS.lock().expect("Failed to obtain metric counter lock");
+  let gauges = METRIC_GAUGES.lock().expect("Failed to obtain metric gauge lock");
+
+  for m in metrics {
+    let mut labels: HashMap<&str, &str> = HashMap::new();
+    for (k, v) in &m.labels {
+      labels.insert(k, v);
+    }
+
+    if m.mtype.to_lowercase() == "counter" {
+      let c = match counters.get(&m.name) {
+        None => {
+          error!("The metric {} ({}) was not found as registered", m.name, m.mtype);
+          continue;
+        },
+        Some(c) => c,
+      };
+
+      let metric = match c.get_metric_with(&labels) {
+        Err(e) => {
+          error!("The metric {} {:?} ({}) was not found in MetricFamily - {}", m.name, labels, m.mtype, e);
+          continue;
+        },
+        Ok(m) => m,
+      };
+
+      metric.inc_by(m.value as u64);
+    } else if m.mtype.to_lowercase() == "gauge" {
+      let g = match gauges.get(&m.name) {
+        None => {
+          error!("The metric {} ({}) was not found as registered", m.name, m.mtype);
+          continue;
+        },
+        Some(g) => g,
+      };
+
+      let metric = match g.get_metric_with(&labels) {
+        Err(e) => {
+          error!("The metric {} {:?} ({}) was not found in MetricFamily - {}", m.name, labels, m.mtype, e);
+          continue;
+        },
+        Ok(m) => m,
+      };
+
+      metric.set(m.value as f64);
+    } else {
+      error!("Unknown metric type: {} {:?} ({})", m.name, labels, m.mtype);
+    }
+  }
 }

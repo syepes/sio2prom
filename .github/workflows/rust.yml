@@ -1,0 +1,68 @@
+name: rust
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - "**.md"
+      - "docs/**"
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    name: ${{ matrix.toolchain }} / ${{ matrix.triple.target }}
+    runs-on: ${{ matrix.triple.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        toolchain: [nightly]
+        triple:
+          - {os: "ubuntu-latest", target: "x86_64-unknown-linux-gnu", cross: false}
+          - {os: "ubuntu-latest", target: "armv7-unknown-linux-gnueabihf", cross: true}
+          - {os: "ubuntu-latest", target: "aarch64-unknown-linux-gnu", cross: true}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+          target: ${{ matrix.triple.target }}
+          components: rustfmt, clippy
+          override: true
+
+      - name: Fetch
+        uses: actions-rs/cargo@v1
+        with:
+          command: fetch
+
+      - name: Check
+        uses: actions-rs/cargo@v1
+        with:
+          command: check
+          args: --target=${{ matrix.triple.target }}
+          use-cross: ${{ matrix.triple.cross }}
+
+      - name: Format
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+      - name: Clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: -- -D warnings -A clippy::or-fun-call -A clippy::single-match -A clippy::expect-fun-call -A clippy::clone_double_ref -A clippy::wildcard-in-or-patterns

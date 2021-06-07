@@ -1,10 +1,12 @@
 [package]
 name = "sio2prom"
-version = "0.1.1"
+version = "0.2.0"
+edition = "2018"
+resolver = "2"
 authors = ["Sebastian YEPES F <syepes@gmail.com>"]
-keywords = ["prometheus", "metrics", "scaleio"]
+keywords = ["prometheus", "metrics", "scaleio", "VxFlex", "PowerFlex"]
 license = "Apache-2.0"
-description = "ScaleIO Prometheus Exporter"
+description = "ScaleIO / VxFlex / PowerFlex Prometheus Exporter"
 homepage = "https://github.com/syepes/sio2prom"
 repository = "https://github.com/syepes/sio2prom.git"
 exclude = ["*"]
@@ -13,20 +15,33 @@ readme = "README.md"
 publish = true
 
 [dependencies]
-serde = "*"
-serde_json = "*"
-serde_derive = "*"
-lazy_static ="*"
-log = "*"
-log4rs = { version = "*", optional = false,  features = ["toml_format", "threshold_filter"] }
-hyper = { version = "*", default-features = false }
-#hyper_insecure_https_connector = "*"
-prometheus = { version = "*", features = ["nightly"] }
+log = "0.4.*"
+env_logger = "0.8.*"
+tokio = { version = "1.6", features = ["macros", "time", "rt-multi-thread"] }
+futures = { version = "0.3", default-features = false }
+reqwest = { version = "0.11.*", features = ["json"] }
+serde = { version = "1.0.*", features = ["derive"] }
+serde_json = { version = "1.0.*", features = ["raw_value"] }
+anyhow = "1.0.*"
+chrono = "0.4.*"
+clap-v3 = { git = "https://github.com/poma/clap/", default-features = false, features = ["std", "cargo"] }
+warp = "0.3"
+prometheus = { version = "0.12", features = ["process"] }
+lazy_static = "1.4.*"
 
 [dev-dependencies]
 clippy = { version = "*" }
 
+[profile.dev]
+debug = 0
+split-debuginfo = "unpacked"
+
+[profile.test]
+debug = 0
+split-debuginfo = "unpacked"
+
 [profile.release]
+panic = 'abort'
 opt-level = 3
 debug = false
 rpath = false

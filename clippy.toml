@@ -1,2 +1,2 @@
-cyclomatic-complexity-threshold = 50
+cognitive-complexity-threshold = 50
 type-complexity-threshold = 400

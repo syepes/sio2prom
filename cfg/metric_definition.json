@@ -1,222 +1,242 @@
 {
-  "numOfProtectionDomains": {
-    "type" : "gauge",
+  "numActiveSessions": {
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_protection_domains"
+    "name": "num_active_sessions"
+  },
+  "numRecoverySessions": {
+    "type": "gauge",
+    "help": "Help Text",
+    "name": "num_recovery_sessions"
+  },
+  "numOfProtectionDomains": {
+    "type": "gauge",
+    "help": "Help Text",
+    "name": "num_protection_domains"
   },
   "numOfSdc": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_sdc"
+    "name": "num_sdc"
   },
   "numOfSds": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_sds"
+    "name": "num_sds"
   },
   "numOfVolumes": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_volumes"
+    "name": "num_volumes"
   },
   "numOfDevices": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_devices"
+    "name": "num_devices"
   },
   "numOfVtrees": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_vtrees"
+    "name": "num_vtrees"
   },
   "numOfStoragePools": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_storage_pools"
+    "name": "num_storage_pools"
   },
   "numOfUnmappedVolumes": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_unmapped_volumes"
+    "name": "num_unmapped_volumes"
   },
   "numOfMappedToAllVolumes": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_mapped_to_all_volumes"
+    "name": "num_mapped_to_all_volumes"
   },
   "numOfThickBaseVolumes": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_thick_base_volumes"
+    "name": "num_thick_base_volumes"
   },
   "numOfThinBaseVolumes": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_thin_base_volumes"
+    "name": "num_thin_base_volumes"
   },
   "numOfSnapshots": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_snapshots"
+    "name": "num_snapshots"
   },
   "numOfVolumesInDeletion": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_volumes_in_deletion"
+    "name": "num_volumes_in_deletion"
   },
   "numOfRfcacheDevices": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_rfcache_devices"
+    "name": "num_rfcache_devices"
   },
   "numOfFaultSets": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_fault_sets"
+    "name": "num_fault_sets"
   },
   "numOfMappedSdcs": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_mapped_sdcs"
+    "name": "num_mapped_sdcs"
   },
   "numOfChildVolumes": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_child_volumes"
+    "name": "num_child_volumes"
   },
   "numOfDescendantVolumes": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "num_descendant_volumes"
+    "name": "num_descendant_volumes"
   },
   "maxCapacityInKb": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "capacity_max_kb"
+    "name": "capacity_max_kb"
   },
   "spareCapacityInKb": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "capacity_spare_kb"
+    "name": "capacity_spare_kb"
   },
   "capacityInUseInKb": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "capacity_use_kb"
+    "name": "capacity_use_kb"
   },
   "failedCapacityInKb": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "capacity_failed_kb"
+    "name": "capacity_failed_kb"
   },
   "spareCapacityInKb": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "capacity_spare_kb"
+    "name": "capacity_spare_kb"
   },
   "unusedCapacityInKb": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "capacity_unused_kb"
+    "name": "capacity_unused_kb"
   },
   "degradedFailedCapacityInKb": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "capacity_degraded_failed_kb"
+    "name": "capacity_degraded_failed_kb"
   },
   "protectedCapacityInKb": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "capacity_protected_kb"
+    "name": "capacity_protected_kb"
   },
   "movingCapacityInKb": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "capacity_moving_kb"
+    "name": "capacity_moving_kb"
   },
   "capacityAvailableForVolumeAllocationInKb": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "capacity_available_volume_allocation_kb"
+    "name": "capacity_available_volume_allocation_kb"
   },
   "numOfMappedVolumes": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "mapped_volumes"
+    "name": "mapped_volumes"
   },
   "bckRebuildReadBwc": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "read_bck_rebuild"
+    "name": "read_bck_rebuild"
   },
   "bckRebuildWriteBwc": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "write_bck_rebuild"
+    "name": "write_bck_rebuild"
   },
   "fwdRebuildReadBwc": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "read_fwd_rebuild"
+    "name": "read_fwd_rebuild"
   },
   "fwdRebuildWriteBwc": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "write_fwd_rebuild"
+    "name": "write_fwd_rebuild"
   },
   "totalReadBwc": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "read_total"
+    "name": "read_total"
   },
   "totalWriteBwc": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "write_total"
+    "name": "write_total"
   },
   "rebalanceReadBwc": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "read_rebalance"
+    "name": "read_rebalance"
   },
   "rebalanceWriteBwc": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "write_rebalance"
+    "name": "write_rebalance"
   },
   "userDataReadBwc": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "read_user_data"
+    "name": "read_user_data"
   },
   "userDataWriteBwc": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "write_user_data"
+    "name": "write_user_data"
+  },
+  "journalerReadBwc": {
+    "type": "gauge",
+    "help": "Help Text",
+    "name": "read_journaler"
+  },
+  "journalerWriteBwc": {
+    "type": "gauge",
+    "help": "Help Text",
+    "name": "write_journaler"
   },
   "avgReadLatencyInMicrosec": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "read_latency_ms"
+    "name": "read_latency_ms"
   },
   "avgWriteLatencyInMicrosec": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "write_latency_ms"
+    "name": "write_latency_ms"
   },
   "avgReadSizeInBytes": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "read_size_bytes"
+    "name": "read_size_bytes"
   },
   "avgWriteSizeInBytes": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "write_size_bytes"
+    "name": "write_size_bytes"
   },
   "fixedReadErrorCount": {
-    "type" : "gauge",
+    "type": "gauge",
     "help": "Help Text",
-    "name" : "fixed_read_error"
+    "name": "fixed_read_error"
   }
 }
