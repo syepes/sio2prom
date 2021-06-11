@@ -62,7 +62,6 @@ async fn data_collector(app: ArgMatches) {
   let mut collect_interval = tokio::time::interval(Duration::from_secs(interval));
 
   let mut sio = sio::client::ClientInfo::new(app.value_of("ip"), app.value_of("auth_usr"), app.value_of("auth_pwd"));
-  sio.auth().await;
 
   loop {
     let metrics = sio.metrics().await;

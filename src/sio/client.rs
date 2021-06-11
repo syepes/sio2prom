@@ -19,7 +19,7 @@ impl<'a> ClientInfo<'a> {
                  token: RefCell::new(None) }
   }
 
-  pub async fn auth(&mut self) {
+  async fn auth(&mut self) {
     trace!("auth");
     if let Ok(c) = reqwest::Client::builder().user_agent(env!("CARGO_PKG_NAME")).danger_accept_invalid_certs(true).timeout(Duration::from_secs(10)).connection_verbose(true).build() {
       if !self.auth_usr.unwrap().is_empty() && !self.auth_pwd.unwrap().is_empty() {
@@ -93,7 +93,10 @@ impl<'a> ClientInfo<'a> {
                   _ => Err(anyhow!("Failed to parse json")),
                 }
               },
-              StatusCode::UNAUTHORIZED | StatusCode::FORBIDDEN => Err(anyhow!("Auth failed")),
+              StatusCode::UNAUTHORIZED | StatusCode::FORBIDDEN => {
+                *self.token.borrow_mut() = None;
+                Err(anyhow!("Auth failed"))
+              },
               _ => {
                 let msg = match r.json::<serde_json::Value>().await.unwrap() {
                   Value::Object(m) => m.get("message").unwrap().to_string(),
@@ -534,12 +537,13 @@ impl<'a> ClientInfo<'a> {
 
   // pub fn metrics(&mut self) -> Option<Vec<Metric>> {
   pub async fn metrics(&mut self) -> Option<Vec<super::metrics::Metric>> {
-    let inst = self.instances().await;
-    info!("Loaded instances: {:?}", &inst.as_ref().unwrap().keys().collect::<Vec<_>>());
+    self.auth().await;
 
+    let inst = self.instances().await;
     if inst.is_err() {
       return None;
     }
+    info!("Loaded instances: {:?}", &inst.as_ref().unwrap().keys().collect::<Vec<_>>());
 
     let rela = self.relations(inst.as_ref().unwrap());
     if rela.is_err() {

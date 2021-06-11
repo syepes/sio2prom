@@ -30,7 +30,7 @@
     docker run -d --name sio2prom -h sio2prom -e IP=1.1.1.1 -e AUTH_USR=mon -e AUTH_PWD=mon -v $PWD/cfg:/app/cfg/ -p 8080:8080 syepes/sio2prom
 
     # Metrics
-    curl -v -i https://localhost:8080/metrics
+    curl -v -i http://localhost:8080/metrics
 
 ## Usage (Built from src)
 
