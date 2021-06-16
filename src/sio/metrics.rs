@@ -285,7 +285,7 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
           Some(o) => label.entry("pdo_id").or_insert_with(|| o.to_string()),
         };
 
-        let state: Metric = Metric::new("dev_state".to_string(), "gauge".to_string(), "deviceState: Normal,NormalTesting=0.0 or DeviceInit=1.0 or DeviceRecovery=2.0 or InitialTest=3.0 or InitialTestDone=4.0 or RemovePending=5.0".to_string(), label.clone(), value);
+        let state: Metric = Metric::new("device_state".to_string(), "gauge".to_string(), "deviceState: Normal,NormalTesting=0.0 or DeviceInit=1.0 or DeviceRecovery=2.0 or InitialTest=3.0 or InitialTestDone=4.0 or RemovePending=5.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
     }

@@ -6,6 +6,10 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 0.2.2 - 2021-06-11
+
+- rename metric dev_state to device_state
+
 ## 0.2.1 - 2021-06-11
 
 - Fix auth token expiration

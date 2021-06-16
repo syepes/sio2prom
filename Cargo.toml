@@ -17,16 +17,16 @@ publish = true
 [dependencies]
 log = "0.4.*"
 env_logger = "0.8.*"
-tokio = { version = "1.6", features = ["macros", "time", "rt-multi-thread"] }
-futures = { version = "0.3", default-features = false }
+tokio = { version = "1.7.*", features = ["macros", "time", "rt-multi-thread"] }
+futures = { version = "0.3.*", default-features = false }
 reqwest = { version = "0.11.*", features = ["json"] }
 serde = { version = "1.0.*", features = ["derive"] }
 serde_json = { version = "1.0.*", features = ["raw_value"] }
 anyhow = "1.0.*"
 chrono = "0.4.*"
 clap-v3 = { git = "https://github.com/poma/clap/", default-features = false, features = ["std", "cargo"] }
-warp = "0.3"
-prometheus = { version = "0.12", features = ["process"] }
+warp = "0.3.*"
+prometheus = { version = "0.12.*", features = ["process"] }
 lazy_static = "1.4.*"
 
 [dev-dependencies]
