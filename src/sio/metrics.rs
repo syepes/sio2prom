@@ -116,7 +116,6 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
         },
         None => None,
       };
-
       let sds_state_mdm_connection = match sds.get("mdmConnectionState").map(|s| s.to_string().replace('"', "")) {
         Some(s) => {
           match s.as_str() {
@@ -124,6 +123,35 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
             "Disconnected" => Some(1.0),
             _ => {
               warn!("Unknown mdmConnectionState: {:?}", s);
+              None
+            },
+          }
+        },
+        None => None,
+      };
+      let sds_state_membership = match sds.get("membershipState").map(|s| s.to_string().replace('"', "")) {
+        Some(s) => {
+          match s.as_str() {
+            "Joined" => Some(0.0),
+            "JoinPending" => Some(1.0),
+            "Decoupled" => Some(2.0),
+            _ => {
+              warn!("Unknown membershipState: {:?}", s);
+              None
+            },
+          }
+        },
+        None => None,
+      };
+      let sds_state_maintenance = match sds.get("maintenanceState").map(|s| s.to_string().replace('"', "")) {
+        Some(s) => {
+          match s.as_str() {
+            "NoMaintenance" => Some(0.0),
+            "InMaintenance" => Some(1.0),
+            "SetMaintenanceInProgress" => Some(2.0),
+            "ExitMaintenanceInProgress" => Some(3.0),
+            _ => {
+              warn!("Unknown maintenanceState: {:?}", s);
               None
             },
           }
@@ -141,28 +169,28 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
         }
       }
 
-      if let Some(value) = sds_state {
-        let mut label: HashMap<&'static str, String> = HashMap::new();
-        label.entry("clu_name").or_insert_with(|| clu_name.to_string());
-        label.entry("clu_id").or_insert_with(|| clu_id.to_string());
-        label.entry("sds_name").or_insert_with(|| sds_name.clone());
-        label.entry("sds_id").or_insert_with(|| sds_id.to_string());
-        label.entry("pdo_name").or_insert_with(|| parent["name"].to_string());
-        label.entry("pdo_id").or_insert_with(|| parent["id"].to_string());
+      let mut label: HashMap<&'static str, String> = HashMap::new();
+      label.entry("clu_name").or_insert_with(|| clu_name.to_string());
+      label.entry("clu_id").or_insert_with(|| clu_id.to_string());
+      label.entry("sds_name").or_insert_with(|| sds_name.clone());
+      label.entry("sds_id").or_insert_with(|| sds_id.to_string());
+      label.entry("pdo_name").or_insert_with(|| parent["name"].to_string());
+      label.entry("pdo_id").or_insert_with(|| parent["id"].to_string());
 
+      if let Some(value) = sds_state {
         let state: Metric = Metric::new("sds_state".to_string(), "gauge".to_string(), "sdsState: Normal=0.0 or RemovePending=1.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
       if let Some(value) = sds_state_mdm_connection {
-        let mut label: HashMap<&'static str, String> = HashMap::new();
-        label.entry("clu_name").or_insert_with(|| clu_name.to_string());
-        label.entry("clu_id").or_insert_with(|| clu_id.to_string());
-        label.entry("sds_name").or_insert_with(|| sds_name);
-        label.entry("sds_id").or_insert_with(|| sds_id.to_string());
-        label.entry("pdo_name").or_insert_with(|| parent["name"].to_string());
-        label.entry("pdo_id").or_insert_with(|| parent["id"].to_string());
-
         let state: Metric = Metric::new("sds_state_mdm_connection".to_string(), "gauge".to_string(), "mdmConnectionState: Connected=0.0 or Disconnected=1.0".to_string(), label.clone(), value);
+        metric_list.push(state);
+      }
+      if let Some(value) = sds_state_membership {
+        let state: Metric = Metric::new("sds_state_membership".to_string(), "gauge".to_string(), "membershipState: Joined=0.0 or JoinPending=1.0 or Decoupled-2.0".to_string(), label.clone(), value);
+        metric_list.push(state);
+      }
+      if let Some(value) = sds_state_maintenance {
+        let state: Metric = Metric::new("maintenanceState".to_string(), "gauge".to_string(), "maintenanceState: NoMaintenance=0.0 or InMaintenance=1.0 or SetMaintenanceInProgress-2.0 or ExitMaintenanceInProgress=3.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
     }
@@ -204,88 +232,162 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
         },
         None => None,
       };
+      let dev_state_error = match dev.get("errorState").map(|s| s.to_string().replace('"', "")) {
+        Some(s) => {
+          match s.as_str() {
+            "None" => Some(0.0),
+            "Error" => Some(1.0),
+            "Warning" => Some(2.0),
+            "Notice" => Some(3.0),
+            "Info" => Some(4.0),
+            "Acceleration" => Some(5.0),
+            "Unrecoverable" => Some(6.0),
+            _ => {
+              warn!("Unknown errorState: {:?}", s);
+              None
+            },
+          }
+        },
+        None => None,
+      };
+      let dev_state_temperature = match dev.get("temperatureState").map(|s| s.to_string().replace('"', "")) {
+        Some(s) => {
+          match s.as_str() {
+            "NeverFailed" => Some(0.0),
+            "FailedNow" => Some(1.0),
+            "FailedPast" => Some(2.0),
+            _ => {
+              warn!("Unknown temperatureState: {:?}", s);
+              None
+            },
+          }
+        },
+        None => None,
+      };
+      let dev_state_ssd_end_of_life = match dev.get("ssdEndOfLifeState").map(|s| s.to_string().replace('"', "")) {
+        Some(s) => {
+          match s.as_str() {
+            "NeverFailed" => Some(0.0),
+            "FailedNow" => Some(1.0),
+            "FailedPast" => Some(2.0),
+            _ => {
+              warn!("Unknown ssdEndOfLifeState: {:?}", s);
+              None
+            },
+          }
+        },
+        None => None,
+      };
+      let dev_state_aggregated = match dev.get("aggregatedState").map(|s| s.to_string().replace('"', "")) {
+        Some(s) => {
+          match s.as_str() {
+            "NeverFailed" => Some(0.0),
+            "FailedNow" => Some(1.0),
+            "FailedPast" => Some(2.0),
+            _ => {
+              warn!("Unknown aggregatedState: {:?}", s);
+              None
+            },
+          }
+        },
+        None => None,
+      };
+
+      label.entry("clu_name").or_insert_with(|| clu_name.to_string());
+      label.entry("clu_id").or_insert_with(|| clu_id.to_string());
+      label.entry("dev_name").or_insert_with(|| dev_name);
+      label.entry("dev_id").or_insert_with(|| dev_id.to_string());
+      label.entry("dev_path").or_insert_with(|| dev_path);
+
+      for sdsl in instances["sdsList"].as_array().unwrap().iter() {
+        for sds in sdsl.as_object().iter() {
+          if relations["parents"][&(dev_id)]["sds"].contains(&(sds["id"].to_string().replace('"', ""))) {
+            parent_sds.entry("name").or_insert_with(|| sds["name"].to_string().replace('"', ""));
+            parent_sds.entry("id").or_insert_with(|| sds["id"].to_string().replace('"', ""));
+            break;
+          }
+        }
+      }
+      for sp in instances["storagePoolList"].as_array().unwrap().iter() {
+        for sto in sp.as_object().iter() {
+          if relations["parents"][&(dev_id)]["storagepool"].contains(&(sto["id"].to_string().replace('"', ""))) {
+            parent_sto.entry("name").or_insert_with(|| sto["name"].to_string().replace('"', ""));
+            parent_sto.entry("id").or_insert_with(|| sto["id"].to_string().replace('"', ""));
+            break;
+          }
+        }
+      }
+      for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
+        for pdo in pd.as_object().iter() {
+          if relations["parents"][&(parent_sto["id"].to_string().replace('"', ""))]["protectiondomain"].contains(&(pdo["id"].to_string().replace('"', ""))) {
+            parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
+            parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
+            break;
+          }
+        }
+      }
+
+      match parent_sds.get("name") {
+        None => {
+          error!("Failed to get 'name' from parent_sds");
+          continue;
+        },
+        Some(o) => label.entry("sds_name").or_insert_with(|| o.to_string()),
+      };
+      match parent_sds.get("id") {
+        None => {
+          error!("Failed to get 'id' from parent_sds");
+          continue;
+        },
+        Some(o) => label.entry("sds_id").or_insert_with(|| o.to_string()),
+      };
+      match parent_sto.get("name") {
+        None => {
+          error!("Failed to get 'name' from parent_sto");
+          continue;
+        },
+        Some(o) => label.entry("sto_name").or_insert_with(|| o.to_string()),
+      };
+      match parent_sto.get("id") {
+        None => {
+          error!("Failed to get 'id' from parent_sto");
+          continue;
+        },
+        Some(o) => label.entry("sto_id").or_insert_with(|| o.to_string()),
+      };
+      match parent_pdo.get("name") {
+        None => {
+          error!("Failed to get 'name' from parent_pdo");
+          continue;
+        },
+        Some(o) => label.entry("pdo_name").or_insert_with(|| o.to_string()),
+      };
+      match parent_pdo.get("id") {
+        None => {
+          error!("Failed to get 'id' from parent_pdo");
+          continue;
+        },
+        Some(o) => label.entry("pdo_id").or_insert_with(|| o.to_string()),
+      };
 
       if let Some(value) = dev_state {
-        label.entry("clu_name").or_insert_with(|| clu_name.to_string());
-        label.entry("clu_id").or_insert_with(|| clu_id.to_string());
-        label.entry("dev_name").or_insert_with(|| dev_name);
-        label.entry("dev_id").or_insert_with(|| dev_id.to_string());
-        label.entry("dev_path").or_insert_with(|| dev_path);
-
-        for sdsl in instances["sdsList"].as_array().unwrap().iter() {
-          for sds in sdsl.as_object().iter() {
-            if relations["parents"][&(dev_id)]["sds"].contains(&(sds["id"].to_string().replace('"', ""))) {
-              parent_sds.entry("name").or_insert_with(|| sds["name"].to_string().replace('"', ""));
-              parent_sds.entry("id").or_insert_with(|| sds["id"].to_string().replace('"', ""));
-              break;
-            }
-          }
-        }
-        for sp in instances["storagePoolList"].as_array().unwrap().iter() {
-          for sto in sp.as_object().iter() {
-            if relations["parents"][&(dev_id)]["storagepool"].contains(&(sto["id"].to_string().replace('"', ""))) {
-              parent_sto.entry("name").or_insert_with(|| sto["name"].to_string().replace('"', ""));
-              parent_sto.entry("id").or_insert_with(|| sto["id"].to_string().replace('"', ""));
-              break;
-            }
-          }
-        }
-        for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
-          for pdo in pd.as_object().iter() {
-            if relations["parents"][&(parent_sto["id"].to_string().replace('"', ""))]["protectiondomain"].contains(&(pdo["id"].to_string().replace('"', ""))) {
-              parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
-              parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
-              break;
-            }
-          }
-        }
-
-        match parent_sds.get("name") {
-          None => {
-            error!("Failed to get 'name' from parent_sds");
-            continue;
-          },
-          Some(o) => label.entry("sds_name").or_insert_with(|| o.to_string()),
-        };
-        match parent_sds.get("id") {
-          None => {
-            error!("Failed to get 'id' from parent_sds");
-            continue;
-          },
-          Some(o) => label.entry("sds_id").or_insert_with(|| o.to_string()),
-        };
-
-        match parent_sto.get("name") {
-          None => {
-            error!("Failed to get 'name' from parent_sto");
-            continue;
-          },
-          Some(o) => label.entry("sto_name").or_insert_with(|| o.to_string()),
-        };
-        match parent_sto.get("id") {
-          None => {
-            error!("Failed to get 'id' from parent_sto");
-            continue;
-          },
-          Some(o) => label.entry("sto_id").or_insert_with(|| o.to_string()),
-        };
-
-        match parent_pdo.get("name") {
-          None => {
-            error!("Failed to get 'name' from parent_pdo");
-            continue;
-          },
-          Some(o) => label.entry("pdo_name").or_insert_with(|| o.to_string()),
-        };
-        match parent_pdo.get("id") {
-          None => {
-            error!("Failed to get 'id' from parent_pdo");
-            continue;
-          },
-          Some(o) => label.entry("pdo_id").or_insert_with(|| o.to_string()),
-        };
-
         let state: Metric = Metric::new("device_state".to_string(), "gauge".to_string(), "deviceState: Normal,NormalTesting=0.0 or DeviceInit=1.0 or DeviceRecovery=2.0 or InitialTest=3.0 or InitialTestDone=4.0 or RemovePending=5.0".to_string(), label.clone(), value);
+        metric_list.push(state);
+      }
+      if let Some(value) = dev_state_error {
+        let state: Metric = Metric::new("device_state_error".to_string(), "gauge".to_string(), "errorState: None=0.0 or Error=1.0 or Warning=2.0 or Notice=3.0 or Info=4.0 or Acceleration=5.0 or Unrecoverable=6.0".to_string(), label.clone(), value);
+        metric_list.push(state);
+      }
+      if let Some(value) = dev_state_temperature {
+        let state: Metric = Metric::new("device_state_temperature".to_string(), "gauge".to_string(), "temperatureState: NeverFailed=0.0 or FailedNow=1.0 or FailedPast=2.0".to_string(), label.clone(), value);
+        metric_list.push(state);
+      }
+      if let Some(value) = dev_state_ssd_end_of_life {
+        let state: Metric = Metric::new("device_state_ssd_end_of_life".to_string(), "gauge".to_string(), "ssdEndOfLifeState: NeverFailed=0.0 or FailedNow=1.0 or FailedPast=2.0".to_string(), label.clone(), value);
+        metric_list.push(state);
+      }
+      if let Some(value) = dev_state_aggregated {
+        let state: Metric = Metric::new("device_state_aggregated".to_string(), "gauge".to_string(), "aggregatedState: NeverFailed=0.0 or FailedNow=1.0 or FailedPast=2.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
     }

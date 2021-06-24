@@ -6,6 +6,10 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 0.2.3 - 2021-06-24
+
+- Added more sds and device states
+
 ## 0.2.2 - 2021-06-11
 
 - rename metric dev_state to device_state
