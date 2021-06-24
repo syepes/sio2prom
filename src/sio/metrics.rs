@@ -186,11 +186,11 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
         metric_list.push(state);
       }
       if let Some(value) = sds_state_membership {
-        let state: Metric = Metric::new("sds_state_membership".to_string(), "gauge".to_string(), "membershipState: Joined=0.0 or JoinPending=1.0 or Decoupled-2.0".to_string(), label.clone(), value);
+        let state: Metric = Metric::new("sds_state_membership".to_string(), "gauge".to_string(), "membershipState: Joined=0.0 or JoinPending=1.0 or Decoupled=2.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
       if let Some(value) = sds_state_maintenance {
-        let state: Metric = Metric::new("maintenanceState".to_string(), "gauge".to_string(), "maintenanceState: NoMaintenance=0.0 or InMaintenance=1.0 or SetMaintenanceInProgress-2.0 or ExitMaintenanceInProgress=3.0".to_string(), label.clone(), value);
+        let state: Metric = Metric::new("maintenanceState".to_string(), "gauge".to_string(), "maintenanceState: NoMaintenance=0.0 or InMaintenance=1.0 or SetMaintenanceInProgress=2.0 or ExitMaintenanceInProgress=3.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
     }
