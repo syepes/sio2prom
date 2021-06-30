@@ -6,6 +6,10 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 0.2.4 - 2021-06-30
+
+- Fix sds maintenance metric name (maintenanceState -> sds_state_maintenance)
+
 ## 0.2.3 - 2021-06-24
 
 - Added more sds and device states
