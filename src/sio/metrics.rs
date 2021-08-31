@@ -22,10 +22,10 @@ impl Metric {
 }
 
 /// Merge the States and Perf Metrics
-pub fn get(inst: &Result<Map<String, serde_json::Value>, anyhow::Error>, stats: &Result<Map<String, serde_json::Value>, anyhow::Error>, labels: &Result<HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>>, String>, rela: &Result<HashMap<&'static str, HashMap<String, HashMap<String, Vec<String>>>>, String>) -> Option<Vec<Metric>> {
+pub fn get<'a>(cfg_path: Option<&'a str>, inst: &Result<Map<String, serde_json::Value>, anyhow::Error>, stats: &Result<Map<String, serde_json::Value>, anyhow::Error>, labels: &Result<HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>>, String>, rela: &Result<HashMap<&'static str, HashMap<String, HashMap<String, Vec<String>>>>, String>) -> Option<Vec<Metric>> {
   let mut metric_list: Vec<Metric> = Vec::new();
 
-  let m = convert_metrics(&stats.as_ref().unwrap(), &labels.as_ref().unwrap());
+  let m = convert_metrics(cfg_path, &stats.as_ref().unwrap(), &labels.as_ref().unwrap());
   let s = convert_states(&inst.as_ref().unwrap(), &rela.as_ref().unwrap());
 
   if let Some(mut value) = m {
@@ -401,8 +401,9 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
 }
 
 /// Build the final metric definition that should be used to create and update the metrics
-fn convert_metrics(stats: &Map<String, serde_json::Value>, labels: &HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>>) -> Option<Vec<Metric>> {
-  let mdef = super::utils::read_json("cfg/metric_definition.json").unwrap_or_else(|| panic!("Failed to loading metric definition"));
+fn convert_metrics<'a>(cfg_path: Option<&'a str>, stats: &Map<String, serde_json::Value>, labels: &HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>>) -> Option<Vec<Metric>> {
+  let path = format!("{}{}", cfg_path.unwrap(), "/metric_definition.json");
+  let mdef = super::utils::read_json(&path).unwrap_or_else(|| panic!("Failed to loading metric definition"));
   debug!("Loaded metric defenitions: {:?}", mdef.keys().collect::<Vec<_>>());
 
   let mut metric_list: Vec<Metric> = Vec::new();

@@ -1,6 +1,6 @@
 mod sio;
 
-use std::{collections::HashMap, io::Write, result::Result, sync::Mutex, time::Duration};
+use std::{collections::HashMap, io::Write, path::Path, result::Result, sync::Mutex, time::Duration};
 
 #[macro_use]
 extern crate log;
@@ -29,7 +29,7 @@ lazy_static! {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let app = App::new("").version(env!("CARGO_PKG_VERSION")).author(env!("CARGO_PKG_AUTHORS")).about(env!("CARGO_PKG_DESCRIPTION")).arg(Arg::with_name("interval").short('i').long("interval").env("INTERVAL").required(false).default_value("60").help("Refresh interval in seconds")).arg(Arg::with_name("ip").short('h').long("ip").env("IP").required(true)).arg(Arg::with_name("auth_usr").short('u').long("auth_usr").env("AUTH_USR").required(true)).arg(Arg::with_name("auth_pwd").short('p').long("auth_pwd").env("AUTH_PWD").requires("auth_usr").required(true)).arg(Arg::with_name("v").short('v').multiple(true).takes_value(false).required(false).help("Log verbosity (-v, -vv, -vvv...)")).get_matches();
+  let app = App::new("").version(env!("CARGO_PKG_VERSION")).author(env!("CARGO_PKG_AUTHORS")).about(env!("CARGO_PKG_DESCRIPTION")).arg(Arg::with_name("interval").short('i').long("interval").env("INTERVAL").required(false).default_value("60").help("Refresh interval in seconds")).arg(Arg::with_name("cfg_path").short('c').long("cfg_path").env("CFG_PATH").required(false).default_value("cfg").help("Configuration path")).arg(Arg::with_name("ip").short('h').long("ip").env("IP").required(true)).arg(Arg::with_name("auth_usr").short('u').long("auth_usr").env("AUTH_USR").required(true)).arg(Arg::with_name("auth_pwd").short('p').long("auth_pwd").env("AUTH_PWD").requires("auth_usr").required(true)).arg(Arg::with_name("v").short('v').multiple(true).takes_value(false).required(false).help("Log verbosity (-v, -vv, -vvv...)")).get_matches();
 
   match app.occurrences_of("v") {
     0 => std::env::set_var("RUST_LOG", "error"),
@@ -40,6 +40,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
   }
 
   env_logger::Builder::from_default_env().format(|buf, record| writeln!(buf, "{} {} {}:{} [{}] - {}", chrono::Local::now().format("%Y-%m-%dT%H:%M:%S"), record.module_path().unwrap_or("unknown"), record.file().unwrap_or("unknown"), record.line().unwrap_or(0), record.level(), record.args())).init();
+
+  if !Path::new(&app.value_of("cfg_path").unwrap()).exists() {
+    error!("Config path not found: {}", app.value_of("cfg_path").unwrap());
+    return Ok(());
+  }
 
   register_metrics();
   let data_handle = tokio::task::spawn(data_collector(app));
@@ -61,7 +66,7 @@ async fn data_collector(app: ArgMatches) {
   let interval = app.value_of("interval").unwrap().parse::<u64>().unwrap_or(60);
   let mut collect_interval = tokio::time::interval(Duration::from_secs(interval));
 
-  let mut sio = sio::client::ClientInfo::new(app.value_of("ip"), app.value_of("auth_usr"), app.value_of("auth_pwd"));
+  let mut sio = sio::client::ClientInfo::new(app.value_of("cfg_path"), app.value_of("ip"), app.value_of("auth_usr"), app.value_of("auth_pwd"));
 
   loop {
     let metrics = sio.metrics().await;

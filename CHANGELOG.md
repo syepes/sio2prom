@@ -6,6 +6,10 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 0.2.5 - 2021-08-31
+
+- Added option for specifying the configuration path (folder) `--cfg_path`
+
 ## 0.2.4 - 2021-06-30
 
 - Fix sds maintenance metric name (maintenanceState -> sds_state_maintenance)

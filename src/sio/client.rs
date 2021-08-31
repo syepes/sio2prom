@@ -5,6 +5,7 @@ use std::{cell::RefCell, collections::HashMap, time::Duration};
 
 #[derive(Debug, Default)]
 pub struct ClientInfo<'a> {
+  pub cfg_path: Option<&'a str>,
   pub ip:       Option<&'a str>,
   pub auth_usr: Option<&'a str>,
   pub auth_pwd: Option<&'a str>,
@@ -12,8 +13,9 @@ pub struct ClientInfo<'a> {
 }
 
 impl<'a> ClientInfo<'a> {
-  pub fn new(ip: Option<&'a str>, auth_usr: Option<&'a str>, auth_pwd: Option<&'a str>) -> ClientInfo<'a> {
-    ClientInfo { ip,
+  pub fn new(cfg_path: Option<&'a str>, ip: Option<&'a str>, auth_usr: Option<&'a str>, auth_pwd: Option<&'a str>) -> ClientInfo<'a> {
+    ClientInfo { cfg_path,
+                 ip,
                  auth_usr,
                  auth_pwd,
                  token: RefCell::new(None) }
@@ -129,7 +131,8 @@ impl<'a> ClientInfo<'a> {
         let t = self.token.borrow().as_ref().unwrap().clone();
         trace!("Auth on {:?} with {:?}/{:?}", req_url.clone(), self.auth_usr, t);
 
-        let query = super::utils::read_json("cfg/metric_query_selection.json").expect("Could not load the query (querySelectedStatistics)");
+        let path = format!("{}{}", self.cfg_path.unwrap(), "/metric_query_selection.json");
+        let query = super::utils::read_json(&path).expect("Could not load the query (querySelectedStatistics)");
         trace!("query: {:#?}", query);
 
         let req = c.post(req_url).basic_auth(self.auth_usr.unwrap().clone(), Some(t));
@@ -562,6 +565,6 @@ impl<'a> ClientInfo<'a> {
     }
     info!("Loaded stats: {:?}", stats.as_ref().unwrap().keys().collect::<Vec<_>>());
 
-    super::metrics::get(&inst, &stats, &labels, &rela)
+    super::metrics::get(self.cfg_path, &inst, &stats, &labels, &rela)
   }
 }
