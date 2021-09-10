@@ -114,6 +114,11 @@
     "help": "Help Text",
     "name": "capacity_use_kb"
   },
+  "inMaintenanceCapacityInKb": {
+    "type": "gauge",
+    "help": "Help Text",
+    "name": "inMaintenanceCapacityInKb"
+  },
   "failedCapacityInKb": {
     "type": "gauge",
     "help": "Help Text",
