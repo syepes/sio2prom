@@ -30,12 +30,6 @@
     },
     {
       "type": "panel",
-      "id": "stat",
-      "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
       "id": "text",
       "name": "Text",
       "version": ""
@@ -71,7 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1635435356166,
+  "iteration": 1635435582635,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -89,7 +83,7 @@
       "isNew": true,
       "links": [],
       "options": {
-        "content": "<center><h2><b>Sdc statistics</b> : $CLU / $SDC</h2></center>",
+        "content": "<center><h2><b>Volumes statistics</b> : $CLU / $DOMAIN / $POOL / $VOL</h2></center>",
         "mode": "html"
       },
       "pluginVersion": "8.2.1",
@@ -140,7 +134,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 4,
+        "w": 6,
         "x": 0,
         "y": 3
       },
@@ -164,7 +158,7 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "sdc_read_user_data_iops{sdc_id=\"$SDC_ID\"}",
+          "expr": "volume_read_user_data_iops{vol_id=\"$VOL_ID\"}",
           "intervalFactor": 2,
           "metric": "storagepool",
           "refId": "A",
@@ -220,8 +214,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 4,
-        "x": 4,
+        "w": 6,
+        "x": 6,
         "y": 3
       },
       "id": 3,
@@ -244,9 +238,8 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "sdc_write_user_data_iops{sdc_id=\"$SDC_ID\"}",
+          "expr": "volume_write_user_data_iops{vol_id=\"$VOL_ID\"}",
           "intervalFactor": 2,
-          "legendFormat": "",
           "refId": "A",
           "step": 2
         }
@@ -254,79 +247,6 @@
       "timeFrom": "1m",
       "title": "Write Op/s",
       "type": "gauge"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "none"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 8,
-        "x": 8,
-        "y": 3
-      },
-      "id": 7,
-      "interval": null,
-      "links": [],
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "max"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "sdc_mapped_volumes{sdc_id=\"$SDC_ID\"}",
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 1800
-        }
-      ],
-      "title": "Mapped volume(s)",
-      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -348,7 +268,7 @@
               "type": "special"
             }
           ],
-          "max": 75000,
+          "max": 150000,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -363,7 +283,7 @@
               },
               {
                 "color": "rgba(245, 54, 54, 0.9)",
-                "value": 70000
+                "value": 100000
               }
             ]
           },
@@ -373,8 +293,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 4,
-        "x": 16,
+        "w": 6,
+        "x": 12,
         "y": 3
       },
       "id": 4,
@@ -397,7 +317,7 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "sdc_read_user_data_kb{sdc_id=\"$SDC_ID\"}",
+          "expr": "volume_read_user_data_kb{vol_id=\"$VOL_ID\"}",
           "intervalFactor": 2,
           "refId": "A",
           "step": 2
@@ -427,7 +347,7 @@
               "type": "special"
             }
           ],
-          "max": 75000,
+          "max": 150000,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -442,7 +362,7 @@
               },
               {
                 "color": "rgba(245, 54, 54, 0.9)",
-                "value": 70000
+                "value": 100000
               }
             ]
           },
@@ -452,8 +372,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 4,
-        "x": 20,
+        "w": 6,
+        "x": 18,
         "y": 3
       },
       "id": 5,
@@ -476,7 +396,7 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "sdc_write_user_data_kb{sdc_id=\"$SDC_ID\"}",
+          "expr": "volume_write_user_data_kb{vol_id=\"$VOL_ID\"}",
           "intervalFactor": 2,
           "refId": "A",
           "step": 2
@@ -487,6 +407,9 @@
       "type": "gauge"
     },
     {
+      "alert": {
+        "enabled": false
+      },
       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
@@ -512,7 +435,7 @@
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -545,7 +468,7 @@
         "x": 0,
         "y": 11
       },
-      "id": 10,
+      "id": 7,
       "links": [],
       "options": {
         "legend": {
@@ -563,7 +486,7 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "sdc_read_user_data_iops{sdc_id=\"$SDC_ID\"}",
+          "expr": "volume_read_user_data_iops{vol_id=\"$VOL_ID\"}",
           "hide": false,
           "intervalFactor": 2,
           "legendFormat": "Read",
@@ -572,7 +495,7 @@
           "step": 120
         },
         {
-          "expr": "sdc_write_user_data_iops{sdc_id=\"$SDC_ID\"}",
+          "expr": "volume_write_user_data_iops{vol_id=\"$VOL_ID\"}",
           "hide": false,
           "intervalFactor": 2,
           "legendFormat": "Write",
@@ -587,9 +510,6 @@
       "type": "timeseries"
     },
     {
-      "alert": {
-        "enabled": false
-      },
       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
@@ -666,7 +586,7 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "sdc_read_user_data_kb{sdc_id=\"$SDC_ID\"}",
+          "expr": "volume_read_user_data_kb{vol_id=\"$VOL_ID\"}",
           "hide": false,
           "intervalFactor": 2,
           "legendFormat": "Read",
@@ -675,7 +595,7 @@
           "step": 120
         },
         {
-          "expr": "sdc_write_user_data_kb{sdc_id=\"$SDC_ID\"}",
+          "expr": "volume_write_user_data_kb{vol_id=\"$VOL_ID\"}",
           "hide": false,
           "intervalFactor": 2,
           "legendFormat": "Write",
@@ -712,7 +632,7 @@
         "name": "CLU",
         "options": [],
         "query": {
-          "query": "label_values(sdc_write_user_data_iops, clu_name)",
+          "query": "label_values(volume_read_user_data_iops, clu_name)",
           "refId": "Prometheus-CLU-Variable-Query"
         },
         "refresh": 1,
@@ -734,11 +654,61 @@
         "includeAll": false,
         "label": null,
         "multi": false,
-        "name": "SDC",
+        "name": "DOMAIN",
         "options": [],
         "query": {
-          "query": "label_values(sdc_write_user_data_iops{clu_name=\"$CLU\"}, sdc_name)",
-          "refId": "Prometheus-SDC-Variable-Query"
+          "query": "label_values(volume_read_user_data_iops{clu_name=\"$CLU\"}, pdo_name)",
+          "refId": "Prometheus-DOMAIN-Variable-Query"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": null,
+        "tagsQuery": null,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "POOL",
+        "options": [],
+        "query": {
+          "query": "label_values(volume_read_user_data_iops{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\"}, sto_name)",
+          "refId": "Prometheus-POOL-Variable-Query"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": null,
+        "tagsQuery": null,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "VOL",
+        "options": [],
+        "query": {
+          "query": "label_values(volume_read_user_data_iops{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\", sto_id=\"$POOL_ID\"}, vol_name)",
+          "refId": "Prometheus-VOL-Variable-Query"
         },
         "refresh": 1,
         "regex": "",
@@ -759,11 +729,36 @@
         "includeAll": false,
         "label": null,
         "multi": false,
-        "name": "SDC_ID",
+        "name": "VOL_ID",
         "options": [],
         "query": {
-          "query": "label_values(sdc_write_user_data_iops{clu_name=\"$CLU\", sdc_name=\"$SDC\"}, sdc_id)",
-          "refId": "Prometheus-SDC_ID-Variable-Query"
+          "query": "label_values(volume_read_user_data_iops{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\", sto_name=\"$POOL\"}, vol_id)",
+          "refId": "Prometheus-VOL_ID-Variable-Query"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": null,
+        "tagsQuery": null,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "POOL_ID",
+        "options": [],
+        "query": {
+          "query": "label_values(volume_read_user_data_iops{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\"}, sto_id)",
+          "refId": "Prometheus-POOL_ID-Variable-Query"
         },
         "refresh": 1,
         "regex": "",
@@ -805,7 +800,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "5 - PowerFlex - SDC",
-  "uid": "_CNP3MKnk",
-  "version": 4
+  "title": "4 - PowerFlex - Volumes",
+  "uid": "qKeUqMFnz",
+  "version": 3
 }
