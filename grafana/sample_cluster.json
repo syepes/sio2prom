@@ -11,6 +11,12 @@
   ],
   "__requires": [
     {
+      "type": "panel",
+      "id": "gauge",
+      "name": "Gauge",
+      "version": ""
+    },
+    {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
@@ -59,6 +65,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
+  "iteration": 1635435154224,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -76,11 +83,608 @@
       "isNew": true,
       "links": [],
       "options": {
-        "content": "<center><h2><b>Global statistics</b></h2></center>",
+        "content": "<center><h2><b>Cluster statistics</b> : $CLU</h2></center>",
         "mode": "html"
       },
       "pluginVersion": "8.2.1",
       "type": "text"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100000,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "rps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 3
+      },
+      "id": 2,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "8.2.1",
+      "targets": [
+        {
+          "expr": "system_read_total_iops{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "refId": "A",
+          "step": 2
+        }
+      ],
+      "timeFrom": "1m",
+      "title": "Read Op/s",
+      "type": "gauge"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 100000,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "wps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 3
+      },
+      "id": 3,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "8.2.1",
+      "targets": [
+        {
+          "expr": "system_write_total_iops{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "refId": "A",
+          "step": 2
+        }
+      ],
+      "timeFrom": "1m",
+      "title": "Write Op/s",
+      "type": "gauge"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 4000000,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(50, 172, 45, 0.97)",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 3000000
+              },
+              {
+                "color": "rgba(245, 54, 54, 0.9)",
+                "value": 3500000
+              }
+            ]
+          },
+          "unit": "KBs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 12,
+        "y": 3
+      },
+      "id": 4,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "8.2.1",
+      "targets": [
+        {
+          "expr": "system_read_total_kb{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "refId": "A",
+          "step": 2
+        }
+      ],
+      "timeFrom": "1m",
+      "title": "Read Mb/s",
+      "type": "gauge"
+    },
+    {
+      "cacheTimeout": null,
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "decimals": 0,
+          "mappings": [
+            {
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
+            }
+          ],
+          "max": 4000000,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(50, 172, 45, 0.97)",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 3000000
+              },
+              {
+                "color": "rgba(245, 54, 54, 0.9)",
+                "value": 3500000
+              }
+            ]
+          },
+          "unit": "KBs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 3
+      },
+      "id": 5,
+      "interval": null,
+      "links": [],
+      "maxDataPoints": 100,
+      "options": {
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "mean"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true,
+        "text": {}
+      },
+      "pluginVersion": "8.2.1",
+      "targets": [
+        {
+          "expr": "system_write_total_kb{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "refId": "A",
+          "step": 2
+        }
+      ],
+      "timeFrom": "1m",
+      "title": "Write Mb/s",
+      "type": "gauge"
+    },
+    {
+      "alert": {
+        "enabled": false
+      },
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 0,
+        "y": 10
+      },
+      "id": 7,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.2.1",
+      "targets": [
+        {
+          "expr": "system_read_total_iops{clu_name=\"$CLU\"}",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "R",
+          "metric": "",
+          "refId": "A",
+          "step": 120
+        },
+        {
+          "expr": "system_write_total_iops{clu_name=\"$CLU\"}",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "W",
+          "metric": "",
+          "refId": "B",
+          "step": 120
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "IOPS",
+      "type": "timeseries"
+    },
+    {
+      "alert": {
+        "enabled": false
+      },
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "KBs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
+        "y": 10
+      },
+      "id": 8,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.2.1",
+      "targets": [
+        {
+          "expr": "system_read_total_kb{clu_name=\"$CLU\"}",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "R",
+          "metric": "",
+          "refId": "A",
+          "step": 120
+        },
+        {
+          "expr": "system_write_total_kb{clu_name=\"$CLU\"}",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "W",
+          "metric": "",
+          "refId": "B",
+          "step": 120
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Bandwidth",
+      "type": "timeseries"
+    },
+    {
+      "alert": {
+        "enabled": false
+      },
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "rps"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 0,
+        "y": 17
+      },
+      "id": 9,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.2.1",
+      "targets": [
+        {
+          "expr": "topk(10, avg(sdc_read_user_data_iops{clu_name=\"$CLU\"}) BY (sdc_name))",
+          "intervalFactor": 2,
+          "legendFormat": "{{sdc_name}}",
+          "refId": "A",
+          "step": 240
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Sdc's read op/sec",
+      "type": "timeseries"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -131,22 +735,22 @@
               }
             ]
           },
-          "unit": "iops"
+          "unit": "wps"
         },
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
-        "w": 12,
-        "x": 0,
-        "y": 3
+        "h": 7,
+        "w": 6,
+        "x": 6,
+        "y": 17
       },
-      "id": 7,
+      "id": 10,
       "links": [],
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
+          "displayMode": "hidden",
           "placement": "bottom"
         },
         "tooltip": {
@@ -156,26 +760,19 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "exemplar": true,
-          "expr": "sum(system_read_total_iops + system_write_total_iops) BY (clu_name)",
-          "hide": false,
-          "interval": "",
+          "expr": "topk(10, avg(sdc_write_user_data_iops{clu_name=\"$CLU\"}) BY (sdc_name))",
           "intervalFactor": 2,
-          "legendFormat": "{{clu_name}}",
-          "metric": "",
+          "legendFormat": "{{sdc_name}}",
           "refId": "A",
-          "step": 120
+          "step": 240
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "System IOPS",
+      "title": "Sdc's write op/sec",
       "type": "timeseries"
     },
     {
-      "alert": {
-        "enabled": false
-      },
       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
@@ -229,17 +826,17 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
-        "w": 12,
+        "h": 7,
+        "w": 6,
         "x": 12,
-        "y": 3
+        "y": 17
       },
-      "id": 8,
+      "id": 11,
       "links": [],
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
+          "displayMode": "hidden",
           "placement": "bottom"
         },
         "tooltip": {
@@ -249,18 +846,102 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "sum(system_read_total_kb + system_write_total_kb) BY (clu_name)",
-          "hide": false,
+          "expr": "topk(10, avg(sdc_read_user_data_kb{clu_name=\"$CLU\"}) BY (sdc_name))",
           "intervalFactor": 2,
-          "legendFormat": "{{clu_name}}",
-          "metric": "",
+          "legendFormat": "{{sdc_name}}",
           "refId": "A",
-          "step": 120
+          "step": 240
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "System Bandwidth",
+      "title": "Sdc's read bandwidth",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": true,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "KBs"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 6,
+        "x": 18,
+        "y": 17
+      },
+      "id": 12,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.2.1",
+      "targets": [
+        {
+          "expr": "topk(10, avg(sdc_write_user_data_kb{clu_name=\"$CLU\"}) BY (sdc_name))",
+          "intervalFactor": 2,
+          "legendFormat": "{{sdc_name}}",
+          "refId": "A",
+          "step": 240
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Sdc's write bandwidth",
       "type": "timeseries"
     },
     {
@@ -277,7 +958,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "points",
+            "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
@@ -287,376 +968,12 @@
             },
             "lineInterpolation": "linear",
             "lineWidth": 2,
-            "pointSize": 4,
+            "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "always",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "iops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 14,
-        "w": 12,
-        "x": 0,
-        "y": 13
-      },
-      "id": 17,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
-          "displayMode": "hidden",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "topk(15,max(storagepool_read_total_iops + storagepool_write_total_iops) by (clu_name,pdo_name,sto_name))",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "{{clu_name}} / {{pdo_name}} / {{sto_name}}",
-          "metric": "",
-          "refId": "A",
-          "step": 120
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 15 StoragePool IOPS",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "points",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 4,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "always",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "deckbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 14,
-        "w": 12,
-        "x": 12,
-        "y": 13
-      },
-      "id": 18,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
-          "displayMode": "hidden",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "topk(15,max(storagepool_read_total_kb + storagepool_write_total_kb) by (clu_name,pdo_name,sto_name))",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "{{clu_name}} / {{pdo_name}} / {{sto_name}}",
-          "metric": "",
-          "refId": "A",
-          "step": 120
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 15 StoragePool Bandwidth",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "points",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 4,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "always",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "iops"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 14,
-        "w": 12,
-        "x": 0,
-        "y": 27
-      },
-      "id": 20,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
-          "displayMode": "hidden",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "topk(15,max(volume_read_user_data_iops + volume_write_user_data_iops) by (clu_name,pdo_name,sto_name,vol_name))",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "{{clu_name}} / {{pdo_name}} / {{sto_name}} / {{vol_name}}",
-          "metric": "",
-          "refId": "A",
-          "step": 120
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 15 Volume IOPS",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "points",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 4,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "always",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "deckbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 14,
-        "w": 12,
-        "x": 12,
-        "y": 27
-      },
-      "id": 16,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
-          "displayMode": "hidden",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "topk(15,max(volume_read_user_data_kb + volume_write_user_data_kb) by (clu_name,pdo_name,sto_name,vol_name))",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "{{clu_name}} / {{pdo_name}} / {{sto_name}} / {{vol_name}}",
-          "metric": "",
-          "refId": "A",
-          "step": 120
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 15 Volume Bandwidth",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "points",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 4,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "always",
-            "spanNulls": true,
+            "showPoints": "never",
+            "spanNulls": false,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -684,19 +1001,226 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 14,
+        "h": 8,
         "w": 12,
         "x": 0,
-        "y": 41
+        "y": 24
+      },
+      "id": 13,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max",
+            "min"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.2.1",
+      "targets": [
+        {
+          "expr": "max(device_read_latency_ms{clu_name=\"$CLU\"}) by (sto_name,pdo_name)",
+          "intervalFactor": 2,
+          "legendFormat": "{{pdo_name}} / {{sto_name}}",
+          "refId": "A",
+          "step": 120
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Max Pool's read latencies",
+      "type": "timeseries"
+    },
+    {
+      "alert": {
+        "enabled": false
+      },
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "ms"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 24
+      },
+      "id": 14,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [
+            "mean",
+            "lastNotNull",
+            "max",
+            "min"
+          ],
+          "displayMode": "table",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.2.1",
+      "targets": [
+        {
+          "expr": "max(device_write_latency_ms{clu_name=\"$CLU\"}) by (sto_name,pdo_name)",
+          "intervalFactor": 2,
+          "legendFormat": "{{pdo_name}} / {{sto_name}}",
+          "refId": "A",
+          "step": 120
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Max Pool's write latencies",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Read bw"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "KBs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Write bw"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "KBs"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 32
       },
       "id": 15,
       "links": [],
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
+          "calcs": [],
           "displayMode": "hidden",
           "placement": "bottom"
         },
@@ -707,18 +1231,37 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "topk(15,max(device_read_latency_ms) by (clu_name,pdo_name,sto_name,dev_name))",
-          "hide": false,
+          "expr": "system_read_fwd_rebuild_iops{clu_name=\"$CLU\"}",
           "intervalFactor": 2,
-          "legendFormat": "{{clu_name}} / {{pdo_name}} / {{sto_name}} / {{dev_name}}",
-          "metric": "",
+          "legendFormat": "Read ops",
           "refId": "A",
-          "step": 120
+          "step": 240
+        },
+        {
+          "expr": "system_write_fwd_rebuild_iops{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Write ops",
+          "refId": "B",
+          "step": 240
+        },
+        {
+          "expr": "system_read_fwd_rebuild_kb{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Read bw",
+          "refId": "C",
+          "step": 240
+        },
+        {
+          "expr": "system_write_fwd_rebuild_kb{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Write bw",
+          "refId": "D",
+          "step": 240
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top 15 Disks read latencies",
+      "title": "Forward Rebuild IOPs/Bandwidth",
       "type": "timeseries"
     },
     {
@@ -732,7 +1275,7 @@
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
-            "drawStyle": "points",
+            "drawStyle": "line",
             "fillOpacity": 10,
             "gradientMode": "none",
             "hideFrom": {
@@ -742,12 +1285,12 @@
             },
             "lineInterpolation": "linear",
             "lineWidth": 2,
-            "pointSize": 4,
+            "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "always",
-            "spanNulls": true,
+            "showPoints": "never",
+            "spanNulls": false,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -770,24 +1313,46 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "iops"
         },
-        "overrides": []
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Read bw"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "KBs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Write bw"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "KBs"
+              }
+            ]
+          }
+        ]
       },
       "gridPos": {
-        "h": 14,
-        "w": 12,
-        "x": 12,
-        "y": 41
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 32
       },
-      "id": 21,
+      "id": 16,
       "links": [],
       "options": {
         "legend": {
-          "calcs": [
-            "mean",
-            "max"
-          ],
+          "calcs": [],
           "displayMode": "hidden",
           "placement": "bottom"
         },
@@ -798,18 +1363,169 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "topk(15,max(device_write_latency_ms) by (clu_name,pdo_name,sto_name,dev_name))",
-          "hide": false,
+          "expr": "system_read_bck_rebuild_iops{clu_name=\"$CLU\"}",
           "intervalFactor": 2,
-          "legendFormat": "{{clu_name}} / {{pdo_name}} / {{sto_name}} / {{dev_name}}",
-          "metric": "",
+          "legendFormat": "Read ops",
           "refId": "A",
-          "step": 120
+          "step": 240
+        },
+        {
+          "expr": "system_write_bck_rebuild_iops{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Write ops",
+          "refId": "B",
+          "step": 240
+        },
+        {
+          "expr": "system_read_bck_rebuild_kb{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Read bw",
+          "refId": "C",
+          "step": 240
+        },
+        {
+          "expr": "system_write_bck_rebuild_kb{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Write bw",
+          "refId": "D",
+          "step": 240
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top 15 Disks write latencies",
+      "title": "Backward Rebuild IOPs/Bandwidth",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 2,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Read bw"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "KBs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Write bw"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "KBs"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 32
+      },
+      "id": 17,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "hidden",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.2.1",
+      "targets": [
+        {
+          "expr": "system_read_rebalance_iops{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Read ops",
+          "refId": "A",
+          "step": 240
+        },
+        {
+          "expr": "system_write_rebalance_iops{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Write ops",
+          "refId": "B",
+          "step": 240
+        },
+        {
+          "expr": "system_read_rebalance_kb{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Read bw",
+          "refId": "C",
+          "step": 240
+        },
+        {
+          "expr": "system_write_rebalance_kb{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Write bw",
+          "refId": "D",
+          "step": 240
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Rebalance IOPs/Bandwidth",
       "type": "timeseries"
     }
   ],
@@ -820,7 +1536,33 @@
     "sio"
   ],
   "templating": {
-    "list": []
+    "list": [
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "CLU",
+        "options": [],
+        "query": {
+          "query": "label_values(system_num_sds, clu_name)",
+          "refId": "Prometheus-CLU-Variable-Query"
+        },
+        "refresh": 2,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": null,
+        "tagsQuery": null,
+        "type": "query"
+      }
+    ]
   },
   "time": {
     "from": "now-24h",
@@ -852,7 +1594,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "0 - PowerFlex - Global",
-  "uid": "8_cTqGFnz",
-  "version": 6
+  "title": "1 - PowerFlex - Cluster",
+  "uid": "Jetc3MK7k",
+  "version": 5
 }
