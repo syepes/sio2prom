@@ -11,12 +11,6 @@
   ],
   "__requires": [
     {
-      "type": "panel",
-      "id": "gauge",
-      "name": "Gauge",
-      "version": ""
-    },
-    {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
@@ -30,8 +24,8 @@
     },
     {
       "type": "panel",
-      "id": "text",
-      "name": "Text",
+      "id": "stat",
+      "name": "Stat",
       "version": ""
     },
     {
@@ -65,30 +59,10 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1635435253354,
+  "iteration": 1635521617788,
   "links": [],
   "liveNow": false,
   "panels": [
-    {
-      "datasource": null,
-      "editable": true,
-      "error": false,
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 6,
-      "isNew": true,
-      "links": [],
-      "options": {
-        "content": "<center><h2><b>Cluster statistics</b> : $CLU</h2></center>",
-        "mode": "html"
-      },
-      "pluginVersion": "8.2.1",
-      "type": "text"
-    },
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
@@ -117,10 +91,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -132,13 +102,16 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 3
+        "y": 0
       },
       "id": 2,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -147,9 +120,8 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
       "pluginVersion": "8.2.1",
       "targets": [
@@ -161,7 +133,7 @@
         }
       ],
       "title": "Read Op/s",
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -189,12 +161,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "orange",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -206,13 +174,16 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 3
+        "y": 0
       },
       "id": 3,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -221,9 +192,8 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
       "pluginVersion": "8.2.1",
       "targets": [
@@ -235,7 +205,7 @@
         }
       ],
       "title": "Write Op/s",
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -265,14 +235,6 @@
               {
                 "color": "rgba(50, 172, 45, 0.97)",
                 "value": null
-              },
-              {
-                "color": "rgba(237, 129, 40, 0.89)",
-                "value": 3000000
-              },
-              {
-                "color": "rgba(245, 54, 54, 0.9)",
-                "value": 3500000
               }
             ]
           },
@@ -284,13 +246,16 @@
         "h": 7,
         "w": 6,
         "x": 12,
-        "y": 3
+        "y": 0
       },
       "id": 4,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -299,9 +264,8 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
       "pluginVersion": "8.2.1",
       "targets": [
@@ -312,8 +276,8 @@
           "step": 1800
         }
       ],
-      "title": "Read Mb/s",
-      "type": "gauge"
+      "title": "Read MB/s",
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -341,16 +305,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgba(50, 172, 45, 0.97)",
+                "color": "dark-orange",
                 "value": null
-              },
-              {
-                "color": "rgba(237, 129, 40, 0.89)",
-                "value": 3000000
-              },
-              {
-                "color": "rgba(245, 54, 54, 0.9)",
-                "value": 3500000
               }
             ]
           },
@@ -362,24 +318,26 @@
         "h": 7,
         "w": 6,
         "x": 18,
-        "y": 3
+        "y": 0
       },
       "id": 5,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
-        "orientation": "horizontal",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "mean"
+            "lastNotNull"
           ],
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
       "pluginVersion": "8.2.1",
       "targets": [
@@ -390,8 +348,8 @@
           "step": 1800
         }
       ],
-      "title": "Write Mb/s",
-      "type": "gauge"
+      "title": "Write MB/s",
+      "type": "stat"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -450,14 +408,14 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 10
+        "y": 7
       },
       "id": 7,
       "links": [],
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
+          "displayMode": "list",
           "placement": "bottom"
         },
         "tooltip": {
@@ -467,19 +425,23 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "exemplar": true,
           "expr": "sds_read_total_iops{sds_name=\"$SDS\"}",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "R",
+          "legendFormat": "Read ops",
           "metric": "",
           "refId": "A",
           "step": 120
         },
         {
+          "exemplar": true,
           "expr": "sds_write_total_iops{sds_name=\"$SDS\"}",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "W",
+          "legendFormat": "Write ops",
           "metric": "",
           "refId": "B",
           "step": 120
@@ -547,14 +509,14 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 10
+        "y": 7
       },
       "id": 8,
       "links": [],
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
+          "displayMode": "list",
           "placement": "bottom"
         },
         "tooltip": {
@@ -564,19 +526,23 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "exemplar": true,
           "expr": "sds_read_total_kb{sds_name=\"$SDS\"}",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "R",
+          "legendFormat": "Read ops",
           "metric": "",
           "refId": "A",
           "step": 120
         },
         {
+          "exemplar": true,
           "expr": "sds_write_total_kb{sds_name=\"$SDS\"}",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "W",
+          "legendFormat": "Write ops",
           "metric": "",
           "refId": "B",
           "step": 120
@@ -644,7 +610,7 @@
         "h": 12,
         "w": 12,
         "x": 0,
-        "y": 17
+        "y": 14
       },
       "id": 13,
       "links": [],
@@ -735,7 +701,7 @@
         "h": 12,
         "w": 12,
         "x": 12,
-        "y": 17
+        "y": 14
       },
       "id": 14,
       "links": [],
@@ -829,7 +795,7 @@
         "h": 7,
         "w": 24,
         "x": 0,
-        "y": 29
+        "y": 26
       },
       "id": 15,
       "links": [],
@@ -876,7 +842,7 @@
         "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
+        "label": "Cluster",
         "multi": false,
         "name": "CLU",
         "options": [],
@@ -901,7 +867,7 @@
         "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
+        "label": "Protection Domain",
         "multi": false,
         "name": "DOMAIN",
         "options": [],
@@ -926,7 +892,7 @@
         "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
+        "label": "Storage Pool",
         "multi": false,
         "name": "POOL",
         "options": [],
@@ -1026,5 +992,5 @@
   "timezone": "browser",
   "title": "2 - PowerFlex - SDS",
   "uid": "R_2yqGFnz",
-  "version": 5
+  "version": 11
 }
