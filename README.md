@@ -13,13 +13,20 @@
 - User definable statistics via `metric_query_selection.json` see [REST API Reference Guide](https://docs.delltechnologies.com/bundle/PF_REST_API_RG)
 - [Prometheus](https://prometheus.io/) customizable metric naming via `metric_definition.json`
 
-### Examples
+### Grafana Dashboards examples
+_grafana version 8+ required_
+Global Dashboard
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_global.jpg" target="_blank" width="300">
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_pool.jpg" target="_blank" width="300">
+Cluster Dashboard
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_cluster.jpg" target="_blank" width="300">
+SDS Dashboard
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sds.jpg" target="_blank" width="300">
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sdc.jpg" target="_blank" width="300">
+Storage Pools Dashboard
+<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_pool.jpg" target="_blank" width="300">
+Volumes Dashboard
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_volume.jpg" target="_blank" width="300">
+SDC Dashboard
+<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sdc.jpg" target="_blank" width="300">
 
 ## Usage (Docker)
 
