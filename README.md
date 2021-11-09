@@ -16,8 +16,7 @@
 ### Grafana Dashboards examples
 _grafana version 8+ required_
 
-**Global Dashboard**
-
+**Global Dashboard**  
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_global.jpg" target="_blank" width="300">
 
 **Cluster Dashboard**
