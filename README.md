@@ -15,23 +15,23 @@
 
 ### Grafana Dashboards examples
 _grafana version 8+ required_
-Global Dashboard
 
+**Global Dashboard**
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_global.jpg" target="_blank" width="300">
-Cluster Dashboard
 
+**Cluster Dashboard**
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_cluster.jpg" target="_blank" width="300">
-SDS Dashboard
 
+**SDS Dashboard**
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sds.jpg" target="_blank" width="300">
-Storage Pools Dashboard
 
+**Storage Pools Dashboard**
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_pool.jpg" target="_blank" width="300">
-Volumes Dashboard
 
+**Volumes Dashboard**
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_volume.jpg" target="_blank" width="300">
-SDC Dashboard
 
+**SDC Dashboard**
 <img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sdc.jpg" target="_blank" width="300">
 
 ## Usage (Docker)
