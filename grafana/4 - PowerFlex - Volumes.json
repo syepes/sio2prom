@@ -14,7 +14,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.2.1"
+      "version": "8.2.3"
     },
     {
       "type": "datasource",
@@ -59,7 +59,7 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1635521706038,
+  "iteration": 1636490761805,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -123,7 +123,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
           "expr": "volume_read_user_data_iops{vol_id=\"$VOL_ID\"}",
@@ -197,7 +197,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
           "expr": "volume_write_user_data_iops{vol_id=\"$VOL_ID\"}",
@@ -270,7 +270,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
           "expr": "volume_read_user_data_kb{vol_id=\"$VOL_ID\"}",
@@ -343,7 +343,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
           "expr": "volume_write_user_data_kb{vol_id=\"$VOL_ID\"}",
@@ -379,7 +379,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -481,7 +481,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -566,7 +566,7 @@
   "schemaVersion": 31,
   "style": "dark",
   "tags": [
-    "sio"
+    "PowerFlex"
   ],
   "templating": {
     "list": [
@@ -754,5 +754,5 @@
   "timezone": "browser",
   "title": "4 - PowerFlex - Volumes",
   "uid": "qKeUqMFnz",
-  "version": 7
+  "version": 4
 }

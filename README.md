@@ -14,25 +14,28 @@
 - [Prometheus](https://prometheus.io/) customizable metric naming via `metric_definition.json`
 
 ### Grafana Dashboards examples
-_grafana version 8+ required_
+_Grafana version 8+ required_
 
-**Global Dashboard**  
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_global.jpg" target="_blank" width="300">
+**Global**  
+![Global Dashboard](/images/grafana_dashboard_0_powerflex_global_0.png)  
+![Global Dashboard](/images/grafana_dashboard_0_powerflex_global_1.png)
 
-**Cluster Dashboard**  
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_cluster.jpg" target="_blank" width="300">
+**Cluster**  
+![Cluster Dashboard](/images/grafana_dashboard_1_powerflex_cluster_0.png)  
+![Cluster Dashboard](/images/grafana_dashboard_1_powerflex_cluster_1.png)
 
-**SDS Dashboard**  
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sds.jpg" target="_blank" width="300">
+**SDS**  
+![SDS Dashboard](/images/grafana_dashboard_2_powerflex_sds_0.png)
 
-**Storage Pools Dashboard**  
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_pool.jpg" target="_blank" width="300">
+**Storage Pools**  
+![Storage Pools Dashboard](/images/grafana_dashboard_3_powerflex_pools_0.png)
+![Storage Pools Dashboard](/images/grafana_dashboard_3_powerflex_pools_1.png)
 
-**Volumes Dashboard**  
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_volume.jpg" target="_blank" width="300">
+**Volumes**  
+![Volumes Dashboard](/images/grafana_dashboard_4_powerflex_volumes_0.png)
 
-**SDC Dashboard**  
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sdc.jpg" target="_blank" width="300">
+**SDC**  
+![SDC Dashboard](/images/grafana_dashboard_5_powerflex_SDC_0.png)
 
 ## Usage (Docker)
 

@@ -14,7 +14,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.2.1"
+      "version": "8.2.3"
     },
     {
       "type": "datasource",
@@ -59,293 +59,10 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1635521656224,
+  "iteration": 1636490739242,
   "links": [],
   "liveNow": false,
   "panels": [
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "kbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 4,
-        "x": 0,
-        "y": 0
-      },
-      "id": 19,
-      "interval": null,
-      "links": [],
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "storagepool_capacity_use_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 2
-        }
-      ],
-      "timeFrom": "1m",
-      "title": "Allocated",
-      "type": "stat"
-    },
-    {
-      "alert": {
-        "enabled": false
-      },
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": false,
-            "stacking": {
-              "group": "A",
-              "mode": "normal"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "deckbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 16,
-        "x": 4,
-        "y": 0
-      },
-      "id": 18,
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "list",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "storagepool_capacity_failed_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "failed",
-          "metric": "storagepool_capacity_failed_kb",
-          "refId": "A",
-          "step": 240
-        },
-        {
-          "expr": "storagepool_capacity_moving_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "moving",
-          "metric": "storagepool_capacity_moving_kb",
-          "refId": "B",
-          "step": 240
-        },
-        {
-          "expr": "storagepool_capacity_protected_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "protected",
-          "metric": "storagepool_capacity_protected_kb",
-          "refId": "C",
-          "step": 240
-        },
-        {
-          "expr": "storagepool_capacity_spare_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "spare",
-          "metric": "storagepool_capacity_spare_kb",
-          "refId": "D",
-          "step": 240
-        },
-        {
-          "expr": "storagepool_capacity_unused_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "unused",
-          "metric": "storagepool_capacity_unused_kb",
-          "refId": "E",
-          "step": 240
-        },
-        {
-          "expr": "storagepool_capacity_use_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "use",
-          "metric": "storagepool_capacity_use_kb",
-          "refId": "F",
-          "step": 240
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Storage Pool capacities",
-      "type": "timeseries"
-    },
-    {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "thresholds"
-          },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "kbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 10,
-        "w": 4,
-        "x": 20,
-        "y": 0
-      },
-      "id": 20,
-      "interval": null,
-      "links": [],
-      "maxDataPoints": 100,
-      "options": {
-        "colorMode": "none",
-        "graphMode": "none",
-        "justifyMode": "auto",
-        "orientation": "horizontal",
-        "reduceOptions": {
-          "calcs": [
-            "mean"
-          ],
-          "fields": "",
-          "values": false
-        },
-        "text": {},
-        "textMode": "auto"
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "storagepool_capacity_available_volume_allocation_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
-          "intervalFactor": 2,
-          "refId": "A",
-          "step": 2
-        }
-      ],
-      "timeFrom": "1m",
-      "title": "Available",
-      "type": "stat"
-    },
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
@@ -385,7 +102,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 10
+        "y": 0
       },
       "id": 2,
       "interval": null,
@@ -395,10 +112,10 @@
         "colorMode": "value",
         "graphMode": "area",
         "justifyMode": "auto",
-        "orientation": "auto",
+        "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
-            "lastNotNull"
+            "mean"
           ],
           "fields": "",
           "values": false
@@ -406,12 +123,11 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
-          "expr": "storagepool_read_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
+          "expr": "system_read_total_iops{clu_name=\"$CLU\"}",
           "intervalFactor": 2,
-          "metric": "storagepool",
           "refId": "A",
           "step": 2
         }
@@ -459,7 +175,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 10
+        "y": 0
       },
       "id": 3,
       "interval": null,
@@ -480,10 +196,10 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
-          "expr": "storagepool_write_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
+          "expr": "system_write_total_iops{clu_name=\"$CLU\"}",
           "intervalFactor": 2,
           "refId": "A",
           "step": 2
@@ -513,7 +229,7 @@
               "type": "special"
             }
           ],
-          "max": 1000000,
+          "max": 4000000,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -532,7 +248,7 @@
         "h": 7,
         "w": 6,
         "x": 12,
-        "y": 10
+        "y": 0
       },
       "id": 4,
       "interval": null,
@@ -553,10 +269,10 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
-          "expr": "storagepool_read_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
+          "expr": "system_read_total_kb{clu_name=\"$CLU\"}",
           "intervalFactor": 2,
           "refId": "A",
           "step": 2
@@ -586,7 +302,7 @@
               "type": "special"
             }
           ],
-          "max": 1000000,
+          "max": 4000000,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -605,7 +321,7 @@
         "h": 7,
         "w": 6,
         "x": 18,
-        "y": 10
+        "y": 0
       },
       "id": 5,
       "interval": null,
@@ -626,10 +342,10 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
-          "expr": "storagepool_write_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
+          "expr": "system_write_total_kb{clu_name=\"$CLU\"}",
           "intervalFactor": 2,
           "refId": "A",
           "step": 2
@@ -640,6 +356,9 @@
       "type": "stat"
     },
     {
+      "alert": {
+        "enabled": false
+      },
       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
@@ -659,7 +378,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -696,7 +415,7 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 17
+        "y": 7
       },
       "id": 7,
       "links": [],
@@ -714,22 +433,22 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "storagepool_read_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
+          "expr": "system_read_total_iops{clu_name=\"$CLU\"}",
           "hide": false,
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "Read ops",
+          "legendFormat": "Read Ops",
           "metric": "",
           "refId": "A",
           "step": 120
         },
         {
           "exemplar": true,
-          "expr": "storagepool_write_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
+          "expr": "system_write_total_iops{clu_name=\"$CLU\"}",
           "hide": false,
           "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "Write ops",
+          "legendFormat": "Write Ops",
           "metric": "",
           "refId": "B",
           "step": 120
@@ -741,6 +460,9 @@
       "type": "timeseries"
     },
     {
+      "alert": {
+        "enabled": false
+      },
       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
@@ -760,7 +482,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -797,7 +519,7 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 17
+        "y": 7
       },
       "id": 8,
       "links": [],
@@ -815,7 +537,7 @@
       "targets": [
         {
           "exemplar": true,
-          "expr": "storagepool_read_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
+          "expr": "system_read_total_kb{clu_name=\"$CLU\"}",
           "hide": false,
           "interval": "",
           "intervalFactor": 2,
@@ -826,7 +548,7 @@
         },
         {
           "exemplar": true,
-          "expr": "storagepool_write_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
+          "expr": "system_write_total_kb{clu_name=\"$CLU\"}",
           "hide": false,
           "interval": "",
           "intervalFactor": 2,
@@ -864,7 +586,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -901,7 +623,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 24
+        "y": 14
       },
       "id": 9,
       "links": [],
@@ -918,22 +640,21 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "topk(10, avg(volume_read_user_data_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}) BY (vol_name))",
+          "exemplar": true,
+          "expr": "topk(10, avg(sdc_read_user_data_iops{clu_name=\"$CLU\"}) BY (sdc_name))",
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "{{vol_name}}",
+          "legendFormat": "{{sdc_name}}",
           "refId": "A",
           "step": 240
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top 10 Volume read op/sec",
+      "title": "Top 10 SDC's read op/sec",
       "type": "timeseries"
     },
     {
-      "alert": {
-        "enabled": false
-      },
       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
@@ -953,7 +674,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -990,7 +711,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 24
+        "y": 14
       },
       "id": 10,
       "links": [],
@@ -1007,22 +728,21 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "topk(10, avg(volume_write_user_data_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}) BY (vol_name))",
+          "exemplar": true,
+          "expr": "topk(10, avg(sdc_write_user_data_iops{clu_name=\"$CLU\"}) BY (sdc_name))",
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "{{vol_name}}",
+          "legendFormat": "{{sdc_name}}",
           "refId": "A",
           "step": 240
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top 10 Volume write op/sec",
+      "title": "Top 10 SDC's write op/sec",
       "type": "timeseries"
     },
     {
-      "alert": {
-        "enabled": false
-      },
       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
@@ -1042,7 +762,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1079,7 +799,7 @@
         "h": 7,
         "w": 6,
         "x": 12,
-        "y": 24
+        "y": 14
       },
       "id": 11,
       "links": [],
@@ -1096,22 +816,21 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "topk(10, avg(volume_read_user_data_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}) BY (vol_name))",
+          "exemplar": true,
+          "expr": "topk(10, avg(sdc_read_user_data_kb{clu_name=\"$CLU\"}) BY (sdc_name))",
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "{{vol_name}}",
+          "legendFormat": "{{sdc_name}}",
           "refId": "A",
           "step": 240
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top 10 Volume read bandwidth",
+      "title": "Top 10 SDC's read bandwidth",
       "type": "timeseries"
     },
     {
-      "alert": {
-        "enabled": false
-      },
       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
@@ -1131,7 +850,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1168,7 +887,7 @@
         "h": 7,
         "w": 6,
         "x": 18,
-        "y": 24
+        "y": 14
       },
       "id": 12,
       "links": [],
@@ -1185,102 +904,18 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "topk(10, avg(volume_write_user_data_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}) BY (vol_name))",
+          "exemplar": true,
+          "expr": "topk(10, avg(sdc_write_user_data_kb{clu_name=\"$CLU\"}) BY (sdc_name))",
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "{{vol_name}}",
+          "legendFormat": "{{sdc_name}}",
           "refId": "A",
           "step": 240
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Top 10 Volume write bandwidth",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "rps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 0,
-        "y": 31
-      },
-      "id": 21,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "topk(10, avg(sds_read_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\"}) BY (sds_name))",
-          "intervalFactor": 2,
-          "legendFormat": "{{sds_name}}",
-          "refId": "A",
-          "step": 240
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 10 SDS read op/sec",
+      "title": "Top 10 SDC's write bandwidth",
       "type": "timeseries"
     },
     {
@@ -1306,13 +941,13 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": true,
+            "spanNulls": false,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -1335,268 +970,7 @@
               }
             ]
           },
-          "unit": "rps"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 6,
-        "y": 31
-      },
-      "id": 22,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "topk(10, avg(sds_write_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\"}) BY (sds_name))",
-          "intervalFactor": 2,
-          "legendFormat": "{{sds_name}}",
-          "refId": "A",
-          "step": 240
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 10 SDS write op/sec",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "KBs"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 12,
-        "y": 31
-      },
-      "id": 23,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "topk(10, avg(sds_read_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\"}) BY (sds_name))",
-          "intervalFactor": 2,
-          "legendFormat": "{{sds_name}}",
-          "refId": "A",
-          "step": 240
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 10 SDS read bandwidth",
-      "type": "timeseries"
-    },
-    {
-      "alert": {
-        "enabled": false
-      },
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "KBs"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 8,
-        "w": 6,
-        "x": 18,
-        "y": 31
-      },
-      "id": 24,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "topk(10, avg(sds_write_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\"}) BY (sds_name))",
-          "intervalFactor": 2,
-          "legendFormat": "{{sds_name}}",
-          "refId": "A",
-          "step": 240
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 10 SDS write bandwidth",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "ms"
+          "unit": "µs"
         },
         "overrides": []
       },
@@ -1604,7 +978,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 39
+        "y": 21
       },
       "id": 13,
       "links": [],
@@ -1616,7 +990,7 @@
             "max",
             "min"
           ],
-          "displayMode": "hidden",
+          "displayMode": "table",
           "placement": "bottom"
         },
         "tooltip": {
@@ -1626,9 +1000,9 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "max(device_read_latency_ms{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}) by (sds_name)",
+          "expr": "max(device_read_latency_ms{clu_name=\"$CLU\"}) by (sto_name,pdo_name)",
           "intervalFactor": 2,
-          "legendFormat": "{{sds_name}}",
+          "legendFormat": "{{pdo_name}} / {{sto_name}}",
           "refId": "A",
           "step": 120
         }
@@ -1661,13 +1035,13 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": true,
+            "spanNulls": false,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -1690,7 +1064,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "µs"
         },
         "overrides": []
       },
@@ -1698,7 +1072,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 39
+        "y": 21
       },
       "id": 14,
       "links": [],
@@ -1710,7 +1084,7 @@
             "max",
             "min"
           ],
-          "displayMode": "hidden",
+          "displayMode": "table",
           "placement": "bottom"
         },
         "tooltip": {
@@ -1720,9 +1094,9 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "max(device_write_latency_ms{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}) by (sds_name)",
+          "expr": "max(device_write_latency_ms{clu_name=\"$CLU\"}) by (sto_name,pdo_name)",
           "intervalFactor": 2,
-          "legendFormat": "{{sds_name}}",
+          "legendFormat": "{{pdo_name}} / {{sto_name}}",
           "refId": "A",
           "step": 120
         }
@@ -1731,13 +1105,409 @@
       "timeShift": null,
       "title": "Max Pool's write latencies",
       "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Read bw"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "KBs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Write bw"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "KBs"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 0,
+        "y": 29
+      },
+      "id": 15,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.2.1",
+      "targets": [
+        {
+          "expr": "system_read_fwd_rebuild_iops{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Read ops",
+          "refId": "A",
+          "step": 240
+        },
+        {
+          "expr": "system_write_fwd_rebuild_iops{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Write ops",
+          "refId": "B",
+          "step": 240
+        },
+        {
+          "expr": "system_read_fwd_rebuild_kb{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Read bw",
+          "refId": "C",
+          "step": 240
+        },
+        {
+          "expr": "system_write_fwd_rebuild_kb{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Write bw",
+          "refId": "D",
+          "step": 240
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Forward Rebuild IOPs/Bandwidth",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Read bw"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "KBs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Write bw"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "KBs"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 8,
+        "y": 29
+      },
+      "id": 16,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.2.1",
+      "targets": [
+        {
+          "expr": "system_read_bck_rebuild_iops{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Read ops",
+          "refId": "A",
+          "step": 240
+        },
+        {
+          "expr": "system_write_bck_rebuild_iops{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Write ops",
+          "refId": "B",
+          "step": 240
+        },
+        {
+          "expr": "system_read_bck_rebuild_kb{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Read bw",
+          "refId": "C",
+          "step": 240
+        },
+        {
+          "expr": "system_write_bck_rebuild_kb{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Write bw",
+          "refId": "D",
+          "step": 240
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Backward Rebuild IOPs/Bandwidth",
+      "type": "timeseries"
+    },
+    {
+      "datasource": "${DS_PROMETHEUS}",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "drawStyle": "line",
+            "fillOpacity": 10,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "never",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "iops"
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Read bw"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "KBs"
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Write bw"
+            },
+            "properties": [
+              {
+                "id": "unit",
+                "value": "KBs"
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 7,
+        "w": 8,
+        "x": 16,
+        "y": 29
+      },
+      "id": 17,
+      "links": [],
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom"
+        },
+        "tooltip": {
+          "mode": "single"
+        }
+      },
+      "pluginVersion": "8.2.1",
+      "targets": [
+        {
+          "expr": "system_read_rebalance_iops{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Read ops",
+          "refId": "A",
+          "step": 240
+        },
+        {
+          "expr": "system_write_rebalance_iops{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Write ops",
+          "refId": "B",
+          "step": 240
+        },
+        {
+          "expr": "system_read_rebalance_kb{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Read bw",
+          "refId": "C",
+          "step": 240
+        },
+        {
+          "expr": "system_write_rebalance_kb{clu_name=\"$CLU\"}",
+          "intervalFactor": 2,
+          "legendFormat": "Write bw",
+          "refId": "D",
+          "step": 240
+        }
+      ],
+      "timeFrom": null,
+      "timeShift": null,
+      "title": "Rebalance IOPs/Bandwidth",
+      "type": "timeseries"
     }
   ],
   "refresh": false,
   "schemaVersion": 31,
   "style": "dark",
   "tags": [
-    "sio"
+    "PowerFlex"
   ],
   "templating": {
     "list": [
@@ -1755,60 +1525,10 @@
         "name": "CLU",
         "options": [],
         "query": {
-          "query": "label_values(storagepool_num_devices, clu_name)",
+          "query": "label_values(system_num_sds, clu_name)",
           "refId": "Prometheus-CLU-Variable-Query"
         },
         "refresh": 2,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": null,
-        "tagsQuery": null,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "",
-        "description": null,
-        "error": null,
-        "hide": 0,
-        "includeAll": false,
-        "label": "Protection Domain",
-        "multi": false,
-        "name": "DOMAIN",
-        "options": [],
-        "query": {
-          "query": "label_values(storagepool_num_devices{clu_name=\"$CLU\"}, pdo_name)",
-          "refId": "Prometheus-DOMAIN-Variable-Query"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": null,
-        "tagsQuery": null,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "",
-        "description": null,
-        "error": null,
-        "hide": 0,
-        "includeAll": false,
-        "label": "Storage Pool",
-        "multi": false,
-        "name": "POOL",
-        "options": [],
-        "query": {
-          "query": "label_values(storagepool_num_devices{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\"}, sto_name)",
-          "refId": "Prometheus-POOL-Variable-Query"
-        },
-        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
@@ -1848,7 +1568,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "3 - PowerFlex - Storage Pools",
-  "uid": "amZYqGKnz",
-  "version": 10
+  "title": "1 - PowerFlex - Cluster",
+  "uid": "Jetc3MK7k",
+  "version": 5
 }
