@@ -11,16 +11,10 @@
   ],
   "__requires": [
     {
-      "type": "panel",
-      "id": "gauge",
-      "name": "Gauge",
-      "version": ""
-    },
-    {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.2.1"
+      "version": "8.2.3"
     },
     {
       "type": "datasource",
@@ -32,12 +26,6 @@
       "type": "panel",
       "id": "stat",
       "name": "Stat",
-      "version": ""
-    },
-    {
-      "type": "panel",
-      "id": "text",
-      "name": "Text",
       "version": ""
     },
     {
@@ -71,30 +59,10 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1635435356169,
+  "iteration": 1636490770339,
   "links": [],
   "liveNow": false,
   "panels": [
-    {
-      "datasource": null,
-      "editable": true,
-      "error": false,
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 6,
-      "isNew": true,
-      "links": [],
-      "options": {
-        "content": "<center><h2><b>Sdc statistics</b> : $CLU / $SDC</h2></center>",
-        "mode": "html"
-      },
-      "pluginVersion": "8.2.1",
-      "type": "text"
-    },
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
@@ -123,14 +91,6 @@
               {
                 "color": "rgba(50, 172, 45, 0.97)",
                 "value": null
-              },
-              {
-                "color": "rgba(237, 129, 40, 0.89)",
-                "value": 75000
-              },
-              {
-                "color": "rgba(245, 54, 54, 0.9)",
-                "value": 90000
               }
             ]
           },
@@ -142,13 +102,16 @@
         "h": 8,
         "w": 4,
         "x": 0,
-        "y": 3
+        "y": 0
       },
       "id": 2,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -157,11 +120,10 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
           "expr": "sdc_read_user_data_iops{sdc_id=\"$SDC_ID\"}",
@@ -173,7 +135,7 @@
       ],
       "timeFrom": "1m",
       "title": "Read Op/s",
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -201,16 +163,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgba(50, 172, 45, 0.97)",
+                "color": "orange",
                 "value": null
-              },
-              {
-                "color": "rgba(237, 129, 40, 0.89)",
-                "value": 75000
-              },
-              {
-                "color": "rgba(245, 54, 54, 0.9)",
-                "value": 90000
               }
             ]
           },
@@ -222,13 +176,16 @@
         "h": 8,
         "w": 4,
         "x": 4,
-        "y": 3
+        "y": 0
       },
       "id": 3,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -237,11 +194,10 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
           "expr": "sdc_write_user_data_iops{sdc_id=\"$SDC_ID\"}",
@@ -253,7 +209,7 @@
       ],
       "timeFrom": "1m",
       "title": "Write Op/s",
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -295,7 +251,7 @@
         "h": 8,
         "w": 8,
         "x": 8,
-        "y": 3
+        "y": 0
       },
       "id": 7,
       "interval": null,
@@ -316,7 +272,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
           "expr": "sdc_mapped_volumes{sdc_id=\"$SDC_ID\"}",
@@ -356,14 +312,6 @@
               {
                 "color": "rgba(50, 172, 45, 0.97)",
                 "value": null
-              },
-              {
-                "color": "rgba(237, 129, 40, 0.89)",
-                "value": 50000
-              },
-              {
-                "color": "rgba(245, 54, 54, 0.9)",
-                "value": 70000
               }
             ]
           },
@@ -375,26 +323,28 @@
         "h": 8,
         "w": 4,
         "x": 16,
-        "y": 3
+        "y": 0
       },
       "id": 4,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
-        "orientation": "horizontal",
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "auto",
         "reduceOptions": {
           "calcs": [
-            "mean"
+            "lastNotNull"
           ],
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
           "expr": "sdc_read_user_data_kb{sdc_id=\"$SDC_ID\"}",
@@ -404,8 +354,8 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Read Mb/s",
-      "type": "gauge"
+      "title": "Read MB/s",
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -433,16 +383,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgba(50, 172, 45, 0.97)",
+                "color": "dark-orange",
                 "value": null
-              },
-              {
-                "color": "rgba(237, 129, 40, 0.89)",
-                "value": 50000
-              },
-              {
-                "color": "rgba(245, 54, 54, 0.9)",
-                "value": 70000
               }
             ]
           },
@@ -454,13 +396,16 @@
         "h": 8,
         "w": 4,
         "x": 20,
-        "y": 3
+        "y": 0
       },
       "id": 5,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -469,11 +414,10 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
           "expr": "sdc_write_user_data_kb{sdc_id=\"$SDC_ID\"}",
@@ -483,8 +427,8 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Write Mb/s",
-      "type": "gauge"
+      "title": "Write MB/s",
+      "type": "stat"
     },
     {
       "datasource": "${DS_PROMETHEUS}",
@@ -506,7 +450,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -543,7 +487,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 11
+        "y": 8
       },
       "id": 10,
       "links": [],
@@ -609,7 +553,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -646,7 +590,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 11
+        "y": 8
       },
       "id": 8,
       "links": [],
@@ -694,7 +638,7 @@
   "schemaVersion": 31,
   "style": "dark",
   "tags": [
-    "sio"
+    "PowerFlex"
   ],
   "templating": {
     "list": [

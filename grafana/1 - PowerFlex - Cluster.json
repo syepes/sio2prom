@@ -11,16 +11,10 @@
   ],
   "__requires": [
     {
-      "type": "panel",
-      "id": "gauge",
-      "name": "Gauge",
-      "version": ""
-    },
-    {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.2.1"
+      "version": "8.2.3"
     },
     {
       "type": "datasource",
@@ -30,8 +24,8 @@
     },
     {
       "type": "panel",
-      "id": "text",
-      "name": "Text",
+      "id": "stat",
+      "name": "Stat",
       "version": ""
     },
     {
@@ -65,30 +59,10 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1635435154224,
+  "iteration": 1636490739242,
   "links": [],
   "liveNow": false,
   "panels": [
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "editable": true,
-      "error": false,
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 6,
-      "isNew": true,
-      "links": [],
-      "options": {
-        "content": "<center><h2><b>Cluster statistics</b> : $CLU</h2></center>",
-        "mode": "html"
-      },
-      "pluginVersion": "8.2.1",
-      "type": "text"
-    },
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
@@ -117,10 +91,6 @@
               {
                 "color": "green",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -132,13 +102,16 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 3
+        "y": 0
       },
       "id": 2,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -147,11 +120,10 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
           "expr": "system_read_total_iops{clu_name=\"$CLU\"}",
@@ -162,7 +134,7 @@
       ],
       "timeFrom": "1m",
       "title": "Read Op/s",
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -190,12 +162,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "orange",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -207,13 +175,16 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 3
+        "y": 0
       },
       "id": 3,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -222,11 +193,10 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
           "expr": "system_write_total_iops{clu_name=\"$CLU\"}",
@@ -237,7 +207,7 @@
       ],
       "timeFrom": "1m",
       "title": "Write Op/s",
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -267,14 +237,6 @@
               {
                 "color": "rgba(50, 172, 45, 0.97)",
                 "value": null
-              },
-              {
-                "color": "rgba(237, 129, 40, 0.89)",
-                "value": 3000000
-              },
-              {
-                "color": "rgba(245, 54, 54, 0.9)",
-                "value": 3500000
               }
             ]
           },
@@ -286,13 +248,16 @@
         "h": 7,
         "w": 6,
         "x": 12,
-        "y": 3
+        "y": 0
       },
       "id": 4,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -301,11 +266,10 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
           "expr": "system_read_total_kb{clu_name=\"$CLU\"}",
@@ -315,8 +279,8 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Read Mb/s",
-      "type": "gauge"
+      "title": "Read MB/s",
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -344,16 +308,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgba(50, 172, 45, 0.97)",
+                "color": "dark-orange",
                 "value": null
-              },
-              {
-                "color": "rgba(237, 129, 40, 0.89)",
-                "value": 3000000
-              },
-              {
-                "color": "rgba(245, 54, 54, 0.9)",
-                "value": 3500000
               }
             ]
           },
@@ -365,13 +321,16 @@
         "h": 7,
         "w": 6,
         "x": 18,
-        "y": 3
+        "y": 0
       },
       "id": 5,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -380,11 +339,10 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
           "expr": "system_write_total_kb{clu_name=\"$CLU\"}",
@@ -394,8 +352,8 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Write Mb/s",
-      "type": "gauge"
+      "title": "Write MB/s",
+      "type": "stat"
     },
     {
       "alert": {
@@ -420,7 +378,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -457,14 +415,14 @@
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 10
+        "y": 7
       },
       "id": 7,
       "links": [],
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
+          "displayMode": "list",
           "placement": "bottom"
         },
         "tooltip": {
@@ -474,19 +432,23 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "exemplar": true,
           "expr": "system_read_total_iops{clu_name=\"$CLU\"}",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "R",
+          "legendFormat": "Read Ops",
           "metric": "",
           "refId": "A",
           "step": 120
         },
         {
+          "exemplar": true,
           "expr": "system_write_total_iops{clu_name=\"$CLU\"}",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "W",
+          "legendFormat": "Write Ops",
           "metric": "",
           "refId": "B",
           "step": 120
@@ -520,7 +482,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -557,14 +519,14 @@
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 10
+        "y": 7
       },
       "id": 8,
       "links": [],
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
+          "displayMode": "list",
           "placement": "bottom"
         },
         "tooltip": {
@@ -574,19 +536,23 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "exemplar": true,
           "expr": "system_read_total_kb{clu_name=\"$CLU\"}",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "R",
+          "legendFormat": "Read bw",
           "metric": "",
           "refId": "A",
           "step": 120
         },
         {
+          "exemplar": true,
           "expr": "system_write_total_kb{clu_name=\"$CLU\"}",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "W",
+          "legendFormat": "Write bw",
           "metric": "",
           "refId": "B",
           "step": 120
@@ -620,7 +586,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -657,7 +623,7 @@
         "h": 7,
         "w": 6,
         "x": 0,
-        "y": 17
+        "y": 14
       },
       "id": 9,
       "links": [],
@@ -674,7 +640,9 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "exemplar": true,
           "expr": "topk(10, avg(sdc_read_user_data_iops{clu_name=\"$CLU\"}) BY (sdc_name))",
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "{{sdc_name}}",
           "refId": "A",
@@ -683,7 +651,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Sdc's read op/sec",
+      "title": "Top 10 SDC's read op/sec",
       "type": "timeseries"
     },
     {
@@ -706,7 +674,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -743,7 +711,7 @@
         "h": 7,
         "w": 6,
         "x": 6,
-        "y": 17
+        "y": 14
       },
       "id": 10,
       "links": [],
@@ -760,7 +728,9 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "exemplar": true,
           "expr": "topk(10, avg(sdc_write_user_data_iops{clu_name=\"$CLU\"}) BY (sdc_name))",
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "{{sdc_name}}",
           "refId": "A",
@@ -769,7 +739,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Sdc's write op/sec",
+      "title": "Top 10 SDC's write op/sec",
       "type": "timeseries"
     },
     {
@@ -792,7 +762,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -829,7 +799,7 @@
         "h": 7,
         "w": 6,
         "x": 12,
-        "y": 17
+        "y": 14
       },
       "id": 11,
       "links": [],
@@ -846,7 +816,9 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "exemplar": true,
           "expr": "topk(10, avg(sdc_read_user_data_kb{clu_name=\"$CLU\"}) BY (sdc_name))",
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "{{sdc_name}}",
           "refId": "A",
@@ -855,7 +827,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Sdc's read bandwidth",
+      "title": "Top 10 SDC's read bandwidth",
       "type": "timeseries"
     },
     {
@@ -878,7 +850,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -915,7 +887,7 @@
         "h": 7,
         "w": 6,
         "x": 18,
-        "y": 17
+        "y": 14
       },
       "id": 12,
       "links": [],
@@ -932,7 +904,9 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "exemplar": true,
           "expr": "topk(10, avg(sdc_write_user_data_kb{clu_name=\"$CLU\"}) BY (sdc_name))",
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "{{sdc_name}}",
           "refId": "A",
@@ -941,7 +915,7 @@
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Sdc's write bandwidth",
+      "title": "Top 10 SDC's write bandwidth",
       "type": "timeseries"
     },
     {
@@ -967,7 +941,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -996,7 +970,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "µs"
         },
         "overrides": []
       },
@@ -1004,7 +978,7 @@
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 24
+        "y": 21
       },
       "id": 13,
       "links": [],
@@ -1061,7 +1035,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1090,7 +1064,7 @@
               }
             ]
           },
-          "unit": "ms"
+          "unit": "µs"
         },
         "overrides": []
       },
@@ -1098,7 +1072,7 @@
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 24
+        "y": 21
       },
       "id": 14,
       "links": [],
@@ -1152,7 +1126,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1214,14 +1188,14 @@
         "h": 7,
         "w": 8,
         "x": 0,
-        "y": 32
+        "y": 29
       },
       "id": 15,
       "links": [],
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
+          "displayMode": "list",
           "placement": "bottom"
         },
         "tooltip": {
@@ -1284,7 +1258,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1346,14 +1320,14 @@
         "h": 7,
         "w": 8,
         "x": 8,
-        "y": 32
+        "y": 29
       },
       "id": 16,
       "links": [],
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
+          "displayMode": "list",
           "placement": "bottom"
         },
         "tooltip": {
@@ -1416,7 +1390,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -1478,14 +1452,14 @@
         "h": 7,
         "w": 8,
         "x": 16,
-        "y": 32
+        "y": 29
       },
       "id": 17,
       "links": [],
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
+          "displayMode": "list",
           "placement": "bottom"
         },
         "tooltip": {
@@ -1533,7 +1507,7 @@
   "schemaVersion": 31,
   "style": "dark",
   "tags": [
-    "sio"
+    "PowerFlex"
   ],
   "templating": {
     "list": [
@@ -1546,7 +1520,7 @@
         "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
+        "label": "Cluster",
         "multi": false,
         "name": "CLU",
         "options": [],

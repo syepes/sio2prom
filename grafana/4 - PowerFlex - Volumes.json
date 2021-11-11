@@ -11,16 +11,10 @@
   ],
   "__requires": [
     {
-      "type": "panel",
-      "id": "gauge",
-      "name": "Gauge",
-      "version": ""
-    },
-    {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.2.1"
+      "version": "8.2.3"
     },
     {
       "type": "datasource",
@@ -30,8 +24,8 @@
     },
     {
       "type": "panel",
-      "id": "text",
-      "name": "Text",
+      "id": "stat",
+      "name": "Stat",
       "version": ""
     },
     {
@@ -65,30 +59,10 @@
   "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1635435253354,
+  "iteration": 1636490761805,
   "links": [],
   "liveNow": false,
   "panels": [
-    {
-      "datasource": null,
-      "editable": true,
-      "error": false,
-      "gridPos": {
-        "h": 3,
-        "w": 24,
-        "x": 0,
-        "y": 0
-      },
-      "id": 6,
-      "isNew": true,
-      "links": [],
-      "options": {
-        "content": "<center><h2><b>Cluster statistics</b> : $CLU</h2></center>",
-        "mode": "html"
-      },
-      "pluginVersion": "8.2.1",
-      "type": "text"
-    },
     {
       "cacheTimeout": null,
       "datasource": "${DS_PROMETHEUS}",
@@ -115,12 +89,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "rgba(50, 172, 45, 0.97)",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -129,16 +99,19 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 6,
         "x": 0,
-        "y": 3
+        "y": 0
       },
       "id": 2,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -147,21 +120,22 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
-          "expr": "sum(sds_read_total_iops{sds_name=\"$SDS\"})",
+          "expr": "volume_read_user_data_iops{vol_id=\"$VOL_ID\"}",
           "intervalFactor": 2,
+          "metric": "storagepool",
           "refId": "A",
-          "step": 1800
+          "step": 2
         }
       ],
+      "timeFrom": "1m",
       "title": "Read Op/s",
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -189,12 +163,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
+                "color": "orange",
                 "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
               }
             ]
           },
@@ -203,16 +173,19 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 6,
         "x": 6,
-        "y": 3
+        "y": 0
       },
       "id": 3,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -221,21 +194,21 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
-          "expr": "sum(sds_write_total_iops{sds_name=\"$SDS\"})",
+          "expr": "volume_write_user_data_iops{vol_id=\"$VOL_ID\"}",
           "intervalFactor": 2,
           "refId": "A",
-          "step": 1800
+          "step": 2
         }
       ],
+      "timeFrom": "1m",
       "title": "Write Op/s",
-      "type": "gauge"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -257,7 +230,7 @@
               "type": "special"
             }
           ],
-          "max": 4000000,
+          "max": 150000,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
@@ -265,14 +238,6 @@
               {
                 "color": "rgba(50, 172, 45, 0.97)",
                 "value": null
-              },
-              {
-                "color": "rgba(237, 129, 40, 0.89)",
-                "value": 3000000
-              },
-              {
-                "color": "rgba(245, 54, 54, 0.9)",
-                "value": 3500000
               }
             ]
           },
@@ -281,16 +246,19 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 6,
         "x": 12,
-        "y": 3
+        "y": 0
       },
       "id": 4,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -299,21 +267,21 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
-          "expr": "sum(sds_read_total_kb{sds_name=\"$SDS\"})",
+          "expr": "volume_read_user_data_kb{vol_id=\"$VOL_ID\"}",
           "intervalFactor": 2,
           "refId": "A",
-          "step": 1800
+          "step": 2
         }
       ],
-      "title": "Read Mb/s",
-      "type": "gauge"
+      "timeFrom": "1m",
+      "title": "Read MB/s",
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
@@ -335,22 +303,14 @@
               "type": "special"
             }
           ],
-          "max": 4000000,
+          "max": 150000,
           "min": 0,
           "thresholds": {
             "mode": "absolute",
             "steps": [
               {
-                "color": "rgba(50, 172, 45, 0.97)",
+                "color": "dark-orange",
                 "value": null
-              },
-              {
-                "color": "rgba(237, 129, 40, 0.89)",
-                "value": 3000000
-              },
-              {
-                "color": "rgba(245, 54, 54, 0.9)",
-                "value": 3500000
               }
             ]
           },
@@ -359,16 +319,19 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 6,
         "x": 18,
-        "y": 3
+        "y": 0
       },
       "id": 5,
       "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
         "orientation": "horizontal",
         "reduceOptions": {
           "calcs": [
@@ -377,23 +340,26 @@
           "fields": "",
           "values": false
         },
-        "showThresholdLabels": false,
-        "showThresholdMarkers": true,
-        "text": {}
+        "text": {},
+        "textMode": "auto"
       },
-      "pluginVersion": "8.2.1",
+      "pluginVersion": "8.2.3",
       "targets": [
         {
-          "expr": "sum(sds_write_total_kb{sds_name=\"$SDS\"})",
+          "expr": "volume_write_user_data_kb{vol_id=\"$VOL_ID\"}",
           "intervalFactor": 2,
           "refId": "A",
-          "step": 1800
+          "step": 2
         }
       ],
-      "title": "Write Mb/s",
-      "type": "gauge"
+      "timeFrom": "1m",
+      "title": "Write MB/s",
+      "type": "stat"
     },
     {
+      "alert": {
+        "enabled": false
+      },
       "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
@@ -413,13 +379,13 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
             },
             "showPoints": "never",
-            "spanNulls": false,
+            "spanNulls": true,
             "stacking": {
               "group": "A",
               "mode": "none"
@@ -447,17 +413,20 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 12,
         "x": 0,
-        "y": 10
+        "y": 8
       },
       "id": 7,
       "links": [],
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "hidden",
+          "calcs": [
+            "mean",
+            "max"
+          ],
+          "displayMode": "list",
           "placement": "bottom"
         },
         "tooltip": {
@@ -467,19 +436,21 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "sds_read_total_iops{sds_name=\"$SDS\"}",
+          "exemplar": true,
+          "expr": "volume_read_user_data_iops{vol_id=\"$VOL_ID\"}",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
-          "legendFormat": "R",
+          "legendFormat": "Read",
           "metric": "",
           "refId": "A",
           "step": 120
         },
         {
-          "expr": "sds_write_total_iops{sds_name=\"$SDS\"}",
+          "expr": "volume_write_user_data_iops{vol_id=\"$VOL_ID\"}",
           "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "W",
+          "legendFormat": "Write",
           "metric": "",
           "refId": "B",
           "step": 120
@@ -510,7 +481,7 @@
               "viz": false
             },
             "lineInterpolation": "linear",
-            "lineWidth": 2,
+            "lineWidth": 1,
             "pointSize": 5,
             "scaleDistribution": {
               "type": "linear"
@@ -544,298 +515,19 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 7,
+        "h": 8,
         "w": 12,
         "x": 12,
-        "y": 10
+        "y": 8
       },
       "id": 8,
       "links": [],
       "options": {
         "legend": {
-          "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "sds_read_total_kb{sds_name=\"$SDS\"}",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "R",
-          "metric": "",
-          "refId": "A",
-          "step": 120
-        },
-        {
-          "expr": "sds_write_total_kb{sds_name=\"$SDS\"}",
-          "hide": false,
-          "intervalFactor": 2,
-          "legendFormat": "W",
-          "metric": "",
-          "refId": "B",
-          "step": 120
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Bandwidth",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 0,
-        "y": 17
-      },
-      "id": 13,
-      "links": [],
-      "options": {
-        "legend": {
           "calcs": [
             "mean",
-            "lastNotNull",
-            "max",
-            "min"
+            "max"
           ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "max(device_read_latency_ms{sds_name=\"$SDS\"}) by (dev_name)",
-          "intervalFactor": 2,
-          "legendFormat": "{{dev_name}}",
-          "refId": "A",
-          "step": 120
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Disks read latencies",
-      "type": "timeseries"
-    },
-    {
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "ms"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 12,
-        "w": 12,
-        "x": 12,
-        "y": 17
-      },
-      "id": 14,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [
-            "mean",
-            "lastNotNull",
-            "max",
-            "min"
-          ],
-          "displayMode": "table",
-          "placement": "bottom"
-        },
-        "tooltip": {
-          "mode": "single"
-        }
-      },
-      "pluginVersion": "8.2.1",
-      "targets": [
-        {
-          "expr": "max(device_write_latency_ms{sds_name=\"$SDS\"}) by (dev_name)",
-          "intervalFactor": 2,
-          "legendFormat": "{{dev_name}}",
-          "refId": "A",
-          "step": 120
-        }
-      ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Disks write latencies",
-      "type": "timeseries"
-    },
-    {
-      "alert": {
-        "enabled": false
-      },
-      "datasource": "${DS_PROMETHEUS}",
-      "fieldConfig": {
-        "defaults": {
-          "color": {
-            "mode": "palette-classic"
-          },
-          "custom": {
-            "axisLabel": "",
-            "axisPlacement": "auto",
-            "barAlignment": 0,
-            "drawStyle": "line",
-            "fillOpacity": 10,
-            "gradientMode": "none",
-            "hideFrom": {
-              "legend": false,
-              "tooltip": false,
-              "viz": false
-            },
-            "lineInterpolation": "linear",
-            "lineWidth": 2,
-            "pointSize": 5,
-            "scaleDistribution": {
-              "type": "linear"
-            },
-            "showPoints": "never",
-            "spanNulls": true,
-            "stacking": {
-              "group": "A",
-              "mode": "none"
-            },
-            "thresholdsStyle": {
-              "mode": "off"
-            }
-          },
-          "mappings": [],
-          "thresholds": {
-            "mode": "absolute",
-            "steps": [
-              {
-                "color": "green",
-                "value": null
-              },
-              {
-                "color": "red",
-                "value": 80
-              }
-            ]
-          },
-          "unit": "deckbytes"
-        },
-        "overrides": []
-      },
-      "gridPos": {
-        "h": 7,
-        "w": 24,
-        "x": 0,
-        "y": 29
-      },
-      "id": 15,
-      "links": [],
-      "options": {
-        "legend": {
-          "calcs": [],
           "displayMode": "list",
           "placement": "bottom"
         },
@@ -846,16 +538,27 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "sds_capacity_use_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sds_name=\"$SDS\"}",
+          "expr": "volume_read_user_data_kb{vol_id=\"$VOL_ID\"}",
+          "hide": false,
           "intervalFactor": 2,
-          "legendFormat": "{{sds_name}}",
+          "legendFormat": "Read",
+          "metric": "",
           "refId": "A",
-          "step": 60
+          "step": 120
+        },
+        {
+          "expr": "volume_write_user_data_kb{vol_id=\"$VOL_ID\"}",
+          "hide": false,
+          "intervalFactor": 2,
+          "legendFormat": "Write",
+          "metric": "",
+          "refId": "B",
+          "step": 120
         }
       ],
       "timeFrom": null,
       "timeShift": null,
-      "title": "Used Capacity",
+      "title": "Bandwidth",
       "type": "timeseries"
     }
   ],
@@ -863,7 +566,7 @@
   "schemaVersion": 31,
   "style": "dark",
   "tags": [
-    "sio"
+    "PowerFlex"
   ],
   "templating": {
     "list": [
@@ -876,12 +579,12 @@
         "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
+        "label": "Cluster",
         "multi": false,
         "name": "CLU",
         "options": [],
         "query": {
-          "query": "label_values(storagepool_num_devices, clu_name)",
+          "query": "label_values(volume_read_user_data_iops, clu_name)",
           "refId": "Prometheus-CLU-Variable-Query"
         },
         "refresh": 1,
@@ -901,12 +604,12 @@
         "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
+        "label": "Protection Domain",
         "multi": false,
         "name": "DOMAIN",
         "options": [],
         "query": {
-          "query": "label_values(storagepool_num_devices{clu_name=\"$CLU\"}, pdo_name)",
+          "query": "label_values(volume_read_user_data_iops{clu_name=\"$CLU\"}, pdo_name)",
           "refId": "Prometheus-DOMAIN-Variable-Query"
         },
         "refresh": 1,
@@ -926,13 +629,63 @@
         "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
+        "label": "Storage Pool",
         "multi": false,
         "name": "POOL",
         "options": [],
         "query": {
-          "query": "label_values(storagepool_num_devices{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\"}, sto_name)",
+          "query": "label_values(volume_read_user_data_iops{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\"}, sto_name)",
           "refId": "Prometheus-POOL-Variable-Query"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": null,
+        "tagsQuery": null,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "",
+        "description": null,
+        "error": null,
+        "hide": 0,
+        "includeAll": false,
+        "label": "Volume",
+        "multi": false,
+        "name": "VOL",
+        "options": [],
+        "query": {
+          "query": "label_values(volume_read_user_data_iops{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\", sto_id=\"$POOL_ID\"}, vol_name)",
+          "refId": "Prometheus-VOL-Variable-Query"
+        },
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "tagValuesQuery": null,
+        "tagsQuery": null,
+        "type": "query"
+      },
+      {
+        "allValue": null,
+        "current": {},
+        "datasource": "${DS_PROMETHEUS}",
+        "definition": "",
+        "description": null,
+        "error": null,
+        "hide": 2,
+        "includeAll": false,
+        "label": null,
+        "multi": false,
+        "name": "VOL_ID",
+        "options": [],
+        "query": {
+          "query": "label_values(volume_read_user_data_iops{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\", sto_name=\"$POOL\"}, vol_id)",
+          "refId": "Prometheus-VOL_ID-Variable-Query"
         },
         "refresh": 1,
         "regex": "",
@@ -956,33 +709,8 @@
         "name": "POOL_ID",
         "options": [],
         "query": {
-          "query": "label_values(storagepool_num_devices{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\", sto_name=\"$POOL\"}, sto_id)",
+          "query": "label_values(volume_read_user_data_iops{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\"}, sto_id)",
           "refId": "Prometheus-POOL_ID-Variable-Query"
-        },
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 0,
-        "tagValuesQuery": null,
-        "tagsQuery": null,
-        "type": "query"
-      },
-      {
-        "allValue": null,
-        "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "label_values(device_read_size_bytes{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\", sto_id=\"$POOL_ID\"}, sds_name)",
-        "description": null,
-        "error": null,
-        "hide": 0,
-        "includeAll": false,
-        "label": null,
-        "multi": false,
-        "name": "SDS",
-        "options": [],
-        "query": {
-          "query": "label_values(device_read_size_bytes{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\", sto_id=\"$POOL_ID\"}, sds_name)",
-          "refId": "StandardVariableQuery"
         },
         "refresh": 1,
         "regex": "",
@@ -1024,7 +752,7 @@
     ]
   },
   "timezone": "browser",
-  "title": "2 - PowerFlex - SDS",
-  "uid": "R_2yqGFnz",
-  "version": 5
+  "title": "4 - PowerFlex - Volumes",
+  "uid": "qKeUqMFnz",
+  "version": 4
 }

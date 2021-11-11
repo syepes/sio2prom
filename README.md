@@ -13,13 +13,29 @@
 - User definable statistics via `metric_query_selection.json` see [REST API Reference Guide](https://docs.delltechnologies.com/bundle/PF_REST_API_RG)
 - [Prometheus](https://prometheus.io/) customizable metric naming via `metric_definition.json`
 
-### Examples
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_global.jpg" target="_blank" width="300">
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_pool.jpg" target="_blank" width="300">
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_cluster.jpg" target="_blank" width="300">
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sds.jpg" target="_blank" width="300">
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_sdc.jpg" target="_blank" width="300">
-<img src="https://raw.githubusercontent.com/syepes/sio2prom/master/grafana/sample_volume.jpg" target="_blank" width="300">
+### Grafana Dashboards examples
+_Grafana version 8+ required_
+
+**Global**  
+<img src="images/grafana_dashboard_0_powerflex_global_0.png" target="_blank" width="300">  
+<img src="images/grafana_dashboard_0_powerflex_global_1.png" target="_blank" width="300">
+
+**Cluster**  
+<img src="images/grafana_dashboard_1_powerflex_cluster_0.png" target="_blank" width="300">  
+<img src="images/grafana_dashboard_1_powerflex_cluster_1.png" target="_blank" width="300">  
+
+**SDS**  
+<img src="images/grafana_dashboard_2_powerflex_sds_0.png" target="_blank" width="300">  
+
+**Storage Pools**  
+<img src="images/grafana_dashboard_3_powerflex_pools_0.png" target="_blank" width="300">  
+<img src="images/grafana_dashboard_3_powerflex_pools_1.png" target="_blank" width="300">  
+
+**Volumes**  
+<img src="images/grafana_dashboard_4_powerflex_volumes_0.png" target="_blank" width="300">  
+
+**SDC**  
+<img src="images/grafana_dashboard_5_powerflex_SDC_0.png" target="_blank" width="300">  
 
 ## Usage (Docker)
 
