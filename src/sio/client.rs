@@ -25,10 +25,10 @@ impl<'a> ClientInfo<'a> {
     trace!("auth");
     if let Ok(c) = reqwest::Client::builder().user_agent(env!("CARGO_PKG_NAME")).danger_accept_invalid_certs(true).timeout(Duration::from_secs(10)).connection_verbose(true).build() {
       if !self.auth_usr.unwrap().is_empty() && !self.auth_pwd.unwrap().is_empty() {
-        let req_url = format!("https://{ip}/api/login", ip = self.ip.unwrap().to_string());
+        let req_url = format!("https://{ip}/api/login", ip = self.ip.unwrap());
         trace!("Auth on {:?} with {:?}/{:?}", req_url.clone(), self.auth_usr.unwrap().to_string(), self.auth_pwd.unwrap().to_string());
 
-        let req = c.get(req_url).basic_auth(self.auth_usr.unwrap().clone(), Some(self.auth_pwd.unwrap().clone()));
+        let req = c.get(req_url).basic_auth(self.auth_usr.unwrap(), Some(self.auth_pwd.unwrap()));
         match req.send().await {
           Ok(r) => {
             trace!("resp:{:#?}", r);
@@ -43,16 +43,16 @@ impl<'a> ClientInfo<'a> {
               },
               StatusCode::UNAUTHORIZED | StatusCode::FORBIDDEN => {
                 *self.token.borrow_mut() = None;
-                let msg = match r.json::<serde_json::Value>().await.unwrap() {
-                  Value::Object(m) => m.get("message").unwrap().to_string(),
+                let msg: String = match r.json::<serde_json::Value>().await {
+                  Ok(Value::Object(m)) => m.get("message").map(|m| m.to_string().replace('"', "")).unwrap_or_else(|| "unknown".to_string()),
                   _ => "unknown".to_string(),
                 };
                 error!("Auth failed: {:?}", msg);
               },
               _ => {
                 *self.token.borrow_mut() = None;
-                let msg = match r.json::<serde_json::Value>().await.unwrap() {
-                  Value::Object(m) => m.get("message").unwrap().to_string(),
+                let msg: String = match r.json::<serde_json::Value>().await {
+                  Ok(Value::Object(m)) => m.get("message").map(|m| m.to_string().replace('"', "")).unwrap_or_else(|| "unknown".to_string()),
                   _ => "unknown".to_string(),
                 };
                 error!("Unknown auth request error: {:?}", msg);
@@ -61,7 +61,7 @@ impl<'a> ClientInfo<'a> {
           },
           Err(e) => {
             *self.token.borrow_mut() = None;
-            error!("Auth request error: {:?}", e);
+            error!("Auth request error: {:?}", e.to_string());
           },
         }
       } else {
@@ -77,11 +77,11 @@ impl<'a> ClientInfo<'a> {
     trace!("instances");
     if let Ok(c) = reqwest::Client::builder().user_agent(env!("CARGO_PKG_NAME")).danger_accept_invalid_certs(true).timeout(Duration::from_secs(15)).connection_verbose(true).build() {
       if !self.auth_usr.unwrap().is_empty() && self.token.borrow().is_some() {
-        let req_url = format!("https://{ip}/api/instances", ip = self.ip.unwrap().to_string());
+        let req_url = format!("https://{ip}/api/instances", ip = self.ip.unwrap());
         let t = self.token.borrow().as_ref().unwrap().clone();
         trace!("Auth on {:?} with {:?}/{:?}", req_url.clone(), self.auth_usr, t);
 
-        let req = c.get(req_url).basic_auth(self.auth_usr.unwrap().clone(), Some(t));
+        let req = c.get(req_url).basic_auth(self.auth_usr.unwrap(), Some(t));
         match req.send().await {
           Ok(r) => {
             trace!("resp:{:#?}", r);
@@ -100,8 +100,8 @@ impl<'a> ClientInfo<'a> {
                 Err(anyhow!("Auth failed"))
               },
               _ => {
-                let msg = match r.json::<serde_json::Value>().await.unwrap() {
-                  Value::Object(m) => m.get("message").unwrap().to_string(),
+                let msg: String = match r.json::<serde_json::Value>().await {
+                  Ok(Value::Object(m)) => m.get("message").map(|m| m.to_string().replace('"', "")).unwrap_or_else(|| "unknown".to_string()),
                   _ => "unknown".to_string(),
                 };
                 error!("Unknown instance request error: {:?}", msg);
@@ -110,8 +110,8 @@ impl<'a> ClientInfo<'a> {
             }
           },
           Err(e) => {
-            error!("Instance request error: {:?}", e);
-            Err(anyhow!("Instance request error: {:?}", e))
+            error!("Instance request error: {:?}", e.to_string());
+            Err(anyhow!("Instance request error: {:?}", e.to_string()))
           },
         }
       } else {
@@ -127,7 +127,7 @@ impl<'a> ClientInfo<'a> {
     trace!("stats");
     if let Ok(c) = reqwest::Client::builder().user_agent(env!("CARGO_PKG_NAME")).danger_accept_invalid_certs(true).timeout(Duration::from_secs(15)).connection_verbose(true).build() {
       if !self.auth_usr.unwrap().is_empty() && self.token.borrow().is_some() {
-        let req_url = format!("https://{ip}/api/instances/querySelectedStatistics", ip = self.ip.unwrap().to_string());
+        let req_url = format!("https://{ip}/api/instances/querySelectedStatistics", ip = self.ip.unwrap());
         let t = self.token.borrow().as_ref().unwrap().clone();
         trace!("Auth on {:?} with {:?}/{:?}", req_url.clone(), self.auth_usr, t);
 
@@ -135,7 +135,7 @@ impl<'a> ClientInfo<'a> {
         let query = super::utils::read_json(&path).expect("Could not load the query (querySelectedStatistics)");
         trace!("query: {:#?}", query);
 
-        let req = c.post(req_url).basic_auth(self.auth_usr.unwrap().clone(), Some(t));
+        let req = c.post(req_url).basic_auth(self.auth_usr.unwrap(), Some(t));
         match req.json(&query).send().await {
           Ok(r) => {
             trace!("resp:{:#?}", r);
@@ -150,8 +150,8 @@ impl<'a> ClientInfo<'a> {
                 }
               },
               StatusCode::BAD_REQUEST => {
-                let msg = match r.json::<serde_json::Value>().await.unwrap() {
-                  Value::Object(m) => m.get("message").unwrap().to_string(),
+                let msg: String = match r.json::<serde_json::Value>().await {
+                  Ok(Value::Object(m)) => m.get("message").map(|m| m.to_string().replace('"', "")).unwrap_or_else(|| "unknown".to_string()),
                   _ => "unknown".to_string(),
                 };
 
@@ -160,8 +160,8 @@ impl<'a> ClientInfo<'a> {
               },
               StatusCode::UNAUTHORIZED | StatusCode::FORBIDDEN => Err(anyhow!("Auth failed")),
               _ => {
-                let msg = match r.json::<serde_json::Value>().await.unwrap() {
-                  Value::Object(m) => m.get("message").unwrap().to_string(),
+                let msg: String = match r.json::<serde_json::Value>().await {
+                  Ok(Value::Object(m)) => m.get("message").map(|m| m.to_string().replace('"', "")).unwrap_or_else(|| "unknown".to_string()),
                   _ => "unknown".to_string(),
                 };
                 error!("Unknown stats request error: {:?}", msg);
@@ -170,8 +170,8 @@ impl<'a> ClientInfo<'a> {
             }
           },
           Err(e) => {
-            error!("Stats request error: {:?}", e);
-            Err(anyhow!("Stats request error: {:?}", e))
+            error!("Stats request error: {:?}", e.to_string());
+            Err(anyhow!("Stats request error: {:?}", e.to_string()))
           },
         }
       } else {
@@ -194,9 +194,9 @@ impl<'a> ClientInfo<'a> {
     for (key, value) in instances.iter() {
       if value.is_array() {
         for items in value.as_array().unwrap().iter() {
-          let item_type = key.replace("List", "").to_string().replace('"', "").to_lowercase();
-          let item_id = items.as_object().and_then(|o| o.get("id").map(|s| s.to_string().replace('"', ""))).expect("item_id Not found");
-          let item_name = items.as_object().and_then(|o| o.get("name").map(|s| s.to_string().replace('"', ""))).unwrap_or("unknown_item".to_string());
+          let item_type: String = key.replace("List", "").to_string().replace('"', "").to_lowercase();
+          let item_id: String = items.as_object().and_then(|o| o.get("id").map(|s| s.to_string().replace('"', ""))).expect("item_id Not found");
+          let item_name: String = items.as_object().and_then(|o| o.get("name").map(|s| s.to_string().replace('"', ""))).unwrap_or_else(|| "unknown_item".to_string());
           trace!("Instance item type: {} / name: {} / id: {}", item_type, item_name, item_id);
 
           let items_links = match items.get("links").and_then(|v| v.as_array()) {
@@ -396,6 +396,7 @@ impl<'a> ClientInfo<'a> {
         let mut label: HashMap<&'static str, String> = HashMap::new();
         let vol_name = vol.get("name").map(|s| s.to_string().replace('"', "")).expect("vol_name Not found");
         let vol_id = vol.get("id").map(|s| s.to_string().replace('"', "")).expect("vol_id Not found");
+        let vol_type = vol.get("volumeType").map(|s| s.to_string().replace('"', "")).expect("vol_type Not found");
 
         for sp in instances["storagePoolList"].as_array().unwrap().iter() {
           for sto in sp.as_object().iter() {
@@ -420,6 +421,7 @@ impl<'a> ClientInfo<'a> {
         label.entry("clu_id").or_insert_with(|| clu_id.to_string());
         label.entry("vol_name").or_insert_with(|| vol_name);
         label.entry("vol_id").or_insert_with(|| vol_id.to_string());
+        label.entry("vol_type").or_insert_with(|| vol_type.to_string());
         label.entry("sto_name").or_insert_with(|| parent_sto["name"].to_string());
         label.entry("sto_id").or_insert_with(|| parent_sto["id"].to_string());
         label.entry("pdo_name").or_insert_with(|| parent_pdo["name"].to_string());
@@ -553,7 +555,7 @@ impl<'a> ClientInfo<'a> {
       return None;
     }
 
-    let labels = self.labels(inst.as_ref().unwrap(), &rela.as_ref().unwrap());
+    let labels = self.labels(inst.as_ref().unwrap(), rela.as_ref().unwrap());
     if labels.is_err() {
       return None;
     }

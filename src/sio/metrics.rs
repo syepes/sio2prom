@@ -25,8 +25,8 @@ impl Metric {
 pub fn get<'a>(cfg_path: Option<&'a str>, inst: &Result<Map<String, serde_json::Value>, anyhow::Error>, stats: &Result<Map<String, serde_json::Value>, anyhow::Error>, labels: &Result<HashMap<&'static str, HashMap<String, HashMap<&'static str, String>>>, String>, rela: &Result<HashMap<&'static str, HashMap<String, HashMap<String, Vec<String>>>>, String>) -> Option<Vec<Metric>> {
   let mut metric_list: Vec<Metric> = Vec::new();
 
-  let m = convert_metrics(cfg_path, &stats.as_ref().unwrap(), &labels.as_ref().unwrap());
-  let s = convert_states(&inst.as_ref().unwrap(), &rela.as_ref().unwrap());
+  let m = convert_metrics(cfg_path, stats.as_ref().unwrap(), labels.as_ref().unwrap());
+  let s = convert_states(inst.as_ref().unwrap(), rela.as_ref().unwrap());
 
   if let Some(mut value) = m {
     metric_list.append(&mut value);
@@ -191,6 +191,62 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
       }
       if let Some(value) = sds_state_maintenance {
         let state: Metric = Metric::new("sds_state_maintenance".to_string(), "gauge".to_string(), "maintenanceState: NoMaintenance=0.0 or InMaintenance=1.0 or SetMaintenanceInProgress=2.0 or ExitMaintenanceInProgress=3.0".to_string(), label.clone(), value);
+        metric_list.push(state);
+      }
+    }
+  }
+
+  // Volumes
+  for vl in instances.get("volumeList").and_then(|v| v.as_array()).unwrap_or_else(|| {
+                                                                    error!("Failed to get 'volumeList' from instances");
+                                                                    &default_val
+                                                                  })
+  {
+    let mut parent_sto: HashMap<&'static str, String> = HashMap::new();
+    let mut parent_pdo: HashMap<&'static str, String> = HashMap::new();
+
+    for vol in vl.as_object().iter() {
+      let mut label: HashMap<&'static str, String> = HashMap::new();
+      let vol_name = vol.get("name").map(|s| s.to_string().replace('"', "")).expect("vol_name Not found");
+      let vol_id = vol.get("id").map(|s| s.to_string().replace('"', "")).expect("vol_id Not found");
+      let vol_type = vol.get("volumeType").map(|s| s.to_string().replace('"', "")).expect("vol_type Not found");
+
+      for sp in instances["storagePoolList"].as_array().unwrap().iter() {
+        for sto in sp.as_object().iter() {
+          if relations["parents"][&(vol_id)]["storagepool"].contains(&(sto["id"].to_string().replace('"', ""))) {
+            parent_sto.entry("name").or_insert_with(|| sto["name"].to_string().replace('"', ""));
+            parent_sto.entry("id").or_insert_with(|| sto["id"].to_string().replace('"', ""));
+            break;
+          }
+        }
+      }
+      for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
+        for pdo in pd.as_object().iter() {
+          if relations["parents"][&(parent_sto["id"].to_string().replace('"', ""))]["protectiondomain"].contains(&(pdo["id"].to_string().replace('"', ""))) {
+            parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
+            parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
+            break;
+          }
+        }
+      }
+
+      label.entry("clu_name").or_insert_with(|| clu_name.to_string());
+      label.entry("clu_id").or_insert_with(|| clu_id.to_string());
+      label.entry("vol_name").or_insert_with(|| vol_name);
+      label.entry("vol_id").or_insert_with(|| vol_id.to_string());
+      label.entry("vol_type").or_insert_with(|| vol_type.to_string());
+      label.entry("sto_name").or_insert_with(|| parent_sto["name"].to_string());
+      label.entry("sto_id").or_insert_with(|| parent_sto["id"].to_string());
+      label.entry("pdo_name").or_insert_with(|| parent_pdo["name"].to_string());
+      label.entry("pdo_id").or_insert_with(|| parent_pdo["id"].to_string());
+
+      let size_in_kb: Option<f64> = match vol.get("sizeInKb").map(|s| s.to_string().replace('"', "")) {
+        Some(s) => s.parse::<f64>().ok(),
+        None => None,
+      };
+
+      if let Some(value) = size_in_kb {
+        let state: Metric = Metric::new("volume_size_in_kb".to_string(), "gauge".to_string(), "volume_size_in_kb".to_string(), label.clone(), value);
         metric_list.push(state);
       }
     }

@@ -6,6 +6,11 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 0.2.6 - 2021-!-29
+
+- Added metric `volume_size_in_kb` (sizeInKb)
+- Added label `volumeType` to all volume metrics
+
 ## 0.2.5 - 2021-08-31
 
 - Added option for specifying the configuration path (folder) `--cfg_path`

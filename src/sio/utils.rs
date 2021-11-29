@@ -13,7 +13,7 @@ pub fn read_json(file: &str) -> Option<Map<String, serde_json::Value>> {
     Ok(mut f) => {
       let mut content: String = String::new();
       f.read_to_string(&mut content).expect("Error reading file");
-      let j: serde_json::Value = serde_json::from_str::<serde_json::Value>(&content).expect(&format!("Can't deserialize json file {}", file));
+      let j: serde_json::Value = serde_json::from_str::<serde_json::Value>(&content).unwrap_or_else(|_| panic!("Can't deserialize json file {}", file));
       Some(j.as_object().unwrap().clone())
     },
   }
