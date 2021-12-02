@@ -23,7 +23,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v3
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/$PROJECT_NAME
+          images: ${{ github.repository }}
 
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
