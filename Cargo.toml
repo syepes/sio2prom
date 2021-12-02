@@ -1,6 +1,6 @@
 [package]
 name = "sio2prom"
-version = "0.2.6"
+version = "0.2.7"
 edition = "2021"
 resolver = "2"
 authors = ["Sebastian YEPES F <syepes@gmail.com>"]
