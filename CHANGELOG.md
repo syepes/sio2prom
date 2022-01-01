@@ -6,6 +6,9 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 0.2.8 - 2021-01-01
+- Update dependencies
+
 ## 0.2.6 - 2021-11-29
 
 - Added metric `volume_size_in_kb` (sizeInKb)
