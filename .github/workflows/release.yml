@@ -3,41 +3,46 @@ name: release
 on:
   push:
     tags:
-      - "v*.*.*"
+      - "v[0-9]+.[0-9]+.[0-9]+"
+      - "[0-9]+.[0-9]+.[0-9]+"
+
 env:
   CARGO_TERM_COLOR: always
+  BIN_NAME: sio2prom
+  PROJECT_NAME: sio2prom
 
 jobs:
-  build:
+  docker:
+    name: Docker
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v2
 
       - name: Docker meta
-        uses: crazy-max/ghaction-docker-meta@v1.12.0
-        id: docker_meta
+        id: meta
+        uses: docker/metadata-action@v3
         with:
-          images: ${{ secrets.DOCKERHUB_USERNAME }}/sio2prom
+          images: ${{ github.repository }}
 
       - name: Set up QEMU
-        uses: docker/setup-qemu-action@v1.0.1
+        uses: docker/setup-qemu-action@v1
         with:
           platforms: linux/amd64,linux/arm/v7,linux/arm64
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1.1.1
+        uses: docker/setup-buildx-action@v1
         id: buildx
 
       - name: Login to DockerHub
-        uses: docker/login-action@v1.8.0
+        uses: docker/login-action@v1
         if: github.event_name != 'pull_request'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push
-        uses: docker/build-push-action@v2.3.0
+        uses: docker/build-push-action@v2
         id: docker_build
         with:
           builder: ${{ steps.buildx.outputs.name }}
@@ -45,6 +50,161 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm/v7,linux/arm64
           push: ${{ github.event_name != 'pull_request' }}
-          tags: ${{ steps.docker_meta.outputs.tags }}
-          labels: ${{ steps.docker_meta.outputs.labels }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           # https://github.com/docker/build-push-action/issues/252#issuecomment-804898823
+
+  binaries:
+    name: Binaries
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        build: [x86_64-linux, x86_64-windows] # aarch64-linux, x86_64-macos
+        include:
+          - build: x86_64-linux
+            os: ubuntu-20.04
+            rust: stable
+            target: x86_64-unknown-linux-gnu
+            cross: false
+          # - build: aarch64-linux
+          #   os: ubuntu-20.04
+          #   rust: stable
+          #   target: aarch64-unknown-linux-gnu
+          #   cross: true
+          # - build: x86_64-macos
+          #   os: macos-latest
+          #   rust: stable
+          #   target: x86_64-apple-darwin
+          #   cross: false
+          # - build: aarch64-macos
+          #   os: macos-latest
+          #   rust: stable
+          #   target: aarch64-apple-darwin
+          #   cross: false
+          - build: x86_64-windows
+            os: windows-2019
+            rust: stable
+            target: x86_64-pc-windows-msvc
+            cross: false
+        # - build: x86_64-win-gnu
+        #   os: windows-2019
+        #   rust: stable-x86_64-gnu
+        #   target: x86_64-pc-windows-gnu
+        # - build: win32-msvc
+        #   os: windows-2019
+        #   rust: stable
+        #   target: i686-pc-windows-msvc
+
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      - name: Install ${{ matrix.rust }} toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.rust }}
+          target: ${{ matrix.target }}
+          override: true
+
+      - name: Run cargo test
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ matrix.cross }}
+          command: test
+          args: --release --locked --target ${{ matrix.target }}
+
+      - name: Build release binary
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ matrix.cross }}
+          command: build
+          args: --release --locked --target ${{ matrix.target }}
+
+      - name: Strip release binary (linux and macos)
+        if: matrix.build == 'x86_64-linux' || matrix.build == 'x86_64-macos'
+        run: strip "target/${{ matrix.target }}/release/$BIN_NAME"
+
+      - name: Strip release binary (arm)
+        if: matrix.build == 'aarch64-linux'
+        run: |
+          docker run --rm -v "$PWD/target:/target:Z" \
+            rustembedded/cross:${{ matrix.target }} \
+            asharch64-linux-gnu-strip /target/${{ matrix.target }}/release/$BIN_NAME
+
+      - name: Build archive
+        shell: bash
+        run: |
+          mkdir dist
+          if [ "${{ matrix.os }}" = "windows-2019" ]; then
+            cp "target/${{ matrix.target }}/release/$BIN_NAME.exe" "dist/"
+          else
+            cp "target/${{ matrix.target }}/release/$BIN_NAME" "dist/"
+          fi
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: bins-${{ matrix.build }}
+          path: dist
+
+  publish:
+    name: Publish
+    needs: [binaries]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v2
+        with:
+          submodules: false
+
+      - uses: actions/download-artifact@v2
+
+      - run: ls -al bins-*
+
+      - name: Calculate tag name
+        run: |
+          name=dev
+          if [[ $GITHUB_REF == refs/tags/v* ]]; then
+            name=${GITHUB_REF:10}
+          fi
+          echo ::set-output name=val::$name
+          echo TAG=$name >> $GITHUB_ENV
+        id: tagname
+
+      - name: Build archive
+        shell: bash
+        run: |
+          set -ex
+          rm -rf tmp
+          mkdir tmp
+          mkdir dist
+
+          for dir in bins-* ; do
+            platform=${dir#"bins-"}
+            if [[ $platform =~ "windows" ]]; then
+              exe=".exe"
+            fi
+            pkgname=$PROJECT_NAME-$TAG-$platform
+            mkdir tmp/$pkgname
+            cp -rp README.md LICENSE.md cfg tmp/$pkgname
+            mv bins-$platform/$BIN_NAME$exe tmp/$pkgname
+            chmod +x tmp/$pkgname/$BIN_NAME$exe
+
+            if [ "$exe" = "" ]; then
+              tar czf dist/$pkgname.tar.gz -C tmp $pkgname
+            else
+              (cd tmp && 7z a -r ../dist/$pkgname.zip $pkgname)
+            fi
+          done
+
+      - name: Upload binaries to release
+        uses: svenstaro/upload-release-action@v2
+        with:
+          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          file: dist/*
+          file_glob: true
+          tag: ${{ steps.tagname.outputs.val }}
+          overwrite: true

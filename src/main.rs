@@ -1,13 +1,14 @@
 mod sio;
 
-use std::{collections::HashMap, io::Write, path::Path, result::Result, sync::Mutex, time::Duration};
+use color_eyre::eyre::Result;
+use std::{collections::HashMap, io::Write, path::Path, sync::Mutex, time::Duration};
 
 #[macro_use]
 extern crate log;
 extern crate env_logger;
 
-extern crate clap_v3;
-use clap_v3::{App, Arg, ArgMatches};
+extern crate clap;
+use clap::{App, Arg, ArgMatches};
 
 #[macro_use]
 extern crate lazy_static;
@@ -29,7 +30,9 @@ lazy_static! {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
-  let app = App::new("").version(env!("CARGO_PKG_VERSION")).author(env!("CARGO_PKG_AUTHORS")).about(env!("CARGO_PKG_DESCRIPTION")).arg(Arg::with_name("interval").short('i').long("interval").env("INTERVAL").required(false).default_value("60").help("Refresh interval in seconds")).arg(Arg::with_name("cfg_path").short('c').long("cfg_path").env("CFG_PATH").required(false).default_value("cfg").help("Configuration path")).arg(Arg::with_name("ip").short('h').long("ip").env("IP").required(true)).arg(Arg::with_name("auth_usr").short('u').long("auth_usr").env("AUTH_USR").required(true)).arg(Arg::with_name("auth_pwd").short('p').long("auth_pwd").env("AUTH_PWD").requires("auth_usr").required(true)).arg(Arg::with_name("v").short('v').multiple(true).takes_value(false).required(false).help("Log verbosity (-v, -vv, -vvv...)")).get_matches();
+  color_eyre::install()?;
+
+  let app = App::new("").version(env!("CARGO_PKG_VERSION")).author(env!("CARGO_PKG_AUTHORS")).about(env!("CARGO_PKG_DESCRIPTION")).arg(Arg::new("interval").short('i').long("interval").env("INTERVAL").required(false).default_value("60").help("Refresh interval in seconds")).arg(Arg::new("cfg_path").short('c').long("cfg_path").env("CFG_PATH").required(false).default_value("cfg").help("Configuration path")).arg(Arg::new("ip").short('h').long("ip").env("IP").required(true)).arg(Arg::new("auth_usr").short('u').long("auth_usr").env("AUTH_USR").required(true)).arg(Arg::new("auth_pwd").short('p').long("auth_pwd").env("AUTH_PWD").requires("auth_usr").required(true)).arg(Arg::new("v").short('v').multiple_values(true).takes_value(false).required(false).help("Log verbosity (-v, -vv, -vvv...)")).get_matches();
 
   match app.occurrences_of("v") {
     0 => std::env::set_var("RUST_LOG", "error"),
