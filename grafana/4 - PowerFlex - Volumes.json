@@ -9,12 +9,13 @@
       "pluginName": "Prometheus"
     }
   ],
+  "__elements": [],
   "__requires": [
     {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.2.3"
+      "version": "8.3.4"
     },
     {
       "type": "datasource",
@@ -56,16 +57,13 @@
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1636490761805,
+  "iteration": 1643391751346,
   "links": [],
   "liveNow": false,
   "panels": [
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -105,7 +103,6 @@
         "y": 0
       },
       "id": 2,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -123,11 +120,18 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.3",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
-          "expr": "volume_read_user_data_iops{vol_id=\"$VOL_ID\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "exemplar": true,
+          "expr": "volume_read_user_data_iops{vol_name=\"$VOL\"}",
+          "interval": "",
           "intervalFactor": 2,
+          "legendFormat": "",
           "metric": "storagepool",
           "refId": "A",
           "step": 2
@@ -138,8 +142,6 @@
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -179,7 +181,6 @@
         "y": 0
       },
       "id": 3,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -197,11 +198,18 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.3",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
-          "expr": "volume_write_user_data_iops{vol_id=\"$VOL_ID\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "exemplar": true,
+          "expr": "volume_write_user_data_iops{vol_name=\"$VOL\"}",
+          "interval": "",
           "intervalFactor": 2,
+          "legendFormat": "",
           "refId": "A",
           "step": 2
         }
@@ -211,8 +219,6 @@
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -241,7 +247,7 @@
               }
             ]
           },
-          "unit": "KBs"
+          "unit": "KiBs"
         },
         "overrides": []
       },
@@ -252,7 +258,6 @@
         "y": 0
       },
       "id": 4,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -270,11 +275,18 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.3",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
-          "expr": "volume_read_user_data_kb{vol_id=\"$VOL_ID\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "exemplar": true,
+          "expr": "volume_read_user_data_kb{vol_name=\"$VOL\"}",
+          "interval": "",
           "intervalFactor": 2,
+          "legendFormat": "",
           "refId": "A",
           "step": 2
         }
@@ -284,8 +296,6 @@
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -314,7 +324,7 @@
               }
             ]
           },
-          "unit": "KBs"
+          "unit": "KiBs"
         },
         "overrides": []
       },
@@ -325,7 +335,6 @@
         "y": 0
       },
       "id": 5,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -343,11 +352,18 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.3",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
-          "expr": "volume_write_user_data_kb{vol_id=\"$VOL_ID\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "exemplar": true,
+          "expr": "volume_write_user_data_kb{vol_name=\"$VOL\"}",
+          "interval": "",
           "intervalFactor": 2,
+          "legendFormat": "",
           "refId": "A",
           "step": 2
         }
@@ -360,7 +376,6 @@
       "alert": {
         "enabled": false
       },
-      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -436,8 +451,12 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
-          "expr": "volume_read_user_data_iops{vol_id=\"$VOL_ID\"}",
+          "expr": "volume_read_user_data_iops{vol_name=\"$VOL\"}",
           "hide": false,
           "interval": "",
           "intervalFactor": 2,
@@ -447,8 +466,14 @@
           "step": 120
         },
         {
-          "expr": "volume_write_user_data_iops{vol_id=\"$VOL_ID\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "exemplar": true,
+          "expr": "volume_write_user_data_iops{vol_name=\"$VOL\"}",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Write",
           "metric": "",
@@ -456,13 +481,10 @@
           "step": 120
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "IOPS",
       "type": "timeseries"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -510,7 +532,7 @@
               }
             ]
           },
-          "unit": "KBs"
+          "unit": "KiBs"
         },
         "overrides": []
       },
@@ -538,8 +560,14 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
-          "expr": "volume_read_user_data_kb{vol_id=\"$VOL_ID\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "exemplar": true,
+          "expr": "volume_read_user_data_kb{vol_name=\"$VOL\"}",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Read",
           "metric": "",
@@ -547,8 +575,14 @@
           "step": 120
         },
         {
-          "expr": "volume_write_user_data_kb{vol_id=\"$VOL_ID\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "exemplar": true,
+          "expr": "volume_write_user_data_kb{vol_name=\"$VOL\"}",
           "hide": false,
+          "interval": "",
           "intervalFactor": 2,
           "legendFormat": "Write",
           "metric": "",
@@ -556,14 +590,12 @@
           "step": 120
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Bandwidth",
       "type": "timeseries"
     }
   ],
   "refresh": false,
-  "schemaVersion": 31,
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [
     "PowerFlex"
@@ -571,12 +603,12 @@
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Cluster",
@@ -591,17 +623,15 @@
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": null,
-        "tagsQuery": null,
         "type": "query"
       },
       {
-        "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Protection Domain",
@@ -616,17 +646,15 @@
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": null,
-        "tagsQuery": null,
         "type": "query"
       },
       {
-        "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Storage Pool",
@@ -641,17 +669,15 @@
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": null,
-        "tagsQuery": null,
         "type": "query"
       },
       {
-        "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
-        "definition": "",
-        "description": null,
-        "error": null,
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
+        "definition": "label_values(volume_read_user_data_iops{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\", sto_id=\"$POOL_ID\"}, vol_name)",
         "hide": 0,
         "includeAll": false,
         "label": "Volume",
@@ -660,26 +686,23 @@
         "options": [],
         "query": {
           "query": "label_values(volume_read_user_data_iops{clu_name=\"$CLU\", pdo_name=\"$DOMAIN\", sto_id=\"$POOL_ID\"}, vol_name)",
-          "refId": "Prometheus-VOL-Variable-Query"
+          "refId": "StandardVariableQuery"
         },
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": null,
-        "tagsQuery": null,
         "type": "query"
       },
       {
-        "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "",
-        "description": null,
-        "error": null,
         "hide": 2,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "VOL_ID",
         "options": [],
@@ -691,20 +714,17 @@
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": null,
-        "tagsQuery": null,
         "type": "query"
       },
       {
-        "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "",
-        "description": null,
-        "error": null,
         "hide": 2,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "POOL_ID",
         "options": [],
@@ -716,8 +736,6 @@
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": null,
-        "tagsQuery": null,
         "type": "query"
       }
     ]
@@ -754,5 +772,6 @@
   "timezone": "browser",
   "title": "4 - PowerFlex - Volumes",
   "uid": "qKeUqMFnz",
-  "version": 4
+  "version": 2,
+  "weekStart": ""
 }
