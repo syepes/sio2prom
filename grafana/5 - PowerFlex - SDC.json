@@ -59,7 +59,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1643391855635,
+  "iteration": 1643394639692,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -135,7 +135,7 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Read Op/s",
+      "title": "Read OPS",
       "type": "stat"
     },
     {
@@ -210,7 +210,7 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Write Op/s",
+      "title": "Write OPS",
       "type": "stat"
     },
     {
@@ -358,7 +358,7 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Read MB/s",
+      "title": "Read Bandwidth",
       "type": "stat"
     },
     {
@@ -432,7 +432,7 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Write MB/s",
+      "title": "Write Bandwidth",
       "type": "stat"
     },
     {
@@ -749,6 +749,6 @@
   "timezone": "browser",
   "title": "5 - PowerFlex - SDC",
   "uid": "_CNP3MKnk",
-  "version": 4,
+  "version": 2,
   "weekStart": ""
 }

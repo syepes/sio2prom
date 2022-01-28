@@ -707,7 +707,7 @@
           "step": 120
         }
       ],
-      "title": "Top 15 Disks read latencies",
+      "title": "Top 15 Disks Read Latencies",
       "type": "timeseries"
     },
     {
@@ -799,7 +799,7 @@
           "step": 120
         }
       ],
-      "title": "Top 15 Disks write latencies",
+      "title": "Top 15 Disks Write Latencies",
       "type": "timeseries"
     }
   ],
@@ -844,6 +844,6 @@
   "timezone": "browser",
   "title": "0 - PowerFlex - Global",
   "uid": "8_cTqGFnz",
-  "version": 2,
+  "version": 3,
   "weekStart": ""
 }

@@ -59,7 +59,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1643391437221,
+  "iteration": 1643394565115,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -133,7 +133,7 @@
           "step": 1800
         }
       ],
-      "title": "Read Op/s",
+      "title": "Read OPS",
       "type": "stat"
     },
     {
@@ -206,7 +206,7 @@
           "step": 1800
         }
       ],
-      "title": "Write Op/s",
+      "title": "Write OPS",
       "type": "stat"
     },
     {
@@ -279,7 +279,7 @@
           "step": 1800
         }
       ],
-      "title": "Read MB/s",
+      "title": "Read Bandwidth",
       "type": "stat"
     },
     {
@@ -352,7 +352,7 @@
           "step": 1800
         }
       ],
-      "title": "Write MB/s",
+      "title": "Write Bandwidth",
       "type": "stat"
     },
     {
@@ -648,7 +648,7 @@
           "step": 120
         }
       ],
-      "title": "Disks read latencies",
+      "title": "Disks Read Latencies",
       "type": "timeseries"
     },
     {
@@ -740,7 +740,7 @@
           "step": 120
         }
       ],
-      "title": "Disks write latencies",
+      "title": "Disks Write Latencies",
       "type": "timeseries"
     },
     {
@@ -989,6 +989,6 @@
   "timezone": "browser",
   "title": "2 - PowerFlex - SDS",
   "uid": "R_2yqGFnz",
-  "version": 1,
+  "version": 3,
   "weekStart": ""
 }

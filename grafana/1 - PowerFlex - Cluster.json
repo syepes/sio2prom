@@ -59,7 +59,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1643391234645,
+  "iteration": 1643394544402,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -134,7 +134,7 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Read Op/s",
+      "title": "Read OPS",
       "type": "stat"
     },
     {
@@ -211,7 +211,7 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Write Op/s",
+      "title": "Write OPS",
       "type": "stat"
     },
     {
@@ -285,7 +285,7 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Read MB/s",
+      "title": "Read Bandwidth",
       "type": "stat"
     },
     {
@@ -362,7 +362,7 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Write MB/s",
+      "title": "Write Bandwidth",
       "type": "stat"
     },
     {
@@ -672,7 +672,7 @@
           "step": 240
         }
       ],
-      "title": "Top 10 SDC's read op/sec",
+      "title": "Top 10 SDC's Read OPS",
       "type": "timeseries"
     },
     {
@@ -761,7 +761,7 @@
           "step": 240
         }
       ],
-      "title": "Top 10 SDC's write op/sec",
+      "title": "Top 10 SDC's Write OPS",
       "type": "timeseries"
     },
     {
@@ -850,7 +850,7 @@
           "step": 240
         }
       ],
-      "title": "Top 10 SDC's read bandwidth",
+      "title": "Top 10 SDC's Read Bandwidth",
       "type": "timeseries"
     },
     {
@@ -939,7 +939,7 @@
           "step": 240
         }
       ],
-      "title": "Top 10 SDC's write bandwidth",
+      "title": "Top 10 SDC's Write Bandwidth",
       "type": "timeseries"
     },
     {
@@ -1034,7 +1034,7 @@
           "step": 120
         }
       ],
-      "title": "Max Pool's read latencies",
+      "title": "Max Pool's Read Latencies",
       "type": "timeseries"
     },
     {
@@ -1129,7 +1129,7 @@
           "step": 120
         }
       ],
-      "title": "Max Pool's write latencies",
+      "title": "Max Pool's Write Latencies",
       "type": "timeseries"
     },
     {
@@ -1597,6 +1597,6 @@
   "timezone": "browser",
   "title": "1 - PowerFlex - Cluster",
   "uid": "Jetc3MK7k",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }

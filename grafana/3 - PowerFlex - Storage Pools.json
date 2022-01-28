@@ -65,7 +65,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1643391670492,
+  "iteration": 1643394589903,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -382,7 +382,7 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Read Op/s",
+      "title": "Read OPS",
       "type": "stat"
     },
     {
@@ -459,7 +459,7 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Write Op/s",
+      "title": "Write OPS",
       "type": "stat"
     },
     {
@@ -536,7 +536,7 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Read MB/s",
+      "title": "Read Bandwidth",
       "type": "stat"
     },
     {
@@ -604,7 +604,7 @@
             "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
-          "expr": "storagepool_write_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} /2",
+          "expr": "storagepool_write_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "",
@@ -613,7 +613,7 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Write MB/s",
+      "title": "Write Bandwidth",
       "type": "stat"
     },
     {
@@ -915,7 +915,7 @@
           "step": 240
         }
       ],
-      "title": "Top 10 Volume read op/sec",
+      "title": "Top 10 Volume Read OPS",
       "type": "timeseries"
     },
     {
@@ -1005,7 +1005,7 @@
           "step": 240
         }
       ],
-      "title": "Top 10 Volume write op/sec",
+      "title": "Top 10 Volume Write OPS",
       "type": "timeseries"
     },
     {
@@ -1095,7 +1095,7 @@
           "step": 240
         }
       ],
-      "title": "Top 10 Volume read bandwidth",
+      "title": "Top 10 Volume Read Bandwidth",
       "type": "timeseries"
     },
     {
@@ -1185,7 +1185,7 @@
           "step": 240
         }
       ],
-      "title": "Top 10 Volume write bandwidth",
+      "title": "Top 10 Volume Write Bandwidth",
       "type": "timeseries"
     },
     {
@@ -1272,7 +1272,7 @@
           "step": 240
         }
       ],
-      "title": "Top 10 SDS read op/sec",
+      "title": "Top 10 SDS Read OPS",
       "type": "timeseries"
     },
     {
@@ -1362,7 +1362,7 @@
           "step": 240
         }
       ],
-      "title": "Top 10 SDS write op/sec",
+      "title": "Top 10 SDS Write OPS",
       "type": "timeseries"
     },
     {
@@ -1449,7 +1449,7 @@
           "step": 240
         }
       ],
-      "title": "Top 10 SDS read bandwidth",
+      "title": "Top 10 SDS Read Bandwidth",
       "type": "timeseries"
     },
     {
@@ -1539,7 +1539,7 @@
           "step": 240
         }
       ],
-      "title": "Top 10 SDS write bandwidth",
+      "title": "Top 10 SDS Write Bandwidth",
       "type": "timeseries"
     },
     {
@@ -1631,7 +1631,7 @@
           "step": 120
         }
       ],
-      "title": "Max Pool SDS read latencies",
+      "title": "Max Pool SDS Read Latencies",
       "type": "timeseries"
     },
     {
@@ -1726,7 +1726,7 @@
           "step": 120
         }
       ],
-      "title": "Max Pool SDS write latencies",
+      "title": "Max Pool SDS Write Latencies",
       "type": "timeseries"
     }
   ],
@@ -1841,6 +1841,6 @@
   "timezone": "browser",
   "title": "3 - PowerFlex - Storage Pools",
   "uid": "amZYqGKnz",
-  "version": 2,
+  "version": 4,
   "weekStart": ""
 }
