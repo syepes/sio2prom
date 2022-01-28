@@ -59,11 +59,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-<<<<<<< HEAD
-  "iteration": 1643297361862,
-=======
-  "iteration": 1643391751346,
->>>>>>> grafana-dashboards-improvements
+  "iteration": 1643392511671,
   "links": [],
   "liveNow": false,
   "panels": [
@@ -776,10 +772,6 @@
   "timezone": "browser",
   "title": "4 - PowerFlex - Volumes",
   "uid": "qKeUqMFnz",
-  "version": 2,
+  "version": 1,
   "weekStart": ""
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> grafana-dashboards-improvements
