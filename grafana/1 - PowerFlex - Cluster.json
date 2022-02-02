@@ -9,12 +9,13 @@
       "pluginName": "Prometheus"
     }
   ],
+  "__elements": [],
   "__requires": [
     {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.2.3"
+      "version": "8.3.4"
     },
     {
       "type": "datasource",
@@ -56,16 +57,17 @@
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1636490739242,
+  "iteration": 1643394544402,
   "links": [],
   "liveNow": false,
   "panels": [
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -105,7 +107,6 @@
         "y": 0
       },
       "id": 2,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -123,7 +124,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.3",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "expr": "system_read_total_iops{clu_name=\"$CLU\"}",
@@ -133,12 +134,10 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Read Op/s",
+      "title": "Read OPS",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -178,7 +177,6 @@
         "y": 0
       },
       "id": 3,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -196,22 +194,31 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.3",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
-          "expr": "system_write_total_iops{clu_name=\"$CLU\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "exemplar": true,
+          "expr": "system_write_total_iops{clu_name=\"$CLU\"} / 2",
+          "interval": "",
           "intervalFactor": 2,
+          "legendFormat": "",
           "refId": "A",
           "step": 2
         }
       ],
       "timeFrom": "1m",
-      "title": "Write Op/s",
+      "title": "Write OPS",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -240,7 +247,7 @@
               }
             ]
           },
-          "unit": "KBs"
+          "unit": "KiBs"
         },
         "overrides": []
       },
@@ -251,7 +258,6 @@
         "y": 0
       },
       "id": 4,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -269,7 +275,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.3",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "expr": "system_read_total_kb{clu_name=\"$CLU\"}",
@@ -279,12 +285,10 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Read MB/s",
+      "title": "Read Bandwidth",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -313,7 +317,7 @@
               }
             ]
           },
-          "unit": "KBs"
+          "unit": "KiBs"
         },
         "overrides": []
       },
@@ -324,7 +328,6 @@
         "y": 0
       },
       "id": 5,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -342,24 +345,30 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.3",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
-          "expr": "system_write_total_kb{clu_name=\"$CLU\"}",
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "exemplar": true,
+          "expr": "system_write_total_kb{clu_name=\"$CLU\"} / 2",
+          "interval": "",
           "intervalFactor": 2,
+          "legendFormat": "",
           "refId": "A",
           "step": 2
         }
       ],
       "timeFrom": "1m",
-      "title": "Write MB/s",
+      "title": "Write Bandwidth",
       "type": "stat"
     },
     {
       "alert": {
         "enabled": false
       },
-      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -432,6 +441,10 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "system_read_total_iops{clu_name=\"$CLU\"}",
           "hide": false,
@@ -443,8 +456,12 @@
           "step": 120
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
-          "expr": "system_write_total_iops{clu_name=\"$CLU\"}",
+          "expr": "system_write_total_iops{clu_name=\"$CLU\"} / 2",
           "hide": false,
           "interval": "",
           "intervalFactor": 2,
@@ -454,8 +471,6 @@
           "step": 120
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "IOPS",
       "type": "timeseries"
     },
@@ -463,7 +478,6 @@
       "alert": {
         "enabled": false
       },
-      "datasource": "${DS_PROMETHEUS}",
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -511,7 +525,7 @@
               }
             ]
           },
-          "unit": "KBs"
+          "unit": "KiBs"
         },
         "overrides": []
       },
@@ -536,6 +550,10 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
           "expr": "system_read_total_kb{clu_name=\"$CLU\"}",
           "hide": false,
@@ -547,8 +565,12 @@
           "step": 120
         },
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "exemplar": true,
-          "expr": "system_write_total_kb{clu_name=\"$CLU\"}",
+          "expr": "system_write_total_kb{clu_name=\"$CLU\"} / 2",
           "hide": false,
           "interval": "",
           "intervalFactor": 2,
@@ -558,8 +580,6 @@
           "step": 120
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Bandwidth",
       "type": "timeseries"
     },
@@ -567,7 +587,10 @@
       "alert": {
         "enabled": false
       },
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -649,13 +672,14 @@
           "step": 240
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 10 SDC's read op/sec",
+      "title": "Top 10 SDC's Read OPS",
       "type": "timeseries"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -737,13 +761,14 @@
           "step": 240
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 10 SDC's write op/sec",
+      "title": "Top 10 SDC's Write OPS",
       "type": "timeseries"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -791,7 +816,7 @@
               }
             ]
           },
-          "unit": "KBs"
+          "unit": "KiBs"
         },
         "overrides": []
       },
@@ -825,13 +850,14 @@
           "step": 240
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 10 SDC's read bandwidth",
+      "title": "Top 10 SDC's Read Bandwidth",
       "type": "timeseries"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -879,7 +905,7 @@
               }
             ]
           },
-          "unit": "KBs"
+          "unit": "KiBs"
         },
         "overrides": []
       },
@@ -913,16 +939,17 @@
           "step": 240
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Top 10 SDC's write bandwidth",
+      "title": "Top 10 SDC's Write Bandwidth",
       "type": "timeseries"
     },
     {
       "alert": {
         "enabled": false
       },
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1007,16 +1034,17 @@
           "step": 120
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Max Pool's read latencies",
+      "title": "Max Pool's Read Latencies",
       "type": "timeseries"
     },
     {
       "alert": {
         "enabled": false
       },
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1101,13 +1129,14 @@
           "step": 120
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
-      "title": "Max Pool's write latencies",
+      "title": "Max Pool's Write Latencies",
       "type": "timeseries"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1166,7 +1195,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "KBs"
+                "value": "KiBs"
               }
             ]
           },
@@ -1178,7 +1207,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "KBs"
+                "value": "KiBs"
               }
             ]
           }
@@ -1233,13 +1262,14 @@
           "step": 240
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Forward Rebuild IOPs/Bandwidth",
       "type": "timeseries"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1298,7 +1328,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "KBs"
+                "value": "KiBs"
               }
             ]
           },
@@ -1310,7 +1340,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "KBs"
+                "value": "KiBs"
               }
             ]
           }
@@ -1365,13 +1395,14 @@
           "step": 240
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Backward Rebuild IOPs/Bandwidth",
       "type": "timeseries"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -1430,7 +1461,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "KBs"
+                "value": "KiBs"
               }
             ]
           },
@@ -1442,7 +1473,7 @@
             "properties": [
               {
                 "id": "unit",
-                "value": "KBs"
+                "value": "KiBs"
               }
             ]
           }
@@ -1497,14 +1528,12 @@
           "step": 240
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Rebalance IOPs/Bandwidth",
       "type": "timeseries"
     }
   ],
   "refresh": false,
-  "schemaVersion": 31,
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [
     "PowerFlex"
@@ -1512,12 +1541,12 @@
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Cluster",
@@ -1532,8 +1561,6 @@
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": null,
-        "tagsQuery": null,
         "type": "query"
       }
     ]
@@ -1570,5 +1597,6 @@
   "timezone": "browser",
   "title": "1 - PowerFlex - Cluster",
   "uid": "Jetc3MK7k",
-  "version": 5
+  "version": 4,
+  "weekStart": ""
 }

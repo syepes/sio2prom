@@ -17,25 +17,22 @@
 _Grafana version 8+ required_
 
 **Global**  
-<img src="images/grafana_dashboard_0_powerflex_global_0.png" target="_blank" width="300">  
-<img src="images/grafana_dashboard_0_powerflex_global_1.png" target="_blank" width="300">
+<img src="images/grafana_dashboard_0_powerflex_global.png" target="_blank" width="300">
 
 **Cluster**  
-<img src="images/grafana_dashboard_1_powerflex_cluster_0.png" target="_blank" width="300">  
-<img src="images/grafana_dashboard_1_powerflex_cluster_1.png" target="_blank" width="300">  
+<img src="images/grafana_dashboard_1_powerflex_cluster.png" target="_blank" width="300"> 
 
 **SDS**  
-<img src="images/grafana_dashboard_2_powerflex_sds_0.png" target="_blank" width="300">  
+<img src="images/grafana_dashboard_2_powerflex_sds.png" target="_blank" width="300">  
 
 **Storage Pools**  
-<img src="images/grafana_dashboard_3_powerflex_pools_0.png" target="_blank" width="300">  
-<img src="images/grafana_dashboard_3_powerflex_pools_1.png" target="_blank" width="300">  
+<img src="images/grafana_dashboard_3_powerflex_pools.png" target="_blank" width="300">
 
 **Volumes**  
-<img src="images/grafana_dashboard_4_powerflex_volumes_0.png" target="_blank" width="300">  
+<img src="images/grafana_dashboard_4_powerflex_volumes.png" target="_blank" width="300">  
 
 **SDC**  
-<img src="images/grafana_dashboard_5_powerflex_SDC_0.png" target="_blank" width="300">  
+<img src="images/grafana_dashboard_5_powerflex_SDC.png" target="_blank" width="300">  
 
 ## Usage (Docker)
 

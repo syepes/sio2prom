@@ -9,12 +9,13 @@
       "pluginName": "Prometheus"
     }
   ],
+  "__elements": [],
   "__requires": [
     {
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "8.2.3"
+      "version": "8.3.4"
     },
     {
       "type": "datasource",
@@ -56,16 +57,17 @@
   },
   "editable": true,
   "fiscalYearStartMonth": 0,
-  "gnetId": null,
   "graphTooltip": 1,
   "id": null,
-  "iteration": 1636490770339,
+  "iteration": 1643394639692,
   "links": [],
   "liveNow": false,
   "panels": [
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -105,7 +107,6 @@
         "y": 0
       },
       "id": 2,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -123,7 +124,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.3",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "expr": "sdc_read_user_data_iops{sdc_id=\"$SDC_ID\"}",
@@ -134,12 +135,14 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Read Op/s",
+      "title": "Read OPS",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -179,7 +182,6 @@
         "y": 0
       },
       "id": 3,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -197,7 +199,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.3",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "expr": "sdc_write_user_data_iops{sdc_id=\"$SDC_ID\"}",
@@ -208,12 +210,14 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Write Op/s",
+      "title": "Write OPS",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -254,7 +258,6 @@
         "y": 0
       },
       "id": 7,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -272,7 +275,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.3",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "expr": "sdc_mapped_volumes{sdc_id=\"$SDC_ID\"}",
@@ -285,8 +288,10 @@
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -315,7 +320,7 @@
               }
             ]
           },
-          "unit": "KBs"
+          "unit": "KiBs"
         },
         "overrides": []
       },
@@ -326,7 +331,6 @@
         "y": 0
       },
       "id": 4,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -344,7 +348,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.3",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "expr": "sdc_read_user_data_kb{sdc_id=\"$SDC_ID\"}",
@@ -354,12 +358,14 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Read MB/s",
+      "title": "Read Bandwidth",
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -388,7 +394,7 @@
               }
             ]
           },
-          "unit": "KBs"
+          "unit": "KiBs"
         },
         "overrides": []
       },
@@ -399,7 +405,6 @@
         "y": 0
       },
       "id": 5,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -417,7 +422,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.2.3",
+      "pluginVersion": "8.3.4",
       "targets": [
         {
           "expr": "sdc_write_user_data_kb{sdc_id=\"$SDC_ID\"}",
@@ -427,11 +432,14 @@
         }
       ],
       "timeFrom": "1m",
-      "title": "Write MB/s",
+      "title": "Write Bandwidth",
       "type": "stat"
     },
     {
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -525,8 +533,6 @@
           "step": 120
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "IOPS",
       "type": "timeseries"
     },
@@ -534,7 +540,10 @@
       "alert": {
         "enabled": false
       },
-      "datasource": "${DS_PROMETHEUS}",
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -582,7 +591,7 @@
               }
             ]
           },
-          "unit": "KBs"
+          "unit": "KiBs"
         },
         "overrides": []
       },
@@ -628,14 +637,12 @@
           "step": 120
         }
       ],
-      "timeFrom": null,
-      "timeShift": null,
       "title": "Bandwidth",
       "type": "timeseries"
     }
   ],
   "refresh": false,
-  "schemaVersion": 31,
+  "schemaVersion": 34,
   "style": "dark",
   "tags": [
     "PowerFlex"
@@ -643,15 +650,14 @@
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "CLU",
         "options": [],
@@ -663,20 +669,17 @@
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": null,
-        "tagsQuery": null,
         "type": "query"
       },
       {
-        "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "SDC",
         "options": [],
@@ -688,20 +691,17 @@
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": null,
-        "tagsQuery": null,
         "type": "query"
       },
       {
-        "allValue": null,
         "current": {},
-        "datasource": "${DS_PROMETHEUS}",
+        "datasource": {
+          "type": "prometheus",
+          "uid": "${DS_PROMETHEUS}"
+        },
         "definition": "",
-        "description": null,
-        "error": null,
         "hide": 2,
         "includeAll": false,
-        "label": null,
         "multi": false,
         "name": "SDC_ID",
         "options": [],
@@ -713,8 +713,6 @@
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": null,
-        "tagsQuery": null,
         "type": "query"
       }
     ]
@@ -751,5 +749,6 @@
   "timezone": "browser",
   "title": "5 - PowerFlex - SDC",
   "uid": "_CNP3MKnk",
-  "version": 4
+  "version": 2,
+  "weekStart": ""
 }
