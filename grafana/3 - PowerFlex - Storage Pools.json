@@ -1,4 +1,6 @@
 {
+<<<<<<< HEAD
+=======
   "__inputs": [
     {
       "name": "DS_PROMETHEUS",
@@ -42,6 +44,7 @@
       "version": ""
     }
   ],
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
   "annotations": {
     "list": [
       {
@@ -64,8 +67,13 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
+<<<<<<< HEAD
+  "id": 20,
+  "iteration": 1644016013058,
+=======
   "id": null,
   "iteration": 1643394589903,
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
   "links": [],
   "liveNow": false,
   "panels": [
@@ -118,7 +126,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_capacity_use_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -129,7 +141,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_capacity_unused_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -219,7 +235,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_capacity_failed_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -234,7 +254,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_capacity_moving_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -249,7 +273,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_capacity_protected_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -264,7 +292,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_capacity_spare_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -279,7 +311,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_capacity_unused_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -294,7 +330,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_capacity_use_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -313,7 +353,11 @@
     {
       "datasource": {
         "type": "prometheus",
+<<<<<<< HEAD
+        "uid": "wwrLY75nz"
+=======
         "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       },
       "fieldConfig": {
         "defaults": {
@@ -321,17 +365,7 @@
             "mode": "thresholds"
           },
           "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "max": 100000,
           "min": 0,
           "thresholds": {
@@ -392,17 +426,7 @@
             "mode": "thresholds"
           },
           "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "max": 100000,
           "min": 0,
           "thresholds": {
@@ -447,7 +471,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_write_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -469,17 +497,7 @@
             "mode": "thresholds"
           },
           "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "max": 1000000,
           "min": 0,
           "thresholds": {
@@ -524,7 +542,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_read_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
@@ -546,17 +568,7 @@
             "mode": "thresholds"
           },
           "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "max": 1000000,
           "min": 0,
           "thresholds": {
@@ -601,7 +613,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_write_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -691,7 +707,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_read_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
@@ -706,7 +726,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_write_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -797,7 +821,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_read_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
@@ -812,7 +840,11 @@
         {
           "datasource": {
             "type": "prometheus",
+<<<<<<< HEAD
+            "uid": "wwrLY75nz"
+=======
             "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
           },
           "exemplar": true,
           "expr": "storagepool_write_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -834,7 +866,11 @@
       },
       "datasource": {
         "type": "prometheus",
+<<<<<<< HEAD
+        "uid": "wwrLY75nz"
+=======
         "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       },
       "fieldConfig": {
         "defaults": {
@@ -924,7 +960,11 @@
       },
       "datasource": {
         "type": "prometheus",
+<<<<<<< HEAD
+        "uid": "wwrLY75nz"
+=======
         "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       },
       "fieldConfig": {
         "defaults": {
@@ -1014,7 +1054,11 @@
       },
       "datasource": {
         "type": "prometheus",
+<<<<<<< HEAD
+        "uid": "wwrLY75nz"
+=======
         "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       },
       "fieldConfig": {
         "defaults": {
@@ -1104,7 +1148,11 @@
       },
       "datasource": {
         "type": "prometheus",
+<<<<<<< HEAD
+        "uid": "wwrLY75nz"
+=======
         "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       },
       "fieldConfig": {
         "defaults": {
@@ -1191,7 +1239,11 @@
     {
       "datasource": {
         "type": "prometheus",
+<<<<<<< HEAD
+        "uid": "wwrLY75nz"
+=======
         "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       },
       "fieldConfig": {
         "defaults": {
@@ -1281,7 +1333,11 @@
       },
       "datasource": {
         "type": "prometheus",
+<<<<<<< HEAD
+        "uid": "wwrLY75nz"
+=======
         "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       },
       "fieldConfig": {
         "defaults": {
@@ -1368,7 +1424,11 @@
     {
       "datasource": {
         "type": "prometheus",
+<<<<<<< HEAD
+        "uid": "wwrLY75nz"
+=======
         "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       },
       "fieldConfig": {
         "defaults": {
@@ -1458,7 +1518,11 @@
       },
       "datasource": {
         "type": "prometheus",
+<<<<<<< HEAD
+        "uid": "wwrLY75nz"
+=======
         "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       },
       "fieldConfig": {
         "defaults": {
@@ -1545,7 +1609,11 @@
     {
       "datasource": {
         "type": "prometheus",
+<<<<<<< HEAD
+        "uid": "wwrLY75nz"
+=======
         "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       },
       "fieldConfig": {
         "defaults": {
@@ -1640,7 +1708,11 @@
       },
       "datasource": {
         "type": "prometheus",
+<<<<<<< HEAD
+        "uid": "wwrLY75nz"
+=======
         "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       },
       "fieldConfig": {
         "defaults": {
@@ -1739,10 +1811,21 @@
   "templating": {
     "list": [
       {
+<<<<<<< HEAD
+        "current": {
+          "selected": false,
+          "text": "MSR-SIO-CLU1",
+          "value": "MSR-SIO-CLU1"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "wwrLY75nz"
+=======
         "current": {},
         "datasource": {
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
         },
         "definition": "",
         "hide": 0,
@@ -1758,6 +1841,20 @@
         "refresh": 2,
         "regex": "",
         "skipUrlSync": false,
+<<<<<<< HEAD
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "MSR-CLU1-CORP",
+          "value": "MSR-CLU1-CORP"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "wwrLY75nz"
+=======
         "sort": 0,
         "type": "query"
       },
@@ -1766,6 +1863,7 @@
         "datasource": {
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
         },
         "definition": "",
         "hide": 0,
@@ -1781,6 +1879,20 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
+<<<<<<< HEAD
+        "sort": 1,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "PERFORMANCE-01",
+          "value": "PERFORMANCE-01"
+        },
+        "datasource": {
+          "type": "prometheus",
+          "uid": "wwrLY75nz"
+=======
         "sort": 0,
         "type": "query"
       },
@@ -1789,6 +1901,7 @@
         "datasource": {
           "type": "prometheus",
           "uid": "${DS_PROMETHEUS}"
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
         },
         "definition": "",
         "hide": 0,
@@ -1804,7 +1917,11 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
+<<<<<<< HEAD
+        "sort": 1,
+=======
         "sort": 0,
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
         "type": "query"
       }
     ]
@@ -1841,6 +1958,10 @@
   "timezone": "browser",
   "title": "3 - PowerFlex - Storage Pools",
   "uid": "amZYqGKnz",
+<<<<<<< HEAD
+  "version": 6,
+=======
   "version": 4,
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
   "weekStart": ""
 }
