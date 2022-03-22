@@ -39,7 +39,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     1 => std::env::set_var("RUST_LOG", "warn"),
     2 => std::env::set_var("RUST_LOG", "info"),
     3 => std::env::set_var("RUST_LOG", "debug"),
-    4 | _ => std::env::set_var("RUST_LOG", "trace"),
+    4 => std::env::set_var("RUST_LOG", "trace"),
+    _ => std::env::set_var("RUST_LOG", "trace"),
   }
 
   env_logger::Builder::from_default_env().format(|buf, record| writeln!(buf, "{} {} {}:{} [{}] - {}", chrono::Local::now().format("%Y-%m-%dT%H:%M:%S"), record.module_path().unwrap_or("unknown"), record.file().unwrap_or("unknown"), record.line().unwrap_or(0), record.level(), record.args())).init();
