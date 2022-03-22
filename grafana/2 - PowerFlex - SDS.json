@@ -59,32 +59,29 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
+<<<<<<< HEAD
+  "iteration": 1644015979500,
+=======
   "iteration": 1643394565115,
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
   "links": [],
   "liveNow": false,
   "panels": [
     {
+<<<<<<< HEAD
+=======
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "max": 100000,
           "min": 0,
           "thresholds": {
@@ -133,31 +130,28 @@
           "step": 1800
         }
       ],
+<<<<<<< HEAD
+      "timeFrom": "1m",
+=======
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       "title": "Read OPS",
       "type": "stat"
     },
     {
+<<<<<<< HEAD
+=======
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "max": 100000,
           "min": 0,
           "thresholds": {
@@ -206,31 +200,28 @@
           "step": 1800
         }
       ],
+<<<<<<< HEAD
+      "timeFrom": "1m",
+=======
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       "title": "Write OPS",
       "type": "stat"
     },
     {
+<<<<<<< HEAD
+=======
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "max": 4000000,
           "min": 0,
           "thresholds": {
@@ -279,31 +270,28 @@
           "step": 1800
         }
       ],
+<<<<<<< HEAD
+      "timeFrom": "1m",
+=======
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       "title": "Read Bandwidth",
       "type": "stat"
     },
     {
+<<<<<<< HEAD
+=======
       "datasource": {
         "type": "prometheus",
         "uid": "${DS_PROMETHEUS}"
       },
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "max": 4000000,
           "min": 0,
           "thresholds": {
@@ -352,6 +340,10 @@
           "step": 1800
         }
       ],
+<<<<<<< HEAD
+      "timeFrom": "1m",
+=======
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
       "title": "Write Bandwidth",
       "type": "stat"
     },
@@ -862,7 +854,11 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
+<<<<<<< HEAD
+        "sort": 1,
+=======
         "sort": 0,
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
         "type": "query"
       },
       {
@@ -885,7 +881,11 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
+<<<<<<< HEAD
+        "sort": 1,
+=======
         "sort": 0,
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
         "type": "query"
       },
       {
@@ -908,7 +908,11 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
+<<<<<<< HEAD
+        "sort": 1,
+=======
         "sort": 0,
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
         "type": "query"
       },
       {
@@ -952,7 +956,11 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
+<<<<<<< HEAD
+        "sort": 1,
+=======
         "sort": 0,
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
         "type": "query"
       }
     ]
@@ -989,6 +997,10 @@
   "timezone": "browser",
   "title": "2 - PowerFlex - SDS",
   "uid": "R_2yqGFnz",
+<<<<<<< HEAD
+  "version": 5,
+=======
   "version": 3,
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
   "weekStart": ""
 }

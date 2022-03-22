@@ -59,7 +59,11 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
+<<<<<<< HEAD
+  "iteration": 1644016082547,
+=======
   "iteration": 1643394639692,
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
   "links": [],
   "liveNow": false,
   "panels": [
@@ -74,17 +78,7 @@
             "mode": "thresholds"
           },
           "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "max": 100000,
           "min": 0,
           "thresholds": {
@@ -102,7 +96,7 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 4,
+        "w": 5,
         "x": 0,
         "y": 0
       },
@@ -149,17 +143,7 @@
             "mode": "thresholds"
           },
           "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "max": 100000,
           "min": 0,
           "thresholds": {
@@ -177,8 +161,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 4,
-        "x": 4,
+        "w": 5,
+        "x": 5,
         "y": 0
       },
       "id": 3,
@@ -223,17 +207,7 @@
           "color": {
             "mode": "thresholds"
           },
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -253,8 +227,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 8,
-        "x": 8,
+        "w": 4,
+        "x": 10,
         "y": 0
       },
       "id": 7,
@@ -298,17 +272,7 @@
             "mode": "thresholds"
           },
           "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "max": 75000,
           "min": 0,
           "thresholds": {
@@ -326,8 +290,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 4,
-        "x": 16,
+        "w": 5,
+        "x": 14,
         "y": 0
       },
       "id": 4,
@@ -372,17 +336,7 @@
             "mode": "thresholds"
           },
           "decimals": 0,
-          "mappings": [
-            {
-              "options": {
-                "match": "null",
-                "result": {
-                  "text": "N/A"
-                }
-              },
-              "type": "special"
-            }
-          ],
+          "mappings": [],
           "max": 75000,
           "min": 0,
           "thresholds": {
@@ -400,8 +354,8 @@
       },
       "gridPos": {
         "h": 8,
-        "w": 4,
-        "x": 20,
+        "w": 5,
+        "x": 19,
         "y": 0
       },
       "id": 5,
@@ -668,7 +622,11 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
+<<<<<<< HEAD
+        "sort": 1,
+=======
         "sort": 0,
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
         "type": "query"
       },
       {
@@ -690,7 +648,11 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
+<<<<<<< HEAD
+        "sort": 1,
+=======
         "sort": 0,
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
         "type": "query"
       },
       {
@@ -749,6 +711,10 @@
   "timezone": "browser",
   "title": "5 - PowerFlex - SDC",
   "uid": "_CNP3MKnk",
+<<<<<<< HEAD
+  "version": 4,
+=======
   "version": 2,
+>>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
   "weekStart": ""
 }
