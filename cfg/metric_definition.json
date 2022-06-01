@@ -243,5 +243,25 @@
     "type": "gauge",
     "help": "Help Text",
     "name": "fixed_read_error"
+  },
+  "BackgroundScannedInMB": {
+    "type": "gauge",
+    "help": "Help Text",
+    "name": "background_scan_mb"
+  },
+  "userDataSdcReadLatency": {
+    "type": "gauge",
+    "help": "Help Text",
+    "name": "sdc_read_latency"
+  },
+  "userDataSdcWriteLatency": {
+    "type": "gauge",
+    "help": "Help Text",
+    "name": "sdc_write_latency"
+  },
+  "userDataSdcTrimLatency": {
+    "type": "gauge",
+    "help": "Help Text",
+    "name": "sdc_trim_latency"
   }
 }
