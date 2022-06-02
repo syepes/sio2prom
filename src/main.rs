@@ -32,8 +32,17 @@ lazy_static! {
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
   color_eyre::install()?;
 
-  let app =
-    Command::new("").version(env!("CARGO_PKG_VERSION")).author(env!("CARGO_PKG_AUTHORS")).about(env!("CARGO_PKG_DESCRIPTION")).arg(Arg::new("interval").short('i').long("interval").env("INTERVAL").required(false).takes_value(true).default_value("60").help("Refresh interval in seconds")).arg(Arg::new("cfg_path").short('c').long("cfg_path").env("CFG_PATH").required(false).takes_value(true).default_value("cfg").help("Configuration path")).arg(Arg::new("ip").short('h').long("ip").env("IP").required(true).takes_value(true)).arg(Arg::new("auth_usr").short('u').long("auth_usr").env("AUTH_USR").required(true).takes_value(true)).arg(Arg::new("auth_pwd").short('p').long("auth_pwd").env("AUTH_PWD").requires("auth_usr").required(true).takes_value(true)).arg(Arg::new("v").short('v').multiple_occurrences(true).takes_value(false).required(false).help("Log verbosity (-v, -vv, -vvv...)")).get_matches();
+  let app = Command::new("").version(env!("CARGO_PKG_VERSION"))
+                            .author(env!("CARGO_PKG_AUTHORS"))
+                            .about(env!("CARGO_PKG_DESCRIPTION"))
+                            .arg(Arg::new("interval").short('i').long("interval").env("INTERVAL").required(false).takes_value(true).default_value("60").help("Refresh interval in seconds"))
+                            .arg(Arg::new("cfg_path").short('c').long("cfg_path").env("CFG_PATH").required(false).takes_value(true).default_value("cfg").help("Configuration path"))
+                            .arg(Arg::new("port").long("port").env("PORT").required(false).takes_value(true).default_value("8080").help("Metric listening port"))
+                            .arg(Arg::new("ip").short('h').long("ip").env("IP").required(true).takes_value(true))
+                            .arg(Arg::new("auth_usr").short('u').long("auth_usr").env("AUTH_USR").required(true).takes_value(true))
+                            .arg(Arg::new("auth_pwd").short('p').long("auth_pwd").env("AUTH_PWD").requires("auth_usr").required(true).takes_value(true))
+                            .arg(Arg::new("v").short('v').multiple_occurrences(true).takes_value(false).required(false).help("Log verbosity (-v, -vv, -vvv...)"))
+                            .get_matches();
 
   match app.occurrences_of("v") {
     0 => std::env::set_var("RUST_LOG", "error"),
@@ -51,12 +60,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     return Ok(());
   }
 
+  let port = &app.value_of("port").and_then(|s| s.parse::<u16>().ok());
+  if port.is_none() {
+    error!("The specified port is not valid ({})", &app.value_of("port").unwrap());
+    return Ok(());
+  }
+
   register_metrics();
   let data_handle = tokio::task::spawn(data_collector(app));
   let metrics_route = warp::path!("metrics").and_then(metrics_handler);
-  let warp_handle = warp::serve(metrics_route).run(([0, 0, 0, 0], 8080));
+  let warp_handle = warp::serve(metrics_route).run(([0, 0, 0, 0], port.unwrap()));
 
-  info!("Started on port http://127.0.0.1:8080/metrics");
+  info!("Started on port http://127.0.0.1:{}/metrics", port.unwrap());
   let _ = tokio::join!(data_handle, warp_handle);
   Ok(())
 }
@@ -72,6 +87,7 @@ async fn data_collector(app: ArgMatches) {
   let mut collect_interval = tokio::time::interval(Duration::from_secs(interval));
 
   let mut sio = sio::client::ClientInfo::new(app.value_of("cfg_path"), app.value_of("ip"), app.value_of("auth_usr"), app.value_of("auth_pwd"));
+  _ = sio.version().await;
 
   loop {
     let metrics = sio.metrics().await;
