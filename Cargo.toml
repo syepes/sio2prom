@@ -1,6 +1,6 @@
 [package]
 name = "sio2prom"
-version = "0.2.11"
+version = "0.2.13"
 edition = "2021"
 authors = ["Sebastian YEPES F <syepes@gmail.com>"]
 keywords = ["prometheus", "metrics", "scaleio", "VxFlex", "PowerFlex"]
