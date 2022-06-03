@@ -497,10 +497,10 @@ fn convert_metrics<'a>(cfg_path: Option<&'a str>, stats: &Map<String, serde_json
               let m_name = format!("{}_{}", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
               let m_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
               let m_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_value: f64 = v.as_f64().expect("Invalid metric value");
-
-              let metric_bw: Metric = Metric::new(m_name, m_type, m_help, m_labels.clone(), m_value);
-              metric_list.push(metric_bw);
+              if let Some(m_value) = v.as_f64() {
+                let metric_bw: Metric = Metric::new(m_name, m_type, m_help, m_labels.clone(), m_value);
+                metric_list.push(metric_bw);
+              }
             }
           } else {
             error!("Metric: {} ({}) not found in (metric_definition.json)", m, stype);
@@ -540,10 +540,10 @@ fn convert_metrics<'a>(cfg_path: Option<&'a str>, stats: &Map<String, serde_json
               let m_name = format!("{}_{}", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
               let m_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
               let m_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_value: f64 = v.as_f64().expect("Invalid metric value");
-
-              let metric: Metric = Metric::new(m_name, m_type, m_help, m_labels.clone(), m_value);
-              metric_list.push(metric);
+              if let Some(m_value) = v.as_f64() {
+                let metric: Metric = Metric::new(m_name, m_type, m_help, m_labels.clone(), m_value);
+                metric_list.push(metric);
+              }
             }
           } else {
             error!("Metric: {} ({}) not found in (metric_definition.json)", m, stype);

@@ -6,6 +6,11 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 0.2.13 - 2022-06-03
+
+- Fix crash when missing or none values are found
+- CI Update
+
 ## 0.2.12 - 2022-05-05
 
 - Added new parameter (--port) to change the default network port 8080
