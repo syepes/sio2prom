@@ -1,5 +1,5 @@
 # Workaround for QEmu bug when building for 32bit platforms on a 64bit host
-FROM --platform=$BUILDPLATFORM rust:buster as vendor
+FROM --platform=$BUILDPLATFORM rust:bullseye as vendor
 ARG BUILDPLATFORM
 ARG TARGETPLATFORM
 RUN echo "Running on: $BUILDPLATFORM / Building for $TARGETPLATFORM"
@@ -10,7 +10,7 @@ COPY ./Cargo.lock .
 COPY ./src src
 RUN mkdir .cargo && cargo vendor > .cargo/config.toml
 
-FROM rust:buster as builder
+FROM rust:bullseye as builder
 WORKDIR /app
 
 COPY --from=vendor /app/.cargo .cargo
@@ -20,7 +20,7 @@ COPY ./Cargo.lock .
 COPY ./src src
 RUN cargo build --release
 
-FROM debian:buster-slim
+FROM debian:bullseye-slim
 WORKDIR /app
 ENV RUST_BACKTRACE=full
 COPY --from=builder /app/target/release/sio2prom sio2prom
