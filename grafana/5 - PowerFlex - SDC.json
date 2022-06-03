@@ -59,11 +59,7 @@
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
   "id": null,
-<<<<<<< HEAD
   "iteration": 1644016082547,
-=======
-  "iteration": 1643394639692,
->>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
   "links": [],
   "liveNow": false,
   "panels": [
@@ -622,11 +618,7 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-<<<<<<< HEAD
         "sort": 1,
-=======
-        "sort": 0,
->>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
         "type": "query"
       },
       {
@@ -648,11 +640,7 @@
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
-<<<<<<< HEAD
         "sort": 1,
-=======
-        "sort": 0,
->>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
         "type": "query"
       },
       {
@@ -711,10 +699,6 @@
   "timezone": "browser",
   "title": "5 - PowerFlex - SDC",
   "uid": "_CNP3MKnk",
-<<<<<<< HEAD
   "version": 4,
-=======
-  "version": 2,
->>>>>>> 08f3f7194c9e05973f6a2f1697709ceb70febf8c
   "weekStart": ""
 }

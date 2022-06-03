@@ -7,14 +7,20 @@ on:
       - main
     paths-ignore:
       - "**.md"
+      - "**.json"
       - "docs/**"
+      - "images/**"
+      - "grafana/**"
   push:
     branches:
       - master
       - main
     paths-ignore:
       - "**.md"
+      - "**.json"
       - "docs/**"
+      - "images/**"
+      - "grafana/**"
 
 env:
   CARGO_TERM_COLOR: always
