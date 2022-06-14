@@ -41,10 +41,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                             .arg(Arg::new("ip").short('h').long("ip").env("IP").required(true).takes_value(true))
                             .arg(Arg::new("auth_usr").short('u').long("auth_usr").env("AUTH_USR").required(true).takes_value(true))
                             .arg(Arg::new("auth_pwd").short('p').long("auth_pwd").env("AUTH_PWD").requires("auth_usr").required(true).takes_value(true))
-                            .arg(Arg::new("v").short('v').multiple_occurrences(true).takes_value(false).required(false).help("Log verbosity (-v, -vv, -vvv...)"))
+                            .arg(Arg::new("v").short('v').action(clap::ArgAction::Count).takes_value(false).required(false).help("Log verbosity (-v, -vv, -vvv...)"))
                             .get_matches();
 
-  match app.occurrences_of("v") {
+  match app.get_one::<u8>("v").unwrap() {
     0 => std::env::set_var("RUST_LOG", "error"),
     1 => std::env::set_var("RUST_LOG", "warn"),
     2 => std::env::set_var("RUST_LOG", "info"),
@@ -55,14 +55,14 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
   env_logger::Builder::from_default_env().format(|buf, record| writeln!(buf, "{} {} {}:{} [{}] - {}", chrono::Local::now().format("%Y-%m-%dT%H:%M:%S"), record.module_path().unwrap_or("unknown"), record.file().unwrap_or("unknown"), record.line().unwrap_or(0), record.level(), record.args())).init();
 
-  if !Path::new(&app.value_of("cfg_path").unwrap()).exists() {
-    error!("Config path not found: {}", app.value_of("cfg_path").unwrap());
+  if !Path::new(&app.get_one::<String>("cfg_path").unwrap()).exists() {
+    error!("Config path not found: {}", app.get_one::<String>("cfg_path").unwrap());
     return Ok(());
   }
 
-  let port = &app.value_of("port").and_then(|s| s.parse::<u16>().ok());
+  let port = &app.get_one::<String>("port").and_then(|s| s.parse::<u16>().ok());
   if port.is_none() {
-    error!("The specified port is not valid ({})", &app.value_of("port").unwrap());
+    error!("The specified port is not valid ({})", &app.get_one::<String>("port").unwrap());
     return Ok(());
   }
 
@@ -83,10 +83,10 @@ fn register_metrics() {
 }
 
 async fn data_collector(app: ArgMatches) {
-  let interval = app.value_of("interval").unwrap().parse::<u64>().unwrap_or(60);
+  let interval = app.get_one::<String>("interval").unwrap().parse::<u64>().unwrap_or(60);
   let mut collect_interval = tokio::time::interval(Duration::from_secs(interval));
 
-  let mut sio = sio::client::ClientInfo::new(app.value_of("cfg_path"), app.value_of("ip"), app.value_of("auth_usr"), app.value_of("auth_pwd"));
+  let mut sio = sio::client::ClientInfo::new(app.get_one::<String>("cfg_path").map(|s| s.as_str()), app.get_one::<String>("ip").map(|s| s.as_str()), app.get_one::<String>("auth_usr").map(|s| s.as_str()), app.get_one::<String>("auth_pwd").map(|s| s.as_str()));
   _ = sio.version().await;
 
   loop {
@@ -188,7 +188,8 @@ fn update_metrics(metrics: &[sio::metrics::Metric]) {
     }
 
     if m.mtype.to_lowercase() == "counter" {
-      let c = match counters.get(&m.name) {
+      let c = counters.get(&m.name);
+      let c = match c {
         None => {
           error!("The metric {} ({}) was not found as registered", m.name, m.mtype);
           continue;
@@ -196,7 +197,8 @@ fn update_metrics(metrics: &[sio::metrics::Metric]) {
         Some(c) => c,
       };
 
-      let metric = match c.get_metric_with(&labels) {
+      let metric = c.get_metric_with(&labels);
+      let metric = match metric {
         Err(e) => {
           error!("The metric {} {:?} ({}) was not found in MetricFamily - {}", m.name, labels, m.mtype, e);
           continue;
@@ -206,7 +208,8 @@ fn update_metrics(metrics: &[sio::metrics::Metric]) {
 
       metric.inc_by(m.value as u64);
     } else if m.mtype.to_lowercase() == "gauge" {
-      let g = match gauges.get(&m.name) {
+      let g = gauges.get(&m.name);
+      let g = match g {
         None => {
           error!("The metric {} ({}) was not found as registered", m.name, m.mtype);
           continue;
@@ -214,7 +217,8 @@ fn update_metrics(metrics: &[sio::metrics::Metric]) {
         Some(g) => g,
       };
 
-      let metric = match g.get_metric_with(&labels) {
+      let metric = g.get_metric_with(&labels);
+      let metric = match metric {
         Err(e) => {
           error!("The metric {} {:?} ({}) was not found in MetricFamily - {}", m.name, labels, m.mtype, e);
           continue;

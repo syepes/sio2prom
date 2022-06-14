@@ -6,6 +6,11 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 0.2.14 - 2022-06-14
+
+- Update deps
+- Fix lints
+
 ## 0.2.13 - 2022-06-03
 
 - Fix crash when missing or none values are found
