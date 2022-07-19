@@ -73,4 +73,4 @@ jobs:
         uses: actions-rs/cargo@v1
         with:
           command: clippy
-          args: -- -A clippy::or-fun-call -A clippy::expect-fun-call -A clippy::clone_double_ref -A clippy::wildcard-in-or-patterns
+          args: -- -A clippy::or-fun-call -A clippy::expect-fun-call -A clippy::clone_double_ref -A clippy::wildcard-in-or-patterns -A clippy::for_loops_over_fallibles
