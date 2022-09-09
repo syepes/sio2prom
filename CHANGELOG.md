@@ -6,6 +6,10 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 0.2.18 - 2022-09-09
+
+- Fix rcleaning of removed devices
+
 ## 0.2.14 - 2022-06-14
 
 - Update deps

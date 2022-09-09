@@ -141,7 +141,9 @@ async fn metrics_handler() -> Result<impl Reply, Rejection> {
 
 fn load_metrics(metrics: &[sio::metrics::Metric]) {
   let mut counters = METRIC_COUNTERS.lock().expect("Failed to obtain metric counter lock");
+  counters.clear();
   let mut gauges = METRIC_GAUGES.lock().expect("Failed to obtain metric gauge lock");
+  gauges.clear();
 
   for m in metrics {
     let labels: Vec<&str> = m.labels.iter().map(|v| *v.0).collect::<Vec<_>>();
