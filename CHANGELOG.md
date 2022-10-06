@@ -6,6 +6,12 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 0.2.19 - 2022-10-06
+
+- Correctly fix rcleaning of removed devices
+- Update external dependencies
+- Added internal Tokio metrics
+
 ## 0.2.18 - 2022-09-09
 
 - Fix rcleaning of removed devices

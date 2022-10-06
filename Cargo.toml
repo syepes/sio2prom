@@ -1,6 +1,6 @@
 [package]
 name = "sio2prom"
-version = "0.2.18"
+version = "0.2.19"
 edition = "2021"
 authors = ["Sebastian YEPES F <syepes@gmail.com>"]
 keywords = ["prometheus", "metrics", "scaleio", "VxFlex", "PowerFlex"]
@@ -26,14 +26,21 @@ publish = true
 [dependencies]
 log = "0.4"
 env_logger = "0.9"
-tokio = { version = "1.21", features = ["macros", "time", "rt-multi-thread"] }
+tokio = { version = "1.21", features = [
+  "macros",
+  "time",
+  "rt-multi-thread",
+  "tracing",
+] }
+console-subscriber = { version = "0.1" }
+tokio-metrics = { version = "0.1", default-features = false }
 futures = { version = "0.3", default-features = false }
 reqwest = { version = "0.11", features = ["json"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0", features = ["raw_value"] }
 anyhow = "1.0"
 chrono = "0.4"
-clap = { version = "3.2", default-features = false, features = [
+clap = { version = "4.0", default-features = false, features = [
   "std",
   "color",
   "cargo",
