@@ -6,6 +6,10 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 0.2.20 - 2022-10-07
+
+- Remove from builds console_subscriber
+
 ## 0.2.19 - 2022-10-06
 
 - Correctly fix rcleaning of removed devices

@@ -44,7 +44,6 @@ lazy_static! {
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error+Send+Sync>> {
-  console_subscriber::init();
   color_eyre::install()?;
 
   let app = Command::new("").version(env!("CARGO_PKG_VERSION"))

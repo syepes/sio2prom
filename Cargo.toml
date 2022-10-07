@@ -1,6 +1,6 @@
 [package]
 name = "sio2prom"
-version = "0.2.19"
+version = "0.2.20"
 edition = "2021"
 authors = ["Sebastian YEPES F <syepes@gmail.com>"]
 keywords = ["prometheus", "metrics", "scaleio", "VxFlex", "PowerFlex"]
@@ -32,7 +32,6 @@ tokio = { version = "1.21", features = [
   "rt-multi-thread",
   "tracing",
 ] }
-console-subscriber = { version = "0.1" }
 tokio-metrics = { version = "0.1", default-features = false }
 futures = { version = "0.3", default-features = false }
 reqwest = { version = "0.11", features = ["json"] }
