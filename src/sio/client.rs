@@ -106,18 +106,13 @@ impl<'a> ClientInfo<'a> {
                   Ok(Value::Object(m)) => m.get("message").map(|m| m.to_string().replace('"', "")).unwrap_or_else(|| "unknown".to_string()),
                   _ => "unknown".to_string(),
                 };
-                error!("Unknown instance request error: {:?}", msg);
                 Err(anyhow!("Unknown instance request error: {:?}", msg))
               },
             }
           },
-          Err(e) => {
-            error!("Instance request error: {:?}", e.to_string());
-            Err(anyhow!("Instance request error: {:?}", e.to_string()))
-          },
+          Err(e) => Err(anyhow!("Instance request error: {:?}", e.to_string())),
         }
       } else {
-        error!("Missing auth token");
         Err(anyhow!("Missing auth token"))
       }
     } else {
@@ -167,7 +162,6 @@ impl<'a> ClientInfo<'a> {
           },
         }
       } else {
-        error!("Missing auth token");
         Err(anyhow!("Missing auth token"))
       }
     } else {
@@ -227,7 +221,6 @@ impl<'a> ClientInfo<'a> {
           },
         }
       } else {
-        error!("Missing auth token");
         Err(anyhow!("Missing auth token"))
       }
     } else {

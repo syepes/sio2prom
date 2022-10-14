@@ -6,6 +6,16 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 1.0.0 - 2022-10-14
+
+After the last fixes and updates we can consider this exporter as stable, so I am graduating it to 1.0 :-)
+
+### Breaking change
+
+- The following parameters have been renamed for compatibility reasons
+  -- `--interval` / `-i` is now `--refresh- /`-r'
+  -- `-h` is now ``-i'
+
 ## 0.2.20 - 2022-10-07
 
 - Remove from builds console_subscriber

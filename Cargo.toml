@@ -1,6 +1,6 @@
 [package]
 name = "sio2prom"
-version = "0.2.20"
+version = "1.0.0"
 edition = "2021"
 authors = ["Sebastian YEPES F <syepes@gmail.com>"]
 keywords = ["prometheus", "metrics", "scaleio", "VxFlex", "PowerFlex"]
@@ -42,6 +42,9 @@ chrono = "0.4"
 clap = { version = "4.0", default-features = false, features = [
   "std",
   "color",
+  "help",
+  "usage",
+  "suggestions",
   "cargo",
   "env",
 ] }

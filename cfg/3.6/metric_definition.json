@@ -124,11 +124,6 @@
     "help": "Help Text",
     "name": "capacity_failed_kb"
   },
-  "spareCapacityInKb": {
-    "type": "gauge",
-    "help": "Help Text",
-    "name": "capacity_spare_kb"
-  },
   "unusedCapacityInKb": {
     "type": "gauge",
     "help": "Help Text",
@@ -148,6 +143,21 @@
     "type": "gauge",
     "help": "Help Text",
     "name": "capacity_moving_kb"
+  },
+  "thinCapacityInUseInKb": {
+    "type": "gauge",
+    "help": "Help Text",
+    "name": "capacity_thin_use_kb"
+  },
+  "thickCapacityInUseInKb": {
+    "type": "gauge",
+    "help": "Help Text",
+    "name": "capacity_thick_use_kb"
+  },
+  "thinUserDataCapacityInKb": {
+    "type": "gauge",
+    "help": "Help Text",
+    "name": "capacity_thin_userdata_kb"
   },
   "capacityAvailableForVolumeAllocationInKb": {
     "type": "gauge",
@@ -243,6 +253,11 @@
     "type": "gauge",
     "help": "Help Text",
     "name": "fixed_read_error"
+  },
+  "backgroundScanFixedReadErrorCount": {
+    "type": "gauge",
+    "help": "Help Text",
+    "name": "background_scan_fixed_error"
   },
   "BackgroundScannedInMB": {
     "type": "gauge",

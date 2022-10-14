@@ -1,7 +1,6 @@
 mod sio;
-
 use color_eyre::eyre::Result;
-use std::{collections::HashMap, io::Write, path::Path, time::Duration};
+use std::{collections::HashMap, io::Write, path::Path, process::exit, time::Duration};
 use tokio::sync::Mutex;
 
 #[macro_use]
@@ -49,12 +48,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error+Send+Sync>> {
   let app = Command::new("").version(env!("CARGO_PKG_VERSION"))
                             .author(env!("CARGO_PKG_AUTHORS"))
                             .about(env!("CARGO_PKG_DESCRIPTION"))
-                            .arg(Arg::new("interval").short('i').long("interval").env("INTERVAL").required(false).num_args(1).default_value("60").help("Refresh interval in seconds"))
+                            .arg(Arg::new("refresh").short('r').long("refresh").env("REFRESH").required(false).num_args(1).default_value("60").help("Refresh interval in seconds"))
                             .arg(Arg::new("cfg_path").short('c').long("cfg_path").env("CFG_PATH").required(false).num_args(1).default_value("cfg").help("Configuration path"))
                             .arg(Arg::new("port").long("port").env("PORT").required(false).num_args(1).default_value("8080").help("Metric listening port"))
-                            .arg(Arg::new("ip").short('h').long("ip").env("IP").required(true).num_args(1))
-                            .arg(Arg::new("auth_usr").short('u').long("auth_usr").env("AUTH_USR").required(true).num_args(1))
-                            .arg(Arg::new("auth_pwd").short('p').long("auth_pwd").env("AUTH_PWD").requires("auth_usr").required(true).num_args(1))
+                            .arg(Arg::new("ip").short('i').long("ip").env("IP").required(true).num_args(1).help("Gateway IP"))
+                            .arg(Arg::new("auth_usr").short('u').long("auth_usr").env("AUTH_USR").required(true).num_args(1).help("Gateway Username"))
+                            .arg(Arg::new("auth_pwd").short('p').long("auth_pwd").env("AUTH_PWD").requires("auth_usr").required(true).num_args(1).help("Gateway Password"))
                             .arg(Arg::new("v").short('v').action(clap::ArgAction::Count).required(false).help("Log verbosity (-v, -vv, -vvv...)"))
                             .get_matches();
 
@@ -71,13 +70,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error+Send+Sync>> {
 
   if !Path::new(&app.get_one::<String>("cfg_path").unwrap()).exists() {
     error!("Config path not found: {}", app.get_one::<String>("cfg_path").unwrap());
-    return Ok(());
+    exit(1);
   }
 
   let port = &app.get_one::<String>("port").and_then(|s| s.parse::<u16>().ok());
   if port.is_none() {
     error!("The specified port is not valid ({})", &app.get_one::<String>("port").unwrap());
-    return Ok(());
+    exit(1);
   }
 
   register_metrics();
@@ -137,11 +136,13 @@ fn register_metrics() {
 }
 
 async fn data_collector(app: ArgMatches) {
-  let interval = app.get_one::<String>("interval").unwrap().parse::<u64>().unwrap_or(60);
-  let mut collect_interval = tokio::time::interval(Duration::from_secs(interval));
+  let refresh = app.get_one::<String>("refresh").unwrap().parse::<u64>().unwrap_or(60);
+  let mut collect_interval = tokio::time::interval(Duration::from_secs(refresh));
 
   let mut sio = sio::client::ClientInfo::new(app.get_one::<String>("cfg_path").map(|s| s.as_str()), app.get_one::<String>("ip").map(|s| s.as_str()), app.get_one::<String>("auth_usr").map(|s| s.as_str()), app.get_one::<String>("auth_pwd").map(|s| s.as_str()));
-  _ = sio.version().await;
+  if sio.version().await.is_err() {
+    exit(1);
+  }
 
   loop {
     let metrics = sio.metrics().await;

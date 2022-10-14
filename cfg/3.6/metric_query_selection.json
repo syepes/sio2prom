@@ -1,0 +1,156 @@
+{
+  "selectedStatisticsList": [
+    {
+      "type": "System",
+      "allIds": "",
+      "properties": [
+        "numOfProtectionDomains",
+        "numOfSdc",
+        "numOfSds",
+        "numOfVolumes",
+        "numOfDevices",
+        "numOfVtrees",
+        "numOfStoragePools",
+        "numOfUnmappedVolumes",
+        "numOfMappedToAllVolumes",
+        "numOfThickBaseVolumes",
+        "numOfThinBaseVolumes",
+        "numOfSnapshots",
+        "numOfVolumesInDeletion",
+        "maxCapacityInKb",
+        "capacityInUseInKb",
+        "inMaintenanceCapacityInKb",
+        "spareCapacityInKb",
+        "degradedFailedCapacityInKb",
+        "failedCapacityInKb",
+        "protectedCapacityInKb",
+        "capacityAvailableForVolumeAllocationInKb",
+        "totalReadBwc",
+        "totalWriteBwc",
+        "fwdRebuildReadBwc",
+        "fwdRebuildWriteBwc",
+        "bckRebuildReadBwc",
+        "bckRebuildWriteBwc",
+        "rebalanceReadBwc",
+        "rebalanceWriteBwc"
+      ]
+    },
+    {
+      "type": "Sdr",
+      "allIds": "",
+      "properties": [
+        "numActiveSessions",
+        "numRecoverySessions",
+        "journalerReadBwc",
+        "journalerWriteBwc"
+      ]
+    },
+    {
+      "type": "Sds",
+      "allIds": "",
+      "properties": [
+        "numOfDevices",
+        "maxCapacityInKb",
+        "capacityInUseInKb",
+        "totalReadBwc",
+        "totalWriteBwc"
+      ]
+    },
+    {
+      "type": "Sdc",
+      "allIds": "",
+      "properties": [
+        "numOfMappedVolumes",
+        "userDataReadBwc",
+        "userDataWriteBwc"
+      ]
+    },
+    {
+      "type": "Volume",
+      "allIds": "",
+      "properties": [
+        "numOfMappedSdcs",
+        "numOfChildVolumes",
+        "numOfDescendantVolumes",
+        "userDataReadBwc",
+        "userDataWriteBwc",
+        "userDataSdcReadLatency",
+        "userDataSdcWriteLatency",
+        "userDataSdcTrimLatency"
+      ]
+    },
+    {
+      "type": "StoragePool",
+      "allIds": "",
+      "properties": [
+        "numOfDevices",
+        "numOfVtrees",
+        "numOfVolumes",
+        "numOfUnmappedVolumes",
+        "numOfMappedToAllVolumes",
+        "numOfThickBaseVolumes",
+        "numOfThinBaseVolumes",
+        "numOfSnapshots",
+        "numOfVolumesInDeletion",
+        "maxCapacityInKb",
+        "capacityInUseInKb",
+        "inMaintenanceCapacityInKb",
+        "degradedFailedCapacityInKb",
+        "failedCapacityInKb",
+        "unusedCapacityInKb",
+        "spareCapacityInKb",
+        "protectedCapacityInKb",
+        "movingCapacityInKb",
+        "thinUserDataCapacityInKb",
+        "thinCapacityInUseInKb",
+        "thickCapacityInUseInKb",
+        "capacityAvailableForVolumeAllocationInKb",
+        "totalReadBwc",
+        "totalWriteBwc",
+        "fwdRebuildReadBwc",
+        "fwdRebuildWriteBwc",
+        "bckRebuildReadBwc",
+        "bckRebuildWriteBwc",
+        "rebalanceReadBwc",
+        "rebalanceWriteBwc"
+      ]
+    },
+    {
+      "type": "Device",
+      "allIds": "",
+      "properties": [
+        "avgReadLatencyInMicrosec",
+        "avgWriteLatencyInMicrosec",
+        "avgReadSizeInBytes",
+        "avgWriteSizeInBytes",
+        "totalReadBwc",
+        "totalWriteBwc",
+        "backgroundScanFixedReadErrorCount",
+        "BackgroundScannedInMB"
+      ]
+    },
+    {
+      "type": "ProtectionDomain",
+      "allIds": "",
+      "properties": [
+        "numOfSds",
+        "numOfStoragePools",
+        "numOfFaultSets",
+        "numOfUnmappedVolumes",
+        "numOfMappedToAllVolumes",
+        "numOfThickBaseVolumes",
+        "numOfThinBaseVolumes",
+        "numOfSnapshots",
+        "numOfVolumesInDeletion",
+        "totalReadBwc",
+        "totalWriteBwc",
+        "fwdRebuildReadBwc",
+        "fwdRebuildWriteBwc",
+        "bckRebuildReadBwc",
+        "bckRebuildWriteBwc",
+        "rebalanceReadBwc",
+        "rebalanceWriteBwc"
+      ]
+    }
+  ]
+}
