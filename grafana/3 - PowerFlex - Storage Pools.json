@@ -1,9 +1,55 @@
 {
+  "__inputs": [
+    {
+      "name": "DS_PROMETHEUS",
+      "label": "Prometheus",
+      "description": "",
+      "type": "datasource",
+      "pluginId": "prometheus",
+      "pluginName": "Prometheus"
+    }
+  ],
+  "__elements": {},
+  "__requires": [
+    {
+      "type": "grafana",
+      "id": "grafana",
+      "name": "Grafana",
+      "version": "9.1.8"
+    },
+    {
+      "type": "panel",
+      "id": "piechart",
+      "name": "Pie chart",
+      "version": ""
+    },
+    {
+      "type": "datasource",
+      "id": "prometheus",
+      "name": "Prometheus",
+      "version": "1.0.0"
+    },
+    {
+      "type": "panel",
+      "id": "stat",
+      "name": "Stat",
+      "version": ""
+    },
+    {
+      "type": "panel",
+      "id": "timeseries",
+      "name": "Time series",
+      "version": ""
+    }
+  ],
   "annotations": {
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
@@ -21,12 +67,15 @@
   "editable": true,
   "fiscalYearStartMonth": 0,
   "graphTooltip": 1,
-  "id": 20,
-  "iteration": 1644016013058,
+  "id": null,
   "links": [],
   "liveNow": false,
   "panels": [
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -57,7 +106,8 @@
         ],
         "legend": {
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "pieType": "pie",
         "reduceOptions": {
@@ -68,14 +118,15 @@
           "values": false
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_capacity_use_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -86,7 +137,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_capacity_unused_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -103,12 +154,18 @@
       "alert": {
         "enabled": false
       },
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -165,10 +222,12 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.2.1",
@@ -176,7 +235,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_capacity_failed_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -191,7 +250,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_capacity_moving_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -206,7 +265,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_capacity_protected_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -221,7 +280,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_capacity_spare_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -236,7 +295,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_capacity_unused_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -251,7 +310,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_capacity_use_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -270,7 +329,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "wwrLY75nz"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -318,9 +377,13 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.1.8",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "storagepool_read_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
           "intervalFactor": 2,
           "metric": "storagepool",
@@ -333,6 +396,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -379,12 +446,12 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.1.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_write_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -400,6 +467,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -446,12 +517,12 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.1.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_read_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
@@ -467,6 +538,10 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -513,12 +588,12 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "8.3.4",
+      "pluginVersion": "9.1.8",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_write_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -534,12 +609,18 @@
       "type": "stat"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -597,10 +678,12 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.2.1",
@@ -608,7 +691,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_read_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
@@ -623,7 +706,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_write_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -640,12 +723,18 @@
       "type": "timeseries"
     },
     {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "palette-classic"
           },
           "custom": {
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
             "axisLabel": "",
             "axisPlacement": "auto",
             "barAlignment": 0,
@@ -703,10 +792,12 @@
         "legend": {
           "calcs": [],
           "displayMode": "list",
-          "placement": "bottom"
+          "placement": "bottom",
+          "showLegend": true
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "single",
+          "sort": "none"
         }
       },
       "pluginVersion": "8.2.1",
@@ -714,7 +805,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_read_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}",
@@ -729,7 +820,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "wwrLY75nz"
+            "uid": "${DS_PROMETHEUS}"
           },
           "exemplar": true,
           "expr": "storagepool_write_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"} / 2",
@@ -751,7 +842,7 @@
       },
       "datasource": {
         "type": "prometheus",
-        "uid": "wwrLY75nz"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -791,8 +882,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -815,8 +905,9 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single"
@@ -825,6 +916,10 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "topk(10, avg(volume_read_user_data_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}) BY (vol_name))",
           "intervalFactor": 2,
           "legendFormat": "{{vol_name}}",
@@ -841,7 +936,7 @@
       },
       "datasource": {
         "type": "prometheus",
-        "uid": "wwrLY75nz"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -881,8 +976,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -905,8 +999,9 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single"
@@ -915,6 +1010,10 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "topk(10, avg(volume_write_user_data_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}) BY (vol_name))",
           "intervalFactor": 2,
           "legendFormat": "{{vol_name}}",
@@ -931,7 +1030,7 @@
       },
       "datasource": {
         "type": "prometheus",
-        "uid": "wwrLY75nz"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -971,8 +1070,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -995,8 +1093,9 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single"
@@ -1005,6 +1104,10 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "topk(10, avg(volume_read_user_data_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}) BY (vol_name))",
           "intervalFactor": 2,
           "legendFormat": "{{vol_name}}",
@@ -1021,7 +1124,7 @@
       },
       "datasource": {
         "type": "prometheus",
-        "uid": "wwrLY75nz"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1061,8 +1164,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1085,8 +1187,9 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single"
@@ -1095,6 +1198,10 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "topk(10, avg(volume_write_user_data_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}) BY (vol_name))",
           "intervalFactor": 2,
           "legendFormat": "{{vol_name}}",
@@ -1108,7 +1215,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "wwrLY75nz"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1148,8 +1255,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1172,8 +1278,9 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single"
@@ -1182,6 +1289,10 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "topk(10, avg(sds_read_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\"}) BY (sds_name))",
           "intervalFactor": 2,
           "legendFormat": "{{sds_name}}",
@@ -1198,7 +1309,7 @@
       },
       "datasource": {
         "type": "prometheus",
-        "uid": "wwrLY75nz"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1238,8 +1349,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1262,8 +1372,9 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single"
@@ -1272,6 +1383,10 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "topk(10, avg(sds_write_total_iops{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\"}) BY (sds_name))",
           "intervalFactor": 2,
           "legendFormat": "{{sds_name}}",
@@ -1285,7 +1400,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "wwrLY75nz"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1325,8 +1440,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1349,8 +1463,9 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single"
@@ -1359,6 +1474,10 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "topk(10, avg(sds_read_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\"}) BY (sds_name))",
           "intervalFactor": 2,
           "legendFormat": "{{sds_name}}",
@@ -1375,7 +1494,7 @@
       },
       "datasource": {
         "type": "prometheus",
-        "uid": "wwrLY75nz"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1415,8 +1534,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1439,8 +1557,9 @@
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "hidden",
-          "placement": "bottom"
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single"
@@ -1449,6 +1568,10 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "topk(10, avg(sds_write_total_kb{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\"}) BY (sds_name))",
           "intervalFactor": 2,
           "legendFormat": "{{sds_name}}",
@@ -1462,7 +1585,7 @@
     {
       "datasource": {
         "type": "prometheus",
-        "uid": "wwrLY75nz"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1502,8 +1625,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1531,8 +1653,9 @@
             "max",
             "min"
           ],
-          "displayMode": "hidden",
-          "placement": "bottom"
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single"
@@ -1541,6 +1664,10 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "max(device_read_latency_ms{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}) by (sds_name)",
           "intervalFactor": 2,
           "legendFormat": "{{sds_name}}",
@@ -1557,7 +1684,7 @@
       },
       "datasource": {
         "type": "prometheus",
-        "uid": "wwrLY75nz"
+        "uid": "${DS_PROMETHEUS}"
       },
       "fieldConfig": {
         "defaults": {
@@ -1597,8 +1724,7 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green",
-                "value": null
+                "color": "green"
               },
               {
                 "color": "red",
@@ -1626,8 +1752,9 @@
             "max",
             "min"
           ],
-          "displayMode": "hidden",
-          "placement": "bottom"
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": false
         },
         "tooltip": {
           "mode": "single"
@@ -1636,6 +1763,10 @@
       "pluginVersion": "8.2.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "expr": "max(device_write_latency_ms{clu_name=\"$CLU\",pdo_name=\"$DOMAIN\",sto_name=\"$POOL\"}) by (sds_name)",
           "intervalFactor": 2,
           "legendFormat": "{{sds_name}}",
@@ -1648,7 +1779,7 @@
     }
   ],
   "refresh": false,
-  "schemaVersion": 34,
+  "schemaVersion": 37,
   "style": "dark",
   "tags": [
     "PowerFlex"
@@ -1656,14 +1787,10 @@
   "templating": {
     "list": [
       {
-        "current": {
-          "selected": false,
-          "text": "MSR-SIO-CLU1",
-          "value": "MSR-SIO-CLU1"
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "wwrLY75nz"
+          "uid": "${DS_PROMETHEUS}"
         },
         "definition": "",
         "hide": 0,
@@ -1683,14 +1810,10 @@
         "type": "query"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "MSR-CLU1-CORP",
-          "value": "MSR-CLU1-CORP"
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "wwrLY75nz"
+          "uid": "${DS_PROMETHEUS}"
         },
         "definition": "",
         "hide": 0,
@@ -1710,14 +1833,10 @@
         "type": "query"
       },
       {
-        "current": {
-          "selected": false,
-          "text": "PERFORMANCE-01",
-          "value": "PERFORMANCE-01"
-        },
+        "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "wwrLY75nz"
+          "uid": "${DS_PROMETHEUS}"
         },
         "definition": "",
         "hide": 0,
@@ -1770,6 +1889,6 @@
   "timezone": "browser",
   "title": "3 - PowerFlex - Storage Pools",
   "uid": "amZYqGKnz",
-  "version": 6,
+  "version": 4,
   "weekStart": ""
 }
