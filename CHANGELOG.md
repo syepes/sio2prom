@@ -6,6 +6,45 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 0.2.20 - 2022-10-07
+
+- Remove from builds console_subscriber
+
+## 0.2.19 - 2022-10-06
+
+- Correctly fix rcleaning of removed devices
+- Update external dependencies
+- Added internal Tokio metrics
+
+## 0.2.18 - 2022-09-09
+
+- Fix rcleaning of removed devices
+
+## 0.2.14 - 2022-06-14
+
+- Update deps
+- Fix lints
+
+## 0.2.13 - 2022-06-03
+
+- Fix crash when missing or none values are found
+- CI Update
+
+## 0.2.12 - 2022-05-05
+
+- Added new parameter (--port) to change the default network port 8080
+- Check / print the API version
+- Update dependencies
+
+## 0.2.11 - 2022-05-05
+
+- Fix paramater parcing (clap)
+- Update dependencies
+
+## 0.2.10 - 2022-03-02
+
+- Update dependencies
+
 ## 0.2.9 - 2021-02-02
 
 - Update dependencies

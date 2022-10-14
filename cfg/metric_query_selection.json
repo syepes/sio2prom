@@ -73,7 +73,10 @@
         "numOfChildVolumes",
         "numOfDescendantVolumes",
         "userDataReadBwc",
-        "userDataWriteBwc"
+        "userDataWriteBwc",
+        "userDataSdcReadLatency",
+        "userDataSdcWriteLatency",
+        "userDataSdcTrimLatency"
       ]
     },
     {
@@ -118,7 +121,9 @@
         "avgReadSizeInBytes",
         "avgWriteSizeInBytes",
         "totalReadBwc",
-        "totalWriteBwc"
+        "totalWriteBwc",
+        "fixedReadErrorCount",
+        "BackgroundScannedInMB"
       ]
     },
     {

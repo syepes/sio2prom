@@ -73,6 +73,58 @@ impl<'a> ClientInfo<'a> {
     debug!("Token:{:#?}", *self.token.borrow_mut());
   }
 
+  pub async fn version(&mut self) -> Result<(), anyhow::Error> {
+    trace!("version");
+    self.auth().await;
+
+    if let Ok(c) = reqwest::Client::builder().user_agent(env!("CARGO_PKG_NAME")).danger_accept_invalid_certs(true).timeout(Duration::from_secs(15)).connection_verbose(true).build() {
+      if !self.auth_usr.unwrap().is_empty() && self.token.borrow().is_some() {
+        let req_url = format!("https://{ip}/api/version", ip = self.ip.unwrap());
+        let t = self.token.borrow().as_ref().unwrap().clone();
+        trace!("Auth on {:?} with {:?}/{:?}", req_url.clone(), self.auth_usr, t);
+
+        let req = c.get(req_url).basic_auth(self.auth_usr.unwrap(), Some(t));
+        match req.send().await {
+          Ok(r) => {
+            trace!("resp:{:#?}", r);
+            match r.status() {
+              StatusCode::OK => {
+                match r.text().await {
+                  Ok(t) => {
+                    info!("API Version: {}", t.replace('"', ""));
+                    Ok(())
+                  },
+                  _ => Err(anyhow!("Failed to detect API version")),
+                }
+              },
+              StatusCode::UNAUTHORIZED | StatusCode::FORBIDDEN => {
+                *self.token.borrow_mut() = None;
+                Err(anyhow!("Auth failed"))
+              },
+              _ => {
+                let msg: String = match r.json::<serde_json::Value>().await {
+                  Ok(Value::Object(m)) => m.get("message").map(|m| m.to_string().replace('"', "")).unwrap_or_else(|| "unknown".to_string()),
+                  _ => "unknown".to_string(),
+                };
+                error!("Unknown instance request error: {:?}", msg);
+                Err(anyhow!("Unknown instance request error: {:?}", msg))
+              },
+            }
+          },
+          Err(e) => {
+            error!("Instance request error: {:?}", e.to_string());
+            Err(anyhow!("Instance request error: {:?}", e.to_string()))
+          },
+        }
+      } else {
+        error!("Missing auth token");
+        Err(anyhow!("Missing auth token"))
+      }
+    } else {
+      Err(anyhow!("Cant build client"))
+    }
+  }
+
   async fn instances(&mut self) -> Result<Map<String, serde_json::Value>, anyhow::Error> {
     trace!("instances");
     if let Ok(c) = reqwest::Client::builder().user_agent(env!("CARGO_PKG_NAME")).danger_accept_invalid_certs(true).timeout(Duration::from_secs(15)).connection_verbose(true).build() {

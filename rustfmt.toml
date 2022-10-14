@@ -2,7 +2,7 @@
 
 # Stable
 unstable_features = true
-edition = "2018"
+edition = "2021"
 max_width = 900
 tab_spaces = 2
 match_block_trailing_comma = true
