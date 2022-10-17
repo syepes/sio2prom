@@ -13,8 +13,8 @@ After the last fixes and updates we can consider this exporter as stable, so I a
 ### Breaking change
 
 - The following parameters have been renamed for compatibility reasons
-  -- `--interval` / `-i` is now `--refresh- /`-r'
-  -- `-h` is now ``-i'
+  - `--interval` / `-i` is now `--refresh- /`-r'
+  - `-h` is now `-i'
 
 ## 0.2.20 - 2022-10-07
 
