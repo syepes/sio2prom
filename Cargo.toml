@@ -1,6 +1,6 @@
 [package]
 name = "sio2prom"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2021"
 authors = ["Sebastian YEPES F <syepes@gmail.com>"]
 keywords = ["prometheus", "metrics", "scaleio", "VxFlex", "PowerFlex"]
@@ -25,8 +25,8 @@ publish = true
 
 [dependencies]
 log = "0.4"
-env_logger = "0.9"
-tokio = { version = "1.21", features = [
+env_logger = "0.10"
+tokio = { version = "1.22", features = [
   "macros",
   "time",
   "rt-multi-thread",
