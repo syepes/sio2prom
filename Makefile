@@ -21,7 +21,7 @@ style-check:
 lint:
 	@rustup component add clippy 2> /dev/null
 	touch src/**
-	cargo clippy --all-targets --all-features -- -D warnings  -A clippy::for_loops_over_fallibles
+	cargo clippy --all-targets --all-features -- -D warnings
 
 check:
 	@rustup component add rustfmt 2> /dev/null

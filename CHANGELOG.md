@@ -6,9 +6,14 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
-## 1.0.0 - 2022-10-14
+## 1.0.2 - 2023-01-07
 
-After the last fixes and updates we can consider this exporter as stable, so I am graduating it to 1.0 :-)
+- Fix lint warning
+- Update external dependencies (CI and Rust)
+
+## 1.0.1 - 2022-12-02
+
+- Update external dependencies
 
 ### Breaking change
 
