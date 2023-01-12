@@ -23,50 +23,52 @@ impl<'a> ClientInfo<'a> {
 
   async fn auth(&mut self) {
     trace!("auth");
-    if let Ok(c) = reqwest::Client::builder().user_agent(env!("CARGO_PKG_NAME")).danger_accept_invalid_certs(true).timeout(Duration::from_secs(10)).connection_verbose(true).build() {
-      if !self.auth_usr.unwrap().is_empty() && !self.auth_pwd.unwrap().is_empty() {
-        let req_url = format!("https://{ip}/api/login", ip = self.ip.unwrap());
-        trace!("Auth on {:?} with {:?}/{:?}", req_url.clone(), self.auth_usr.unwrap().to_string(), self.auth_pwd.unwrap().to_string());
+    if self.token.borrow().is_none() {
+      if let Ok(c) = reqwest::Client::builder().user_agent(env!("CARGO_PKG_NAME")).danger_accept_invalid_certs(true).timeout(Duration::from_secs(10)).connection_verbose(true).build() {
+        if !self.auth_usr.unwrap().is_empty() && !self.auth_pwd.unwrap().is_empty() && self.token.borrow().is_none() {
+          let req_url = format!("https://{ip}/api/login", ip = self.ip.unwrap());
+          trace!("Auth on {:?} with {:?}/{:?}", req_url.clone(), self.auth_usr.unwrap().to_string(), self.auth_pwd.unwrap().to_string());
 
-        let req = c.get(req_url).basic_auth(self.auth_usr.unwrap(), Some(self.auth_pwd.unwrap()));
-        match req.send().await {
-          Ok(r) => {
-            trace!("resp:{:#?}", r);
-            match r.status() {
-              StatusCode::OK => {
-                match r.json::<serde_json::Value>().await {
-                  Ok(t) => {
-                    *self.token.borrow_mut() = Some(t.to_string().replace('"', ""));
-                  },
-                  _ => *self.token.borrow_mut() = None,
-                }
-              },
-              StatusCode::UNAUTHORIZED | StatusCode::FORBIDDEN => {
-                *self.token.borrow_mut() = None;
-                let msg: String = match r.json::<serde_json::Value>().await {
-                  Ok(Value::Object(m)) => m.get("message").map(|m| m.to_string().replace('"', "")).unwrap_or_else(|| "unknown".to_string()),
-                  _ => "unknown".to_string(),
-                };
-                error!("Auth failed: {:?}", msg);
-              },
-              _ => {
-                *self.token.borrow_mut() = None;
-                let msg: String = match r.json::<serde_json::Value>().await {
-                  Ok(Value::Object(m)) => m.get("message").map(|m| m.to_string().replace('"', "")).unwrap_or_else(|| "unknown".to_string()),
-                  _ => "unknown".to_string(),
-                };
-                error!("Unknown auth request error: {:?}", msg);
-              },
-            };
-          },
-          Err(e) => {
-            *self.token.borrow_mut() = None;
-            error!("Auth request error: {:?}", e.to_string());
-          },
+          let req = c.get(req_url).basic_auth(self.auth_usr.unwrap(), Some(self.auth_pwd.unwrap()));
+          match req.send().await {
+            Ok(r) => {
+              trace!("resp:{:#?}", r);
+              match r.status() {
+                StatusCode::OK => {
+                  match r.json::<serde_json::Value>().await {
+                    Ok(t) => {
+                      *self.token.borrow_mut() = Some(t.to_string().replace('"', ""));
+                    },
+                    _ => *self.token.borrow_mut() = None,
+                  }
+                },
+                StatusCode::UNAUTHORIZED | StatusCode::FORBIDDEN => {
+                  *self.token.borrow_mut() = None;
+                  let msg: String = match r.json::<serde_json::Value>().await {
+                    Ok(Value::Object(m)) => m.get("message").map(|m| m.to_string().replace('"', "")).unwrap_or_else(|| "unknown".to_string()),
+                    _ => "unknown".to_string(),
+                  };
+                  error!("Auth failed: {:?}", msg);
+                },
+                _ => {
+                  *self.token.borrow_mut() = None;
+                  let msg: String = match r.json::<serde_json::Value>().await {
+                    Ok(Value::Object(m)) => m.get("message").map(|m| m.to_string().replace('"', "")).unwrap_or_else(|| "unknown".to_string()),
+                    _ => "unknown".to_string(),
+                  };
+                  error!("Unknown auth request error: {:?}", msg);
+                },
+              };
+            },
+            Err(e) => {
+              *self.token.borrow_mut() = None;
+              error!("Auth request error: {:?}", e.to_string());
+            },
+          }
+        } else {
+          *self.token.borrow_mut() = None;
+          error!("Auth missing credentials");
         }
-      } else {
-        *self.token.borrow_mut() = None;
-        error!("Auth missing credentials");
       }
     }
 

@@ -6,6 +6,10 @@ This CHANGELOG follows the format listed at [Keep A Changelog](http://keepachang
 
 ## [Unreleased]
 
+## 1.0.3 - 2023-01-12
+
+- Fix the reutilization of the auth token
+
 ## 1.0.2 - 2023-01-07
 
 - Fix lint warning
