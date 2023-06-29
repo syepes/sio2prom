@@ -296,12 +296,10 @@ impl<'a> ClientInfo<'a> {
     let clu_name = match instances.get("System").and_then(|o| o.as_object().and_then(|j| j.get("name")).map(|s| s.to_string().replace('"', ""))) {
       None => {
         warn!("clu_name Not found using clu_id as name");
-        None
+        clu_id.to_string()
       },
-      Some(s) => Some(s),
+      Some(s) => s,
     };
-
-    let clu_name = if let Some(id) = clu_name { id } else { clu_name.unwrap() };
 
     // System
     {
