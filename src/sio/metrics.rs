@@ -51,10 +51,11 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
   let clu_name = match instances.get("System").and_then(|o| o.as_object().and_then(|j| j.get("name")).map(|s| s.to_string().replace('"', ""))) {
     None => {
       warn!("clu_name Not found using clu_id as name");
-      clu_id.to_string()
+      None
     },
-    Some(s) => s,
+    Some(s) => Some(s),
   };
+  let clu_name = if let Some(id) = clu_name { id } else { clu_name.unwrap() };
 
   // Sdc
   for sdc in instances.get("sdcList").and_then(|v| v.as_array()).unwrap_or_else(|| {
@@ -161,7 +162,7 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
 
       for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
         for pdo in pd.as_object().iter() {
-          if relations["parents"][&(sds_id)]["protectiondomain"].contains(&(pdo["id"].to_string().replace('"', ""))) {
+          if relations["parents"][&sds_id]["protectiondomain"].contains(&pdo["id"].to_string().replace('"', "")) {
             parent.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
             parent.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
             break;
@@ -213,7 +214,7 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
 
       for sp in instances["storagePoolList"].as_array().unwrap().iter() {
         for sto in sp.as_object().iter() {
-          if relations["parents"][&(vol_id)]["storagepool"].contains(&(sto["id"].to_string().replace('"', ""))) {
+          if relations["parents"][&vol_id]["storagepool"].contains(&sto["id"].to_string().replace('"', "")) {
             parent_sto.entry("name").or_insert_with(|| sto["name"].to_string().replace('"', ""));
             parent_sto.entry("id").or_insert_with(|| sto["id"].to_string().replace('"', ""));
             break;
@@ -222,7 +223,7 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
       }
       for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
         for pdo in pd.as_object().iter() {
-          if relations["parents"][&(parent_sto["id"].to_string().replace('"', ""))]["protectiondomain"].contains(&(pdo["id"].to_string().replace('"', ""))) {
+          if relations["parents"][&parent_sto["id"].to_string().replace('"', "")]["protectiondomain"].contains(&pdo["id"].to_string().replace('"', "")) {
             parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
             parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
             break;
@@ -357,7 +358,7 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
 
       for sdsl in instances["sdsList"].as_array().unwrap().iter() {
         for sds in sdsl.as_object().iter() {
-          if relations["parents"][&(dev_id)]["sds"].contains(&(sds["id"].to_string().replace('"', ""))) {
+          if relations["parents"][&dev_id]["sds"].contains(&sds["id"].to_string().replace('"', "")) {
             parent_sds.entry("name").or_insert_with(|| sds["name"].to_string().replace('"', ""));
             parent_sds.entry("id").or_insert_with(|| sds["id"].to_string().replace('"', ""));
             break;
@@ -366,7 +367,7 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
       }
       for sp in instances["storagePoolList"].as_array().unwrap().iter() {
         for sto in sp.as_object().iter() {
-          if relations["parents"][&(dev_id)]["storagepool"].contains(&(sto["id"].to_string().replace('"', ""))) {
+          if relations["parents"][&dev_id]["storagepool"].contains(&sto["id"].to_string().replace('"', "")) {
             parent_sto.entry("name").or_insert_with(|| sto["name"].to_string().replace('"', ""));
             parent_sto.entry("id").or_insert_with(|| sto["id"].to_string().replace('"', ""));
             break;
@@ -375,7 +376,7 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
       }
       for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
         for pdo in pd.as_object().iter() {
-          if relations["parents"][&(parent_sto["id"].to_string().replace('"', ""))]["protectiondomain"].contains(&(pdo["id"].to_string().replace('"', ""))) {
+          if relations["parents"][&parent_sto["id"].to_string().replace('"', "")]["protectiondomain"].contains(&pdo["id"].to_string().replace('"', "")) {
             parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
             parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
             break;
@@ -388,43 +389,55 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
           error!("Failed to get 'name' from parent_sds");
           continue;
         },
-        Some(o) => label.entry("sds_name").or_insert_with(|| o.to_string()),
-      };
+        Some(o) => {
+          label.entry("sds_name").or_insert_with(|| o.to_string());
+        },
+      }
       match parent_sds.get("id") {
         None => {
           error!("Failed to get 'id' from parent_sds");
           continue;
         },
-        Some(o) => label.entry("sds_id").or_insert_with(|| o.to_string()),
-      };
+        Some(o) => {
+          label.entry("sds_id").or_insert_with(|| o.to_string());
+        },
+      }
       match parent_sto.get("name") {
         None => {
           error!("Failed to get 'name' from parent_sto");
           continue;
         },
-        Some(o) => label.entry("sto_name").or_insert_with(|| o.to_string()),
-      };
+        Some(o) => {
+          label.entry("sto_name").or_insert_with(|| o.to_string());
+        },
+      }
       match parent_sto.get("id") {
         None => {
           error!("Failed to get 'id' from parent_sto");
           continue;
         },
-        Some(o) => label.entry("sto_id").or_insert_with(|| o.to_string()),
-      };
+        Some(o) => {
+          label.entry("sto_id").or_insert_with(|| o.to_string());
+        },
+      }
       match parent_pdo.get("name") {
         None => {
           error!("Failed to get 'name' from parent_pdo");
           continue;
         },
-        Some(o) => label.entry("pdo_name").or_insert_with(|| o.to_string()),
-      };
+        Some(o) => {
+          label.entry("pdo_name").or_insert_with(|| o.to_string());
+        },
+      }
       match parent_pdo.get("id") {
         None => {
           error!("Failed to get 'id' from parent_pdo");
           continue;
         },
-        Some(o) => label.entry("pdo_id").or_insert_with(|| o.to_string()),
-      };
+        Some(o) => {
+          label.entry("pdo_id").or_insert_with(|| o.to_string());
+        },
+      }
 
       if let Some(value) = dev_state {
         let state: Metric = Metric::new("device_state".to_string(), "gauge".to_string(), "deviceState: Normal,NormalTesting=0.0 or DeviceInit=1.0 or DeviceRecovery=2.0 or InitialTest=3.0 or InitialTestDone=4.0 or RemovePending=5.0".to_string(), label.clone(), value);
