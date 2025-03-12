@@ -495,23 +495,46 @@ fn convert_metrics(cfg_path: Option<&str>, stats: &Map<String, serde_json::Value
               let m_io_name = format!("{}_{}_iops", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
               let m_io_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
               let m_io_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_io_value: f64 = iops_calc(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
+              let m_io_value: f64 = div_oper(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
               let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
               metric_list.push(metric_io);
 
               let m_bw_name = format!("{}_{}_kb", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
               let m_bw_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
               let m_bw_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_bw_value: f64 = bw_calc(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
+              let m_bw_value: f64 = div_oper(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
               let metric_bw: Metric = Metric::new(m_bw_name, m_bw_type, m_bw_help, m_labels.clone(), m_bw_value);
               metric_list.push(metric_bw);
+
+              let m_sz_name = format!("{}_{}_iosize_kb", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+              let m_sz_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
+              let m_sz_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
+              let m_sz_value: f64 = div_oper(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap());
+              let metric_sz: Metric = Metric::new(m_sz_name, m_sz_type, m_sz_help, m_labels.clone(), m_sz_value);
+              metric_list.push(metric_sz);
+
+            } else if m.ends_with("Latency") && v.is_object() {
+              let m_io_name = format!("{}_{}_iops", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+              let m_io_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
+              let m_io_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
+              let m_io_value: f64 = div_oper(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
+              let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
+              metric_list.push(metric_io);
+
+              let m_lat_name = format!("{}_{}_us", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+              let m_lat_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
+              let m_lat_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
+              let m_lat_value: f64 = div_oper(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap());
+              let metric_lat: Metric = Metric::new(m_lat_name, m_lat_type, m_lat_help, m_labels.clone(), m_lat_value);
+              metric_list.push(metric_lat);
+
             } else {
               let m_name = format!("{}_{}", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
               let m_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
               let m_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
               if let Some(m_value) = v.as_f64() {
-                let metric_bw: Metric = Metric::new(m_name, m_type, m_help, m_labels.clone(), m_value);
-                metric_list.push(metric_bw);
+                let metric: Metric = Metric::new(m_name, m_type, m_help, m_labels.clone(), m_value);
+                metric_list.push(metric);
               }
             }
           } else {
@@ -538,16 +561,39 @@ fn convert_metrics(cfg_path: Option<&str>, stats: &Map<String, serde_json::Value
               let m_io_name = format!("{}_{}_iops", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
               let m_io_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
               let m_io_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_io_value: f64 = iops_calc(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
+              let m_io_value: f64 = div_oper(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
               let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
               metric_list.push(metric_io);
 
               let m_bw_name = format!("{}_{}_kb", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
               let m_bw_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
               let m_bw_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_bw_value: f64 = bw_calc(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
+              let m_bw_value: f64 = div_oper(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
               let metric_bw: Metric = Metric::new(m_bw_name, m_bw_type, m_bw_help, m_labels.clone(), m_bw_value);
               metric_list.push(metric_bw);
+
+              let m_sz_name = format!("{}_{}_iosize_kb", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+              let m_sz_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
+              let m_sz_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
+              let m_sz_value: f64 = div_oper(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap());
+              let metric_sz: Metric = Metric::new(m_sz_name, m_sz_type, m_sz_help, m_labels.clone(), m_sz_value);
+              metric_list.push(metric_sz);
+
+            } else if m.ends_with("Latency") && v.is_object() {
+              let m_io_name = format!("{}_{}_iops", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+              let m_io_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
+              let m_io_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
+              let m_io_value: f64 = div_oper(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
+              let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
+              metric_list.push(metric_io);
+
+              let m_lat_name = format!("{}_{}_us", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+              let m_lat_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
+              let m_lat_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
+              let m_lat_value: f64 = div_oper(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap());
+              let metric_lat: Metric = Metric::new(m_lat_name, m_lat_type, m_lat_help, m_labels.clone(), m_lat_value);
+              metric_list.push(metric_lat);
+
             } else {
               let m_name = format!("{}_{}", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
               let m_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
@@ -573,21 +619,11 @@ fn convert_metrics(cfg_path: Option<&str>, stats: &Map<String, serde_json::Value
   }
 }
 
-/// Calculate IOPS from the *Bwc metrics
-/// `https://github.com/andrewjwhite/ScaleIO_RestAPI_Python_Examples/blob/master/ScaleIO_cluster_stats_example.py#L92-L108`
-fn iops_calc(occur: i32, secs: i32) -> f64 {
-  if occur == 0 {
+/// Divide operation (to calculate IOPS, Bandwidth, IO size, latency... from the *Bwc or *Latency metrics)
+fn div_oper(value: i32, divisor: i32) -> f64 {
+  if value == 0 || divisor == 0 {
     0.0_f64
   } else {
-    (occur / secs) as f64
-  }
-}
-
-/// Calculate Bandwidth Kb/s from the *Bwc metrics
-fn bw_calc(occur: i32, secs: i32) -> f64 {
-  if occur == 0 {
-    0.0_f64
-  } else {
-    (occur / secs) as f64
+    (value as f64 / divisor as f64) as f64
   }
 }
