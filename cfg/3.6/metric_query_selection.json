@@ -32,7 +32,9 @@
         "bckRebuildReadBwc",
         "bckRebuildWriteBwc",
         "rebalanceReadBwc",
-        "rebalanceWriteBwc"
+        "rebalanceWriteBwc",
+        "userDataSdcReadLatency",
+        "userDataSdcWriteLatency"
       ]
     },
     {
@@ -62,7 +64,9 @@
       "properties": [
         "numOfMappedVolumes",
         "userDataReadBwc",
-        "userDataWriteBwc"
+        "userDataWriteBwc",
+        "userDataSdcReadLatency",
+        "userDataSdcWriteLatency"
       ]
     },
     {
@@ -75,8 +79,7 @@
         "userDataReadBwc",
         "userDataWriteBwc",
         "userDataSdcReadLatency",
-        "userDataSdcWriteLatency",
-        "userDataSdcTrimLatency"
+        "userDataSdcWriteLatency"
       ]
     },
     {
@@ -112,7 +115,9 @@
         "bckRebuildReadBwc",
         "bckRebuildWriteBwc",
         "rebalanceReadBwc",
-        "rebalanceWriteBwc"
+        "rebalanceWriteBwc",
+        "userDataSdcReadLatency",
+        "userDataSdcWriteLatency"
       ]
     },
     {
@@ -149,7 +154,9 @@
         "bckRebuildReadBwc",
         "bckRebuildWriteBwc",
         "rebalanceReadBwc",
-        "rebalanceWriteBwc"
+        "rebalanceWriteBwc",
+        "userDataSdcReadLatency",
+        "userDataSdcWriteLatency"
       ]
     }
   ]
