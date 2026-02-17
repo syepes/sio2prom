@@ -456,12 +456,15 @@ impl<'a> ClientInfo<'a> {
             }
           }
         }
-        for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
-          for pdo in pd.as_object().iter() {
-            if relations["parents"][&parent_sto["id"].to_string().replace('"', "")]["protectiondomain"].contains(&pdo["id"].to_string().replace('"', "")) {
-              parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
-              parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
-              break;
+        // Only lookup protection domain if we found a storage pool
+        if let Some(sto_id) = parent_sto.get("id") {
+          for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
+            for pdo in pd.as_object().iter() {
+              if relations["parents"][&sto_id.to_string().replace('"', "")]["protectiondomain"].contains(&pdo["id"].to_string().replace('"', "")) {
+                parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
+                parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
+                break;
+              }
             }
           }
         }
@@ -471,10 +474,20 @@ impl<'a> ClientInfo<'a> {
         label.entry("vol_name").or_insert_with(|| vol_name);
         label.entry("vol_id").or_insert_with(|| vol_id.to_string());
         label.entry("vol_type").or_insert_with(|| vol_type.to_string());
-        label.entry("sto_name").or_insert_with(|| parent_sto["name"].to_string());
-        label.entry("sto_id").or_insert_with(|| parent_sto["id"].to_string());
-        label.entry("pdo_name").or_insert_with(|| parent_pdo["name"].to_string());
-        label.entry("pdo_id").or_insert_with(|| parent_pdo["id"].to_string());
+
+        // Only add storage pool and protection domain labels if they were found
+        if let Some(sto_name) = parent_sto.get("name") {
+          label.entry("sto_name").or_insert_with(|| sto_name.to_string());
+        }
+        if let Some(sto_id) = parent_sto.get("id") {
+          label.entry("sto_id").or_insert_with(|| sto_id.to_string());
+        }
+        if let Some(pdo_name) = parent_pdo.get("name") {
+          label.entry("pdo_name").or_insert_with(|| pdo_name.to_string());
+        }
+        if let Some(pdo_id) = parent_pdo.get("id") {
+          label.entry("pdo_id").or_insert_with(|| pdo_id.to_string());
+        }
 
         labels.entry("volume").or_insert_with(HashMap::new).entry(vol_id).or_insert_with(|| label);
       }
@@ -498,30 +511,47 @@ impl<'a> ClientInfo<'a> {
         let dev_id = dev.get("id").map(|s| s.to_string().replace('"', "")).expect("dev_id Not found");
         let dev_path = dev.get("deviceCurrentPathName").map(|s| s.to_string().replace("/dev/", "").replace('"', "")).expect("dev_path Not found");
 
-        for sdsl in instances["sdsList"].as_array().unwrap().iter() {
-          for sds in sdsl.as_object().iter() {
-            if relations["parents"][&dev_id]["sds"].contains(&sds["id"].to_string().replace('"', "")) {
-              parent_sds.entry("name").or_insert_with(|| sds["name"].to_string().replace('"', ""));
-              parent_sds.entry("id").or_insert_with(|| sds["id"].to_string().replace('"', ""));
-              break;
+        // Skip devices that don't have parent relationships
+        if !relations["parents"].contains_key(&dev_id) {
+          warn!("Device {} ({}) has no parent relationships, skipping", dev_name, dev_id);
+          continue;
+        }
+
+        // Check if this device has SDS parent relationship
+        if let Some(sds_parents) = relations["parents"][&dev_id].get("sds") {
+          for sdsl in instances["sdsList"].as_array().unwrap().iter() {
+            for sds in sdsl.as_object().iter() {
+              if sds_parents.contains(&sds["id"].to_string().replace('"', "")) {
+                parent_sds.entry("name").or_insert_with(|| sds["name"].to_string().replace('"', ""));
+                parent_sds.entry("id").or_insert_with(|| sds["id"].to_string().replace('"', ""));
+                break;
+              }
             }
           }
         }
-        for sp in instances["storagePoolList"].as_array().unwrap().iter() {
-          for sto in sp.as_object().iter() {
-            if relations["parents"][&dev_id]["storagepool"].contains(&sto["id"].to_string().replace('"', "")) {
-              parent_sto.entry("name").or_insert_with(|| sto["name"].to_string().replace('"', ""));
-              parent_sto.entry("id").or_insert_with(|| sto["id"].to_string().replace('"', ""));
-              break;
+
+        // Check if this device has storagepool parent relationship
+        if let Some(pool_parents) = relations["parents"][&dev_id].get("storagepool") {
+          for sp in instances["storagePoolList"].as_array().unwrap().iter() {
+            for sto in sp.as_object().iter() {
+              if pool_parents.contains(&sto["id"].to_string().replace('"', "")) {
+                parent_sto.entry("name").or_insert_with(|| sto["name"].to_string().replace('"', ""));
+                parent_sto.entry("id").or_insert_with(|| sto["id"].to_string().replace('"', ""));
+                break;
+              }
             }
           }
         }
-        for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
-          for pdo in pd.as_object().iter() {
-            if relations["parents"][&parent_sto["id"].to_string().replace('"', "")]["protectiondomain"].contains(&pdo["id"].to_string().replace('"', "")) {
-              parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
-              parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
-              break;
+
+        // Only lookup protection domain if we found a storage pool
+        if let Some(sto_id) = parent_sto.get("id") {
+          for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
+            for pdo in pd.as_object().iter() {
+              if relations["parents"][&sto_id.to_string().replace('"', "")]["protectiondomain"].contains(&pdo["id"].to_string().replace('"', "")) {
+                parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
+                parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
+                break;
+              }
             }
           }
         }

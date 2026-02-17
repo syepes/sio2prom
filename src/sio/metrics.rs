@@ -86,7 +86,7 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
         label.entry("sdc_name").or_insert_with(|| sdc_name);
         label.entry("sdc_id").or_insert_with(|| sdc_id.to_string());
 
-        let state: Metric = Metric::new("sdc_state_mdm_connection".to_string(), "gauge".to_string(), "mdmConnectionState: Connected=0.0 or Disconnected=1.0".to_string(), label.clone(), value);
+        let state: Metric = Metric::new("powerflex_sdc_state_mdm_connection".to_string(), "gauge".to_string(), "mdmConnectionState: Connected=0.0 or Disconnected=1.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
     }
@@ -178,19 +178,19 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
       label.entry("pdo_id").or_insert_with(|| parent["id"].to_string());
 
       if let Some(value) = sds_state {
-        let state: Metric = Metric::new("sds_state".to_string(), "gauge".to_string(), "sdsState: Normal=0.0 or RemovePending=1.0".to_string(), label.clone(), value);
+        let state: Metric = Metric::new("powerflex_sds_state".to_string(), "gauge".to_string(), "sdsState: Normal=0.0 or RemovePending=1.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
       if let Some(value) = sds_state_mdm_connection {
-        let state: Metric = Metric::new("sds_state_mdm_connection".to_string(), "gauge".to_string(), "mdmConnectionState: Connected=0.0 or Disconnected=1.0".to_string(), label.clone(), value);
+        let state: Metric = Metric::new("powerflex_sds_state_mdm_connection".to_string(), "gauge".to_string(), "mdmConnectionState: Connected=0.0 or Disconnected=1.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
       if let Some(value) = sds_state_membership {
-        let state: Metric = Metric::new("sds_state_membership".to_string(), "gauge".to_string(), "membershipState: Joined=0.0 or JoinPending=1.0 or Decoupled=2.0".to_string(), label.clone(), value);
+        let state: Metric = Metric::new("powerflex_sds_state_membership".to_string(), "gauge".to_string(), "membershipState: Joined=0.0 or JoinPending=1.0 or Decoupled=2.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
       if let Some(value) = sds_state_maintenance {
-        let state: Metric = Metric::new("sds_state_maintenance".to_string(), "gauge".to_string(), "maintenanceState: NoMaintenance=0.0 or InMaintenance=1.0 or SetMaintenanceInProgress=2.0 or ExitMaintenanceInProgress=3.0".to_string(), label.clone(), value);
+        let state: Metric = Metric::new("powerflex_sds_state_maintenance".to_string(), "gauge".to_string(), "maintenanceState: NoMaintenance=0.0 or InMaintenance=1.0 or SetMaintenanceInProgress=2.0 or ExitMaintenanceInProgress=3.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
     }
@@ -246,7 +246,7 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
       };
 
       if let Some(value) = size_in_kb {
-        let state: Metric = Metric::new("volume_size_in_kb".to_string(), "gauge".to_string(), "volume_size_in_kb".to_string(), label.clone(), value);
+        let state: Metric = Metric::new("powerflex_volume_size_in_kb".to_string(), "gauge".to_string(), "volume_size_in_kb".to_string(), label.clone(), value);
         metric_list.push(state);
       }
     }
@@ -355,30 +355,47 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
       label.entry("dev_id").or_insert_with(|| dev_id.to_string());
       label.entry("dev_path").or_insert_with(|| dev_path);
 
-      for sdsl in instances["sdsList"].as_array().unwrap().iter() {
-        for sds in sdsl.as_object().iter() {
-          if relations["parents"][&dev_id]["sds"].contains(&sds["id"].to_string().replace('"', "")) {
-            parent_sds.entry("name").or_insert_with(|| sds["name"].to_string().replace('"', ""));
-            parent_sds.entry("id").or_insert_with(|| sds["id"].to_string().replace('"', ""));
-            break;
+      // Skip devices without parent relationships
+      if !relations["parents"].contains_key(&dev_id) {
+        warn!("Device ({}) has no parent relationships in metrics, skipping", dev_id);
+        continue;
+      }
+
+      // Check if this device has SDS parent relationship
+      if let Some(sds_parents) = relations["parents"][&dev_id].get("sds") {
+        for sdsl in instances["sdsList"].as_array().unwrap().iter() {
+          for sds in sdsl.as_object().iter() {
+            if sds_parents.contains(&sds["id"].to_string().replace('"', "")) {
+              parent_sds.entry("name").or_insert_with(|| sds["name"].to_string().replace('"', ""));
+              parent_sds.entry("id").or_insert_with(|| sds["id"].to_string().replace('"', ""));
+              break;
+            }
           }
         }
       }
-      for sp in instances["storagePoolList"].as_array().unwrap().iter() {
-        for sto in sp.as_object().iter() {
-          if relations["parents"][&dev_id]["storagepool"].contains(&sto["id"].to_string().replace('"', "")) {
-            parent_sto.entry("name").or_insert_with(|| sto["name"].to_string().replace('"', ""));
-            parent_sto.entry("id").or_insert_with(|| sto["id"].to_string().replace('"', ""));
-            break;
+
+      // Check if this device has storagepool parent relationship
+      if let Some(pool_parents) = relations["parents"][&dev_id].get("storagepool") {
+        for sp in instances["storagePoolList"].as_array().unwrap().iter() {
+          for sto in sp.as_object().iter() {
+            if pool_parents.contains(&sto["id"].to_string().replace('"', "")) {
+              parent_sto.entry("name").or_insert_with(|| sto["name"].to_string().replace('"', ""));
+              parent_sto.entry("id").or_insert_with(|| sto["id"].to_string().replace('"', ""));
+              break;
+            }
           }
         }
       }
-      for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
-        for pdo in pd.as_object().iter() {
-          if relations["parents"][&parent_sto["id"].to_string().replace('"', "")]["protectiondomain"].contains(&pdo["id"].to_string().replace('"', "")) {
-            parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
-            parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
-            break;
+
+      // Only lookup protection domain if we found a storage pool
+      if let Some(sto_id) = parent_sto.get("id") {
+        for pd in instances["protectionDomainList"].as_array().unwrap().iter() {
+          for pdo in pd.as_object().iter() {
+            if relations["parents"][&sto_id.to_string().replace('"', "")]["protectiondomain"].contains(&pdo["id"].to_string().replace('"', "")) {
+              parent_pdo.entry("name").or_insert_with(|| pdo["name"].to_string().replace('"', ""));
+              parent_pdo.entry("id").or_insert_with(|| pdo["id"].to_string().replace('"', ""));
+              break;
+            }
           }
         }
       }
@@ -439,23 +456,23 @@ fn convert_states(instances: &Map<String, serde_json::Value>, relations: &HashMa
       }
 
       if let Some(value) = dev_state {
-        let state: Metric = Metric::new("device_state".to_string(), "gauge".to_string(), "deviceState: Normal,NormalTesting=0.0 or DeviceInit=1.0 or DeviceRecovery=2.0 or InitialTest=3.0 or InitialTestDone=4.0 or RemovePending=5.0".to_string(), label.clone(), value);
+        let state: Metric = Metric::new("powerflex_device_state".to_string(), "gauge".to_string(), "deviceState: Normal,NormalTesting=0.0 or DeviceInit=1.0 or DeviceRecovery=2.0 or InitialTest=3.0 or InitialTestDone=4.0 or RemovePending=5.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
       if let Some(value) = dev_state_error {
-        let state: Metric = Metric::new("device_state_error".to_string(), "gauge".to_string(), "errorState: None=0.0 or Error=1.0 or Warning=2.0 or Notice=3.0 or Info=4.0 or Acceleration=5.0 or Unrecoverable=6.0".to_string(), label.clone(), value);
+        let state: Metric = Metric::new("powerflex_device_state_error".to_string(), "gauge".to_string(), "errorState: None=0.0 or Error=1.0 or Warning=2.0 or Notice=3.0 or Info=4.0 or Acceleration=5.0 or Unrecoverable=6.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
       if let Some(value) = dev_state_temperature {
-        let state: Metric = Metric::new("device_state_temperature".to_string(), "gauge".to_string(), "temperatureState: NeverFailed=0.0 or FailedNow=1.0 or FailedPast=2.0".to_string(), label.clone(), value);
+        let state: Metric = Metric::new("powerflex_device_state_temperature".to_string(), "gauge".to_string(), "temperatureState: NeverFailed=0.0 or FailedNow=1.0 or FailedPast=2.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
       if let Some(value) = dev_state_ssd_end_of_life {
-        let state: Metric = Metric::new("device_state_ssd_end_of_life".to_string(), "gauge".to_string(), "ssdEndOfLifeState: NeverFailed=0.0 or FailedNow=1.0 or FailedPast=2.0".to_string(), label.clone(), value);
+        let state: Metric = Metric::new("powerflex_device_state_ssd_end_of_life".to_string(), "gauge".to_string(), "ssdEndOfLifeState: NeverFailed=0.0 or FailedNow=1.0 or FailedPast=2.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
       if let Some(value) = dev_state_aggregated {
-        let state: Metric = Metric::new("device_state_aggregated".to_string(), "gauge".to_string(), "aggregatedState: NeverFailed=0.0 or FailedNow=1.0 or FailedPast=2.0".to_string(), label.clone(), value);
+        let state: Metric = Metric::new("powerflex_device_state_aggregated".to_string(), "gauge".to_string(), "aggregatedState: NeverFailed=0.0 or FailedNow=1.0 or FailedPast=2.0".to_string(), label.clone(), value);
         metric_list.push(state);
       }
     }
@@ -492,49 +509,26 @@ fn convert_metrics(cfg_path: Option<&str>, stats: &Map<String, serde_json::Value
             };
 
             if m.ends_with("Bwc") && v.is_object() {
-              let m_io_name = format!("{}_{}_iops", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+              let m_io_name = format!("powerflex_{}_{}_iops", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
               let m_io_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
               let m_io_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_io_value: f64 = div_oper(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
+              let m_io_value: f64 = iops_calc(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
               let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
               metric_list.push(metric_io);
 
-              let m_bw_name = format!("{}_{}_kb", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+              let m_bw_name = format!("powerflex_{}_{}_kb", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
               let m_bw_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
               let m_bw_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_bw_value: f64 = div_oper(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
+              let m_bw_value: f64 = bw_calc(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
               let metric_bw: Metric = Metric::new(m_bw_name, m_bw_type, m_bw_help, m_labels.clone(), m_bw_value);
               metric_list.push(metric_bw);
-
-              let m_sz_name = format!("{}_{}_iosize_kb", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
-              let m_sz_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
-              let m_sz_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_sz_value: f64 = div_oper(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap());
-              let metric_sz: Metric = Metric::new(m_sz_name, m_sz_type, m_sz_help, m_labels.clone(), m_sz_value);
-              metric_list.push(metric_sz);
-
-            } else if m.ends_with("Latency") && v.is_object() {
-              let m_io_name = format!("{}_{}_iops", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
-              let m_io_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
-              let m_io_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_io_value: f64 = div_oper(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
-              let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
-              metric_list.push(metric_io);
-
-              let m_lat_name = format!("{}_{}_us", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
-              let m_lat_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
-              let m_lat_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_lat_value: f64 = div_oper(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap());
-              let metric_lat: Metric = Metric::new(m_lat_name, m_lat_type, m_lat_help, m_labels.clone(), m_lat_value);
-              metric_list.push(metric_lat);
-
             } else {
-              let m_name = format!("{}_{}", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+              let m_name = format!("powerflex_{}_{}", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
               let m_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
               let m_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
               if let Some(m_value) = v.as_f64() {
-                let metric: Metric = Metric::new(m_name, m_type, m_help, m_labels.clone(), m_value);
-                metric_list.push(metric);
+                let metric_bw: Metric = Metric::new(m_name, m_type, m_help, m_labels.clone(), m_value);
+                metric_list.push(metric_bw);
               }
             }
           } else {
@@ -558,44 +552,21 @@ fn convert_metrics(cfg_path: Option<&str>, stats: &Map<String, serde_json::Value
             };
 
             if m.ends_with("Bwc") && v.is_object() {
-              let m_io_name = format!("{}_{}_iops", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+              let m_io_name = format!("powerflex_{}_{}_iops", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
               let m_io_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
               let m_io_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_io_value: f64 = div_oper(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
+              let m_io_value: f64 = iops_calc(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
               let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
               metric_list.push(metric_io);
 
-              let m_bw_name = format!("{}_{}_kb", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+              let m_bw_name = format!("powerflex_{}_{}_kb", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
               let m_bw_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
               let m_bw_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_bw_value: f64 = div_oper(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
+              let m_bw_value: f64 = bw_calc(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
               let metric_bw: Metric = Metric::new(m_bw_name, m_bw_type, m_bw_help, m_labels.clone(), m_bw_value);
               metric_list.push(metric_bw);
-
-              let m_sz_name = format!("{}_{}_iosize_kb", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
-              let m_sz_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
-              let m_sz_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_sz_value: f64 = div_oper(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap());
-              let metric_sz: Metric = Metric::new(m_sz_name, m_sz_type, m_sz_help, m_labels.clone(), m_sz_value);
-              metric_list.push(metric_sz);
-
-            } else if m.ends_with("Latency") && v.is_object() {
-              let m_io_name = format!("{}_{}_iops", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
-              let m_io_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
-              let m_io_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_io_value: f64 = div_oper(v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numSeconds"].to_string().parse::<i32>().unwrap());
-              let metric_io: Metric = Metric::new(m_io_name, m_io_type, m_io_help, m_labels.clone(), m_io_value);
-              metric_list.push(metric_io);
-
-              let m_lat_name = format!("{}_{}_us", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
-              let m_lat_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
-              let m_lat_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
-              let m_lat_value: f64 = div_oper(v.as_object().unwrap()["totalWeightInKb"].to_string().parse::<i32>().unwrap(), v.as_object().unwrap()["numOccured"].to_string().parse::<i32>().unwrap());
-              let metric_lat: Metric = Metric::new(m_lat_name, m_lat_type, m_lat_help, m_labels.clone(), m_lat_value);
-              metric_list.push(metric_lat);
-
             } else {
-              let m_name = format!("{}_{}", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
+              let m_name = format!("powerflex_{}_{}", stype, mdef[m].as_object().unwrap()["name"]).replace('"', "").to_lowercase();
               let m_type = mdef[m].as_object().unwrap()["type"].to_string().replace('"', "").to_lowercase();
               let m_help = mdef[m].as_object().unwrap()["help"].to_string().replace('"', "");
               if let Some(m_value) = v.as_f64() {
@@ -619,11 +590,21 @@ fn convert_metrics(cfg_path: Option<&str>, stats: &Map<String, serde_json::Value
   }
 }
 
-/// Divide operation (to calculate IOPS, Bandwidth, IO size, latency... from the *Bwc or *Latency metrics)
-fn div_oper(value: i32, divisor: i32) -> f64 {
-  if value == 0 || divisor == 0 {
+/// Calculate IOPS from the *Bwc metrics
+/// `https://github.com/andrewjwhite/ScaleIO_RestAPI_Python_Examples/blob/master/ScaleIO_cluster_stats_example.py#L92-L108`
+fn iops_calc(occur: i32, secs: i32) -> f64 {
+  if occur == 0 {
     0.0_f64
   } else {
-    (value as f64 / divisor as f64) as f64
+    (occur / secs) as f64
+  }
+}
+
+/// Calculate Bandwidth Kb/s from the *Bwc metrics
+fn bw_calc(occur: i32, secs: i32) -> f64 {
+  if occur == 0 {
+    0.0_f64
+  } else {
+    (occur / secs) as f64
   }
 }

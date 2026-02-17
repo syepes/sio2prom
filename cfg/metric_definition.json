@@ -239,7 +239,7 @@
     "help": "Help Text",
     "name": "write_size_bytes"
   },
-  "fixedReadErrorCount": {
+  "backgroundScanFixedReadErrorCount": {
     "type": "gauge",
     "help": "Help Text",
     "name": "fixed_read_error"
